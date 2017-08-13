@@ -5,7 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Noun Icons</string>
     <string name="blank_query_error">Enter not a blank query!</string>
-
+    <string name="enter_icons_name_to_search">Enter icons name to search</string>
+    <string name="enter_tag_to_search_icons">Enter tag to search icons</string>
 
 
 </resources>
