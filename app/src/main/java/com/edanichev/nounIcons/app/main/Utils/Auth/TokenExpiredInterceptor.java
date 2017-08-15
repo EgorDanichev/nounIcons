@@ -1,6 +1,5 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth;
 
-import com.edanichev.nounIcons.app.main.NounIconsList.TokenStorage;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Token.TokenCommand;
 import java.io.IOException;
 import okhttp3.Interceptor;

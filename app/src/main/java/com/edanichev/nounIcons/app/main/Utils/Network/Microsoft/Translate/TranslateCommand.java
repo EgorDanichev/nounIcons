@@ -1,6 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate;
 
-import com.edanichev.nounIcons.app.main.NounIconsList.TokenStorage;
+import com.edanichev.nounIcons.app.main.Utils.Auth.TokenStorage;
 import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.TokenExpiredInterceptor;
 import com.edanichev.nounIcons.app.main.Utils.XML.XmlInterceptor;

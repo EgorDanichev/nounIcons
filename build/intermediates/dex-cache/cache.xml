@@ -48,6 +48,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/75ef260bc01b8089a19b63d0a467b2a8ef2f0c84/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a0b6df5a02f387d07f034618ecbca38df9c92c7a">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_078eb8b27db9e5d3eb029d83499ce9abb708c9f2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/egordanichev/.android/build-cache/f1de005e806adb30e6d9d184ee644583abb05fa5/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"

@@ -1,4 +1,4 @@
-package com.edanichev.nounIcons.app.main.NounIconsList;
+package com.edanichev.nounIcons.app.main.Utils.Auth;
 
 
 import android.content.Context;

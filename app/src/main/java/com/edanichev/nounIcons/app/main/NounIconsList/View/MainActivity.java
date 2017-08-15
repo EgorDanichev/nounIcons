@@ -24,14 +24,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
@@ -39,6 +38,7 @@ import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.MyRecyclerViewAdapter;
 import com.facebook.stetho.Stetho;
 import com.flipboard.bottomsheet.BottomSheetLayout;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     private RecyclerView mItemsList;
     private Button iconListButton;
     BottomSheetLayout bottomSheet;
+    MyFragment bottomSheetFragment = new MyFragment();
 
     private MainPresenter presenter;
     private MyRecyclerViewAdapter adapter;
@@ -92,21 +93,6 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
 
         Stetho.initializeWithDefaults(this);
-    }
-
-
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-               return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override protected void onDestroy() {
@@ -159,12 +145,10 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     @Override
     public void onItemClick(View view, int position) {
 
-
         Bundle bundle = new Bundle();
         bundle.putString("text", adapter.getItemUrl(position));
-        MyFragment bottomSheetFragment = new MyFragment();
-        bottomSheetFragment.setArguments(bundle);
 
+        bottomSheetFragment.setArguments(bundle);
         bottomSheetFragment.show(getSupportFragmentManager(), R.id.bottomsheet);
 
     }
@@ -178,4 +162,9 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         recyclerView.setAdapter(adapter);
 
     }
+
+    public void closeBottomFragment(){
+        bottomSheetFragment.dismiss();
+    }
+
 }

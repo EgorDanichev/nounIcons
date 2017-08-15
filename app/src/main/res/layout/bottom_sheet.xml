@@ -1,15 +1,23 @@
-<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gpb="http://schemas.android.com/tools"
     android:id="@+id/bottomsheet"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:layout_height="400dp"
     android:background="@color/chuck_colorAccent">
 
-        <ImageView
-            android:id="@+id/bottom_sheet_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/placeholder" />
 
-    </LinearLayout>
+    <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true" />
+
+    <com.edanichev.nounIcons.app.main.Utils.Pictures.CustomLayout
+        android:id="@+id/bottom_sheet_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/transparent" />
+
+
+</RelativeLayout>

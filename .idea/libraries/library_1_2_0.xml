@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="library-1.2.0">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/75ef260bc01b8089a19b63d0a467b2a8ef2f0c84/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/75ef260bc01b8089a19b63d0a467b2a8ef2f0c84/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jpardogo.googleprogressbar/library/1.2.0/4d1b8600d2219289f815ec9a7f8ef36266ef0138/library-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
