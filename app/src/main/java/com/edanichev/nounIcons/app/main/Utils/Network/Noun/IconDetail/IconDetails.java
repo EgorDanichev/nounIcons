@@ -20,6 +20,7 @@ public class IconDetails {
     public class tag {
         String id;
         String slug;
+        String term;
 
         public String getSlug(){
             return slug;

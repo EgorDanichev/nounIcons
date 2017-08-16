@@ -32,7 +32,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.NounIconDetails.View.MyFragment;
+import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     private RecyclerView mItemsList;
     private Button iconListButton;
     BottomSheetLayout bottomSheet;
-    MyFragment bottomSheetFragment = new MyFragment();
+    IconDetailsFragmentView bottomSheetFragment = new IconDetailsFragmentView();
 
     private MainPresenter presenter;
     private MyRecyclerViewAdapter adapter;

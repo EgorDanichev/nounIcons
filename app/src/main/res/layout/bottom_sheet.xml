@@ -7,35 +7,51 @@
     android:background="@color/chuck_colorAccent">
 
 
-    <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true" />
-
     <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:orientation="vertical">
 
-        <me.gujun.android.taggroup.TagGroup
-            android:id="@+id/tag_group"
-            style="@style/TagGroup"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/chuck_colorAccent"
-            app:backgroundColor="@android:color/black"
-            android:paddingLeft="5dp"
-            android:paddingTop="5dp"
-            android:layout_weight="1"/>
+            android:layout_height="wrap_content">
 
-        <com.edanichev.nounIcons.app.main.Utils.Pictures.CustomLayout
-            android:id="@+id/bottom_sheet_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="7"
-            android:padding="20dp"
-            app:srcCompat="@drawable/transparent" />
+            <com.edanichev.nounIcons.app.main.Utils.Pictures.CustomLayout
+                android:id="@+id/bottom_sheet_view"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:padding="20dp"
+                app:srcCompat="@drawable/transparent" />
+
+            <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <me.gujun.android.taggroup.TagGroup
+                android:id="@+id/tag_group"
+                style="@style/TagGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/chuck_colorAccent"
+                app:backgroundColor="@android:color/black"
+                app:borderColor="@android:color/transparent" />
+
+        </ScrollView>
+
+
 
     </LinearLayout>
 
