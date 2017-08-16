@@ -30,6 +30,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/aa955f10df89a7cd58f7f2fa8121093f5bb8c292/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="81e3b12efc8ca9aa274adcac0883782e231876da">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b8308d39bc6bdc74b071ac2015b8dcac8a01342d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/egordanichev/.android/build-cache/8cd501c78479b5193c03f6e526d9c12ed10b0af0/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -45,6 +54,15 @@
         revision="25.0.2"
         sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
         <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_d1de324aa0c61bbd38ba404373ec0ddfe1b129f7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/75ef260bc01b8089a19b63d0a467b2a8ef2f0c84/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a0b6df5a02f387d07f034618ecbca38df9c92c7a">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_078eb8b27db9e5d3eb029d83499ce9abb708c9f2/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -66,6 +84,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/d7a6f8fa3c4c28a956d5850bd7feead5d02957d6/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e9a4d49b97190d4490310827938d428c6fc996f4">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_7724d2d545c0283734d3f4f28821018432da778e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/egordanichev/.android/build-cache/d29166f68e41d0af5cc9930897b9a020fbd0daf8/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -75,12 +102,48 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/aa955f10df89a7cd58f7f2fa8121093f5bb8c292/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="81e3b12efc8ca9aa274adcac0883782e231876da">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b8308d39bc6bdc74b071ac2015b8dcac8a01342d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="04feb5ba1e44e0c105be6fb97431c9b576d810ac">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_c062bc93fd7456a8a4fe7e2e9591d21ba202a4d5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/887c5c14b0972b744fec105a6793c4f52a9963c0/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c794cd6f001ebf421b766f23f7091ca686dbeed8">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_33186b5159c7dc9f5352729ae406ebacca7ed806/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/egordanichev/.android/build-cache/6fea01c8fb8c6a46086323a44c129def1db691f4/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.2"
         sha1="47635644d0d5c103c1dd8360549eb9ba3225c7d3">
         <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_d2d131564d69a558aec08a0472954cb6b00eed50/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_05ba31322360df7c93391c4466565769a832bdc9/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -111,6 +174,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/887c5c14b0972b744fec105a6793c4f52a9963c0/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c794cd6f001ebf421b766f23f7091ca686dbeed8">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_33186b5159c7dc9f5352729ae406ebacca7ed806/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/egordanichev/.android/build-cache/260f4f9df1913eda5e7a3cd13e86905739c85cca/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -122,6 +194,15 @@
         is-multidex="true"
         jar="/Users/egordanichev/.android/build-cache/a082eddfb33fe6868b2812225ceace086f46e1c7/output/jars/classes.jar"
         jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="92137af0a8a8623fa451a25beaffc4a9f22a8bb9">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_00e92ba5c48d701aa4b78657e80402017e2d3cb1/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/a082eddfb33fe6868b2812225ceace086f46e1c7/output/jars/classes.jar"
+        jumboMode="true"
         optimize="true"
         revision="25.0.2"
         sha1="92137af0a8a8623fa451a25beaffc4a9f22a8bb9">

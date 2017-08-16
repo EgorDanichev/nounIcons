@@ -4,8 +4,8 @@ package com.edanichev.nounIcons.app.main.NounIconsList.Presenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractor;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractorImpl;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainView;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;

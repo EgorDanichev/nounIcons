@@ -32,12 +32,16 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
+import com.edanichev.nounIcons.app.main.NounIconDetails.View.MyFragment;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.MyRecyclerViewAdapter;
-import com.facebook.stetho.Stetho;
 import com.flipboard.bottomsheet.BottomSheetLayout;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+import net.yslibrary.android.keyboardvisibilityevent.Unregistrar;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
     private final static int NUMBER_OF_COLUMNS = 5;
 
+    private static boolean isKeyboardVisible = false ;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,22 +96,25 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
             }
         });
 
+        registerKeyboardListener();
 
-        Stetho.initializeWithDefaults(this);
     }
 
-    @Override protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
         presenter.onDestroy();
         super.onDestroy();
     }
 
-    @Override public void showProgress() {
+    @Override
+    public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
         mItemsList.setVisibility(View.GONE);
 
     }
 
-    @Override public void hideProgress() {
+    @Override
+    public void hideProgress() {
         progressBar.setVisibility(View.GONE);
         mItemsList.setVisibility(View.VISIBLE);
     }
@@ -125,6 +133,12 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void emptyQueryError(){
+        searchText.setError( getResources().getString(R.string.blank_query_error) );
+    }
+
+
     public void searchIconsList(View view) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         String iconsQuery = searchText.getText().toString();
@@ -137,20 +151,38 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    @Override
-    public void emptyQueryError(){
-        searchText.setError( getResources().getString(R.string.blank_query_error) );
-    }
 
     @Override
     public void onItemClick(View view, int position) {
+        openBottomFragment(position);
+    }
 
-        Bundle bundle = new Bundle();
-        bundle.putString("text", adapter.getItemUrl(position));
+    public void closeBottomFragment(){
+        bottomSheetFragment.dismiss();
+    }
 
-        bottomSheetFragment.setArguments(bundle);
-        bottomSheetFragment.show(getSupportFragmentManager(), R.id.bottomsheet);
+    public void openBottomFragment(int position){
+        if (!isKeyboardVisible) {
+            Bundle bundle = new Bundle();
+            bundle.putString("iconUrl", adapter.getItemUrl(position));
 
+            bundle.putString("iconId", adapter.mData.get(position).id);
+
+            bottomSheetFragment.setArguments(bundle);
+            bottomSheetFragment.show(getSupportFragmentManager(), R.id.bottomsheet);
+        }
+    }
+
+
+    private void registerKeyboardListener(){
+        Unregistrar unregistrar = KeyboardVisibilityEvent.registerEventListener(
+                this,
+                new KeyboardVisibilityEventListener() {
+                    @Override
+                    public void onVisibilityChanged(boolean isOpen) {
+                        isKeyboardVisible = isOpen;
+                    }
+                });
     }
 
     private void createAdapter() {
@@ -160,11 +192,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         adapter = new MyRecyclerViewAdapter(this);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
-
     }
 
-    public void closeBottomFragment(){
-        bottomSheetFragment.dismiss();
-    }
 
 }

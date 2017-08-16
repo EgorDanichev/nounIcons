@@ -3,10 +3,10 @@ package com.edanichev.nounIcons.app.main.NounIconsList.Model;
 
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.TranslateCommand;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.Translation;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;

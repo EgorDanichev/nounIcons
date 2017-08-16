@@ -17,7 +17,6 @@
  */
 
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
-
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 
 import java.util.List;

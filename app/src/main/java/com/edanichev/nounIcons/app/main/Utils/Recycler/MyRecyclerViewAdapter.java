@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 import com.squareup.picasso.Picasso;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
