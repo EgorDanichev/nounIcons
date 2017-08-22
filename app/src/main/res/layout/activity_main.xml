@@ -1,77 +1,77 @@
-<com.flipboard.bottomsheet.BottomSheetLayout android:id="@+id/bottomsheet"
+<com.flipboard.bottomsheet.BottomSheetLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomsheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.NounIconsList.View.MainActivity"
-    android:orientation="vertical">
-
-
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:focusable="true"
-    android:focusableInTouchMode="true"    >
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/signup_input_layout_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="10dp"
-        android:layout_weight="20"
-        android:textColorHint="?android:attr/colorAccent"
-        android:theme="@style/Theme.AppCompat">
-
-        <EditText
-            android:id="@+id/search_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/enter_tag_to_search_icons"
-            android:textColor="@android:color/black" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <Button
-        android:id="@+id/icon_list_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:onClick="searchIconsList"
-        android:text="Search icons" />
-
-
-</LinearLayout>
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:context=".main.NounIconsList.View.MainActivity">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/items_grid_list"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/progress"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/signup_input_layout_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="10dp"
+                android:layout_weight="20"
+                android:textColorHint="?android:attr/colorAccent"
+                android:theme="@style/Theme.AppCompat">
+
+                <EditText
+                    android:id="@+id/search_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/enter_tag_to_search_icons"
+                    android:textColor="@android:color/black" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/icon_list_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="@string/search_icons" />
+
+        </LinearLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:visibility="gone" />
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@android:style/Widget.Holo.ProgressBar.Large"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/items_grid_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                />
+
+        </RelativeLayout>
 
     </LinearLayout>
-
-</LinearLayout>
 </com.flipboard.bottomsheet.BottomSheetLayout>

@@ -1,21 +1,3 @@
-/*
- *
- *  * Copyright (C) 2014 Antonio Leiva Gordillo.
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *
- */
-
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.app.Activity;
@@ -37,7 +19,6 @@ import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.MyRecyclerViewAdapter;
-import com.flipboard.bottomsheet.BottomSheetLayout;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
@@ -50,52 +31,28 @@ import java.security.SignatureException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-
 public class MainActivity extends AppCompatActivity implements MainView,MyRecyclerViewAdapter.ItemClickListener {
+
+
+    private final static int NUMBER_OF_COLUMNS = 5;
+    private static boolean isKeyboardVisible = false ;
 
     private ProgressBar progressBar;
     private EditText searchText;
     private RecyclerView mItemsList;
     private Button iconListButton;
-    BottomSheetLayout bottomSheet;
-    IconDetailsFragmentView bottomSheetFragment = new IconDetailsFragmentView();
+    private IconDetailsFragmentView bottomSheetFragment = new IconDetailsFragmentView();
 
     private MainPresenter presenter;
-    private MyRecyclerViewAdapter adapter;
-
-    private final static int NUMBER_OF_COLUMNS = 5;
-
-    private static boolean isKeyboardVisible = false ;
+    private MyRecyclerViewAdapter iconListAdapter;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        progressBar = (ProgressBar) findViewById(R.id.progress);
-        searchText = (EditText) findViewById(R.id.search_edit);
-        mItemsList = (RecyclerView) findViewById(R.id.items_grid_list);
-        iconListButton = (Button) findViewById(R.id.icon_list_button);
-        bottomSheet = (BottomSheetLayout) findViewById(R.id.bottomsheet);
-
-        createAdapter();
-
+        findView();
         presenter = new MainPresenterImpl(this);
-
-        searchText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    try {
-                        searchIconsList(v);
-                    } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-                        e.printStackTrace();
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
-
+        createAdapter();
         registerKeyboardListener();
 
     }
@@ -109,13 +66,13 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     @Override
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
-        mItemsList.setVisibility(View.GONE);
+        mItemsList.setVisibility(View.INVISIBLE);
 
     }
 
     @Override
     public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
         mItemsList.setVisibility(View.VISIBLE);
     }
 
@@ -129,8 +86,9 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     public void showIconsList(List<Icons.NounIcon> icons) {
         hideProgress();
 
-        adapter.setItems(icons);
-        adapter.notifyDataSetChanged();
+        iconListAdapter.setItems(icons);
+        iconListAdapter.notifyDataSetChanged();
+        mItemsList.scrollToPosition(0);
     }
 
     @Override
@@ -138,11 +96,9 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         searchText.setError( getResources().getString(R.string.blank_query_error) );
     }
 
+    public void searchIconsList(String iconsQuery) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
-    public void searchIconsList(View view) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
-        String iconsQuery = searchText.getText().toString();
-        hideKeyboard(view);
+        searchText.setText(iconsQuery);
         presenter.getIconsList(iconsQuery);
     }
 
@@ -151,28 +107,26 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-
     @Override
     public void onItemClick(View view, int position) {
-        openBottomFragment(position);
+
+        openIconDetails(position);
     }
 
-    public void closeBottomFragment(){
-        bottomSheetFragment.dismiss();
+    public void closeIconDetails(){
+        if (bottomSheetFragment!= null) bottomSheetFragment.dismiss();
+
     }
 
-    public void openBottomFragment(int position){
+    public void openIconDetails(int position){
         if (!isKeyboardVisible) {
             Bundle bundle = new Bundle();
-            bundle.putString("iconUrl", adapter.getItemUrl(position));
 
-            bundle.putString("iconId", adapter.mData.get(position).id);
-
+            bundle.putParcelable("icon", iconListAdapter.mData.get(position));
             bottomSheetFragment.setArguments(bundle);
             bottomSheetFragment.show(getSupportFragmentManager(), R.id.bottomsheet);
         }
     }
-
 
     private void registerKeyboardListener(){
         Unregistrar unregistrar = KeyboardVisibilityEvent.registerEventListener(
@@ -186,13 +140,52 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     }
 
     private void createAdapter() {
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.items_grid_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
-        adapter = new MyRecyclerViewAdapter(this);
-        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
+        iconListAdapter = new MyRecyclerViewAdapter(this);
+        iconListAdapter.setClickListener(this);
+        recyclerView.setAdapter(iconListAdapter);
     }
 
+    private View.OnKeyListener searchKeyListenet(){
+        return new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    try {
+                        searchIconsList(searchText.getText().toString());
+                        hideKeyboard(v);
+                    } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
+    }
+
+    private View.OnClickListener buttonClickListener(){
+        return new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                try {
+                    searchIconsList(searchText.getText().toString());
+                    hideKeyboard(view);
+                } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    private void findView(){
+        progressBar = (ProgressBar) findViewById(R.id.progress);
+        searchText = (EditText) findViewById(R.id.search_edit);
+        searchText.setOnKeyListener(searchKeyListenet());
+        mItemsList = (RecyclerView) findViewById(R.id.items_grid_list);
+        iconListButton = (Button) findViewById(R.id.icon_list_button);
+        iconListButton.setOnClickListener(buttonClickListener());
+        getSupportActionBar().hide();    }
 
 }

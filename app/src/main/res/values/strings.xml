@@ -7,6 +7,7 @@
     <string name="blank_query_error">Enter not a blank query!</string>
     <string name="enter_icons_name_to_search">Enter icons name to search</string>
     <string name="enter_tag_to_search_icons">Enter tag to search icons</string>
+    <string name="search_icons">Search icons</string>
 
 
 </resources>

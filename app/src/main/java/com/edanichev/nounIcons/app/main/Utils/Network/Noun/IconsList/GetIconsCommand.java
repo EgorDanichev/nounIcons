@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GetIconsCommand {
 
     private Retrofit retrofit;
-    private NounService service;
+    private NounIconListService service;
     private IconsCallback iconsCallback;
 
     public GetIconsCommand(IconsCallback callback){
@@ -47,7 +47,7 @@ public class GetIconsCommand {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        service = retrofit.create(NounService.class);
+        service = retrofit.create(NounIconListService.class);
 
     }
 

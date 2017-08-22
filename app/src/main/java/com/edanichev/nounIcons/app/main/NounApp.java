@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.edanichev.nounIcons.app.main.Utils.Auth.TokenStorage;
 import com.facebook.stetho.Stetho;
+import com.squareup.leakcanary.LeakCanary;
 
 public class NounApp extends Application {
 
@@ -14,6 +15,11 @@ public class NounApp extends Application {
 
         TokenStorage.initInstance(this);
         Stetho.initializeWithDefaults(this);
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
     }
 
 }

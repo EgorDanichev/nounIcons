@@ -4,7 +4,7 @@ package com.edanichev.nounIcons.app.main.Utils.Pictures;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.edanichev.nounIcons.app.main.NounIconsList.PictureLoadedCallback;
+import com.edanichev.nounIcons.app.main.NounIconDetails.PictureLoadedCallback;
 
 public class AsyncPictureLoader extends AsyncTask<String,Void,Void> {
 
