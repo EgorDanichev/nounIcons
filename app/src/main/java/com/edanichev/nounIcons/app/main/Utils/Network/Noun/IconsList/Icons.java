@@ -1,51 +1,45 @@
 package com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.List;
 
-public class Icons {
-    public List<NounIcon> icons;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Index;
 
-    public static class NounIcon implements Parcelable {
-        public String id;
-        public String preview_url_84;
-        public String attribution_preview_url;
-        public String icon_url;
-        public String term;
+public class Icons extends RealmObject{
 
-        NounIcon(Parcel in) {
-            id = in.readString();
-            preview_url_84 = in.readString();
-            attribution_preview_url = in.readString();
-            icon_url = in.readString();
-        }
+    @Index
+    private String request;
 
-        public static final Creator<NounIcon> CREATOR = new Creator<NounIcon>() {
-            @Override
-            public NounIcon createFromParcel(Parcel in) {
-                return new NounIcon(in);
-            }
+    private RealmList<IconDetails> icons;
 
-            @Override
-            public NounIcon[] newArray(int size) {
-                return new NounIcon[size];
-            }
-        };
+    public List<IconDetails> getIcons() {
+        return icons;
+    }
 
-        @Override
-        public int describeContents() {
-            return 0;
-        }
+    public void setIcons(RealmList<IconDetails> icons) {
+        this.icons = icons;
+    }
 
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-            parcel.writeString(id);
-            parcel.writeString(preview_url_84);
-            parcel.writeString(attribution_preview_url);
-            parcel.writeString(icon_url);
-        }
+    public String getRequest() {
+        return request;
+    }
+
+    public void setRequest(String request) {
+        this.request = request;
+    }
+
+    public Icons(RealmList<IconDetails> icons) {
+        this.icons = icons;
+    }
+
+    public Icons(){
+
+    }
+
+    public Icons(String request, RealmList<IconDetails> icons) {
+        this.request = request;
+        this.icons = icons;
     }
 }

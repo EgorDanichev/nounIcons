@@ -12,6 +12,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:padding="5dp"
-        app:srcCompat="@android:color/transparent" />
+        app:srcCompat="@android:color/transparent"
+        android:elevation="10dp"/>
 
 </FrameLayout>

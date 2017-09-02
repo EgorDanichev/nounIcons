@@ -99,8 +99,6 @@ public class OAuthInterceptor implements Interceptor {
             return this;
         }
 
-
-
         public OAuthInterceptor build() {
 
             if (consumerKey == null) throw new IllegalStateException("consumerKey not set");

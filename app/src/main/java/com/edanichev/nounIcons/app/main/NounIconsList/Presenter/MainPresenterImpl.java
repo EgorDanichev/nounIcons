@@ -5,16 +5,15 @@ import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractor;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractorImpl;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainView;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainPresenterImpl implements MainPresenter, FindItemsInteractor.OnFinishedListener,IconsCallback {
+public class MainPresenterImpl implements MainPresenter, FindItemsInteractor.OnFinishedListener, IconsCallback {
 
     private MainView mainView;
     private FindItemsInteractor findItemsInteractor;
@@ -49,7 +48,7 @@ public class MainPresenterImpl implements MainPresenter, FindItemsInteractor.OnF
 
     @Override
     public void onEmptyIconsList() {
-        mainView.showMessage("No icons found! Idi na hui!");
+        mainView.showMessage("No icons found!");
 
     }
 
@@ -65,14 +64,9 @@ public class MainPresenterImpl implements MainPresenter, FindItemsInteractor.OnF
 
 
     @Override
-    public void onIconsSearchResponse(Icons icons) {
+    public void onIconsSearchResponse(List<IconDetails> icons) {
 
-        List<Icons.NounIcon> items = new ArrayList<>();
-
-        for (Icons.NounIcon icon:icons.icons){
-            items.add(icon);
-        }
-        mainView.showIconsList(items);
+        mainView.showIconsList(icons);
     }
 
 }

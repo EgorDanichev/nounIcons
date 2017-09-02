@@ -22,8 +22,6 @@ public class AsyncPictureLoader extends AsyncTask<String,Void,Void> {
 
     @Override
     protected Void doInBackground(String... strings) {
-
-
         return null;
     }
 }

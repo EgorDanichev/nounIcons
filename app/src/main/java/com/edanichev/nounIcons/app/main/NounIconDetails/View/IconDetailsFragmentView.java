@@ -3,20 +3,23 @@ package com.edanichev.nounIcons.app.main.NounIconDetails.View;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsFragmentPresenter;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsFragmentPresenterInterface;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Tag;
 import com.edanichev.nounIcons.app.main.Utils.Pictures.BottomSheetView;
-import com.flipboard.bottomsheet.commons.BottomSheetFragment;
 import com.google.android.flexbox.FlexboxLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -27,13 +30,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipCloudConfig;
 import fisk.chipcloud.ChipListener;
 
-public class IconDetailsFragmentView extends BottomSheetFragment implements IconDetailsFragmentViewInterface {
+public class IconDetailsFragmentView extends BottomSheetDialogFragment implements IconDetailsFragmentViewInterface {
 
     private ImageView iconImageView;
     private ProgressBar progress;
@@ -41,11 +45,13 @@ public class IconDetailsFragmentView extends BottomSheetFragment implements Icon
     private FlexboxLayout flexbox;
     private ChipCloud chipCloud;
     private TextView iconTermView;
+    private Button favoriteButton;
 
-    private Icons.NounIcon iconData;
-    private List<String> tagList = new ArrayList<>();
+    private IconDetails iconData;
+    private boolean favorite = false;
 
     public IconDetailsFragmentPresenterInterface iconDetailsFragmentPresenter;
+
 
     @Nullable
     @Override
@@ -55,14 +61,15 @@ public class IconDetailsFragmentView extends BottomSheetFragment implements Icon
         findView(myInflatedView);
 
         createPresenter();
-        recieveIconData();
+        receiveIconData();
         loadImageInBackground();
         loadIconTerm();
-
-        iconDetailsFragmentPresenter.getIconDetails(iconData.id);
+        showTags();
 
         return myInflatedView;
     }
+
+
 
     public void showProgress(){
         progress.setVisibility(View.VISIBLE);
@@ -74,14 +81,12 @@ public class IconDetailsFragmentView extends BottomSheetFragment implements Icon
         iconImageView.setVisibility(View.VISIBLE);
     }
 
-    public void showTags(List<String> tagNames){
-        this.tagList = tagNames;
-        chipCloud.addChips(tagNames);
+    private void showTags(){
+        chipCloud.addChips(getTagsInString());
     }
 
 
     private void createPresenter(){
-        iconDetailsFragmentPresenter = new IconDetailsFragmentPresenter(this,getActivity());
     }
 
     private void findView(View myInflatedView){
@@ -92,7 +97,7 @@ public class IconDetailsFragmentView extends BottomSheetFragment implements Icon
         bottomSheetView = (BottomSheetView) myInflatedView.findViewById(R.id.bottom_sheet_view);
         flexbox = (FlexboxLayout) myInflatedView.findViewById(R.id.flexbox_drawable);
         iconTermView = (TextView) myInflatedView.findViewById(R.id.icon_term);
-
+        favoriteButton = (Button) myInflatedView.findViewById(R.id.add_to_favorite_button); 
 
         ChipCloudConfig config = new ChipCloudConfig()
                 .selectMode(ChipCloud.SelectMode.single)
@@ -104,23 +109,48 @@ public class IconDetailsFragmentView extends BottomSheetFragment implements Icon
 
         chipCloud = new ChipCloud(getActivity(), flexbox,config);
         chipCloud.setListener(chipListener());
+        
+        favoriteButton.setOnClickListener(favoriteButtonListener());
 
     }
+    
+    
+    private View.OnClickListener favoriteButtonListener(){
+        
+        return new View.OnClickListener(){
 
-    private void recieveIconData(){
+            @Override
+            public void onClick(View view) {
+
+                final Animation myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);
+                if (!favorite) {
+                    view.setBackgroundResource(R.drawable.favorite_full);
+                    favorite = true;
+                    favoriteButton.startAnimation(myAnim);
+                }
+                else {
+                    view.setBackgroundResource(R.drawable.favorite_empty);
+                    favorite = false;
+                    favoriteButton.startAnimation(myAnim);
+                }
+
+            }
+        };
+    }
+
+    private void receiveIconData(){
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             iconData = bundle.getParcelable("icon");
         }
-
     }
 
     private void loadImageInBackground() {
 
         showProgress();
         Picasso.with(getActivity()).
-                load(iconData.attribution_preview_url).
+                load(iconData.getAttribution_preview_url()).
                 into((ImageView) bottomSheetView, new Callback(){
 
                     @Override
@@ -136,9 +166,8 @@ public class IconDetailsFragmentView extends BottomSheetFragment implements Icon
     }
 
     private void loadIconTerm(){
-        iconTermView.setText(iconData.term.toUpperCase());
+        iconTermView.setText(iconData.getTerm().toUpperCase());
     }
-
 
     private View.OnClickListener imageClickListener(){
 
@@ -168,6 +197,15 @@ public class IconDetailsFragmentView extends BottomSheetFragment implements Icon
 
             }
         };
+    }
+
+    private List<String> getTagsInString(){
+        List<String> tags = new ArrayList<>();
+
+        for(Tag tag:iconData.getTags()) {
+            if (!Objects.equals(tag.getSlug().trim(), "")) tags.add(tag.getSlug());
+        }
+     return tags;
     }
 
 

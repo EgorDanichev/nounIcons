@@ -17,7 +17,7 @@
  */
 
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public interface MainView {
     void showProgress();
     void hideProgress();
     void showMessage(String message);
-    void showIconsList(List<Icons.NounIcon> icons);
+    void showIconsList(List<IconDetails> icons);
     void emptyQueryError();
 }
 

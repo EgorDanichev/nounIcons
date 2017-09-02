@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,7 +19,7 @@ import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.MyRecyclerViewAdapter;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     private EditText searchText;
     private RecyclerView mItemsList;
     private Button iconListButton;
-    private IconDetailsFragmentView bottomSheetFragment = new IconDetailsFragmentView();
+    private IconDetailsFragmentView bottomSheetFragment;
 
     private MainPresenter presenter;
     private MyRecyclerViewAdapter iconListAdapter;
@@ -67,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
         mItemsList.setVisibility(View.INVISIBLE);
-
     }
 
     @Override
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     }
 
     @Override
-    public void showIconsList(List<Icons.NounIcon> icons) {
+    public void showIconsList(List<IconDetails> icons) {
         hideProgress();
 
         iconListAdapter.setItems(icons);
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     public void searchIconsList(String iconsQuery) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         searchText.setText(iconsQuery);
-        presenter.getIconsList(iconsQuery);
+        presenter.getIconsList(iconsQuery.trim());
     }
 
     public void hideKeyboard(View view) {
@@ -109,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
     @Override
     public void onItemClick(View view, int position) {
-
         openIconDetails(position);
     }
 
@@ -123,8 +124,10 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
             Bundle bundle = new Bundle();
 
             bundle.putParcelable("icon", iconListAdapter.mData.get(position));
+            bottomSheetFragment = new IconDetailsFragmentView();
             bottomSheetFragment.setArguments(bundle);
-            bottomSheetFragment.show(getSupportFragmentManager(), R.id.bottomsheet);
+            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+
         }
     }
 
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         recyclerView.setAdapter(iconListAdapter);
     }
 
-    private View.OnKeyListener searchKeyListenet(){
+    private View.OnKeyListener searchKeyListener(){
         return new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
@@ -164,6 +167,31 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
             }
         };
     }
+
+    private TextWatcher onSearchTextChangerLitener(){
+
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                 if (editable.length() == 0){
+                     showIconsList(new ArrayList<IconDetails>());
+                }
+
+            }
+        };
+
+    }
+
 
     private View.OnClickListener buttonClickListener(){
         return new View.OnClickListener(){
@@ -182,10 +210,13 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     private void findView(){
         progressBar = (ProgressBar) findViewById(R.id.progress);
         searchText = (EditText) findViewById(R.id.search_edit);
-        searchText.setOnKeyListener(searchKeyListenet());
         mItemsList = (RecyclerView) findViewById(R.id.items_grid_list);
         iconListButton = (Button) findViewById(R.id.icon_list_button);
+
         iconListButton.setOnClickListener(buttonClickListener());
-        getSupportActionBar().hide();    }
+        searchText.setOnKeyListener(searchKeyListener());
+        searchText.addTextChangedListener(onSearchTextChangerLitener());
+        getSupportActionBar().hide();
+    }
 
 }

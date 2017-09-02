@@ -6,12 +6,12 @@ import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.TranslateCommand;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.Translation;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
-
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.util.List;
 
 public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallback,TranslateCallback {
     IconsCallback iconsCallback;
@@ -31,7 +31,7 @@ public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallbac
     }
 
     @Override
-    public void onIconsSearchResponse(Icons icons) {
+    public void onIconsSearchResponse(List<IconDetails> icons) {
 
         if (icons!=null)
             iconsCallback.onIconsSearchResponse(icons);
@@ -41,6 +41,7 @@ public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallbac
 
     @Override
     public void onEmptyIconsList() {
+        iconsCallback.onEmptyIconsList();
 
     }
 

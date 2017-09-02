@@ -1,3 +1,14 @@
 <resources>
-    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar"/>
+    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+
+    <style name="TextAppearence.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="colorControlNormal">@android:color/black</item>
+
+        <item name="colorControlActivated">@android:color/black</item>
+        <item name="colorControlHighlight">@android:color/black</item>
+    </style>
 </resources>

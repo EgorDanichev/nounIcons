@@ -1,9 +1,10 @@
 package com.edanichev.nounIcons.app.main.NounIconsList;
 
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+import java.util.List;
 
 public interface IconsCallback {
 
-    void onIconsSearchResponse(Icons icons);
+    void onIconsSearchResponse(List<IconDetails> icons);
     void onEmptyIconsList();
 }

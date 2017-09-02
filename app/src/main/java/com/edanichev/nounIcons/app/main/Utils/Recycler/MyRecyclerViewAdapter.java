@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.List;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
 
-    public List<Icons.NounIcon> mData = new ArrayList<>();
+    public List<IconDetails> mData = new ArrayList<>();
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
@@ -25,7 +25,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         this.mInflater = LayoutInflater.from(context);
     }
 
-    public void setItems(List<Icons.NounIcon> data){
+    public void setItems(List<IconDetails> data){
         mData = data;
     }
 
@@ -51,7 +51,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
     public String getItemUrl(int id) {
-        return mData.get(id).attribution_preview_url;
+        return mData.get(id).getAttribution_preview_url();
     }
 
     public void setClickListener(ItemClickListener itemClickListener) {
@@ -79,7 +79,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         void bind(int position) throws IOException {
             Picasso.with(itemView.getContext())
-                    .load(mData.get(position).preview_url_84)
+                    .load(mData.get(position).getPreview_url_84())
                     .into(iconImage);
         }
 

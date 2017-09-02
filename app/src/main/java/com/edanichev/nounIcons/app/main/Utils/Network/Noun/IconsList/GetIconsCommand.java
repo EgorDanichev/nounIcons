@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuthInterceptor;
+import com.edanichev.nounIcons.app.main.Utils.DB.IconsRealmAdapter;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.util.concurrent.TimeUnit;
@@ -54,12 +55,29 @@ public class GetIconsCommand {
 
     public void getIcons(String term) {
 
+        final IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
+        String requestUrl = retrofit.baseUrl().toString() +"icons/"+ term;
+
+        if(iconsRealmAdapter.checkIfExists(requestUrl)){
+            iconsCallback.onIconsSearchResponse(iconsRealmAdapter.getIconsFromCache(requestUrl));
+            return;
+        }
+
+
         service.icons(term).enqueue(
                 new Callback<Icons>() {
 
                     @Override
                     public void onResponse(@NonNull Call<Icons> call, @NonNull Response<Icons> response) {
-                        iconsCallback.onIconsSearchResponse(response.body());
+
+                        if (response.body()!=null) {
+                            iconsCallback.onIconsSearchResponse(response.body().getIcons());
+
+                            IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
+                            iconsRealmAdapter.addIconsToCache(call.request().url().toString(), response.body().getIcons());
+                        } else
+                            iconsCallback.onEmptyIconsList();
+
                     }
 
                     @Override

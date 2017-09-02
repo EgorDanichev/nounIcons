@@ -20,7 +20,7 @@ package com.edanichev.nounIcons.app.main.NounIconDetails.Presenter;
 
 public interface IconDetailsFragmentPresenterInterface {
 
-    public void getIconDetails(String id);
+
 
 
 }
