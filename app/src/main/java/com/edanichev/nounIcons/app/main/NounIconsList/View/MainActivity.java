@@ -1,10 +1,13 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -21,6 +24,15 @@ import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.MyRecyclerViewAdapter;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.context.IconicsLayoutInflater;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
@@ -42,14 +54,17 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
     private ProgressBar progressBar;
     private EditText searchText;
-    private RecyclerView mItemsList;
-    private Button iconListButton;
+    private RecyclerView iconsGridList;
+    private Button searchIconsButton;
     private IconDetailsFragmentView bottomSheetFragment;
+    private Toolbar toolbar;
+    private Drawer result;
 
     private MainPresenter presenter;
     private MyRecyclerViewAdapter iconListAdapter;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
+        LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -57,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         presenter = new MainPresenterImpl(this);
         createAdapter();
         registerKeyboardListener();
-
     }
 
     @Override
@@ -69,13 +83,13 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     @Override
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
-        mItemsList.setVisibility(View.INVISIBLE);
+        iconsGridList.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.INVISIBLE);
-        mItemsList.setVisibility(View.VISIBLE);
+        iconsGridList.setVisibility(View.VISIBLE);
     }
 
 
@@ -90,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
         iconListAdapter.setItems(icons);
         iconListAdapter.notifyDataSetChanged();
-        mItemsList.scrollToPosition(0);
+        iconsGridList.scrollToPosition(0);
     }
 
     @Override
@@ -208,15 +222,76 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     }
 
     private void findView(){
-        progressBar = (ProgressBar) findViewById(R.id.progress);
-        searchText = (EditText) findViewById(R.id.search_edit);
-        mItemsList = (RecyclerView) findViewById(R.id.items_grid_list);
-        iconListButton = (Button) findViewById(R.id.icon_list_button);
+        new DrawerBuilder().withActivity(this).build();
 
-        iconListButton.setOnClickListener(buttonClickListener());
+        createDrawer();
+
+        progressBar = findViewById(R.id.progress);
+        searchText = findViewById(R.id.search_edit);
+        iconsGridList = findViewById(R.id.items_grid_list);
+        searchIconsButton = findViewById(R.id.icon_list_button);
+        toolbar = findViewById(R.id.toolbar);
+
+        searchIconsButton.setOnClickListener(buttonClickListener());
         searchText.setOnKeyListener(searchKeyListener());
         searchText.addTextChangedListener(onSearchTextChangerLitener());
-        getSupportActionBar().hide();
+
+        searchText.setCompoundDrawables(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_search).color(Color.DKGRAY).sizeDp(20),null,null,null);
+        searchText.setCompoundDrawablePadding(12);
+
+        searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                searchText.setCompoundDrawables(null,null,null,null);
+            }
+        });
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_view_headline).color(Color.BLACK).sizeDp(24));
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                result.openDrawer();
+                hideKeyboard(v);
+            }
+        });
+
     }
+
+
+    private void createDrawer(){
+
+
+        PrimaryDrawerItem favorite =
+                new PrimaryDrawerItem()
+                        .withIdentifier(2)
+                        .withName("My favorites")
+                        .withIcon( new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_star).color(Color.BLACK).sizeDp(30) );
+
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.chuck_colorAccent)
+                .withCurrentProfileHiddenInList(true)
+                .addProfiles(new ProfileDrawerItem()
+                        .withName("Tap to login")
+                        .withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_account_circle).color(Color.BLACK).sizeDp(30))
+                ).withTextColor(Color.BLACK)
+                .withSelectionListEnabledForSingleProfile(false)
+                .build();
+
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withAccountHeader(headerResult)
+                .withSelectedItem(-1)
+                .addDrawerItems(
+                        favorite
+                )
+                .build();
+
+    }
+
 
 }

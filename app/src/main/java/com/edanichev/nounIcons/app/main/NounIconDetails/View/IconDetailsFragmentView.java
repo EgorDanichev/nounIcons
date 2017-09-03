@@ -21,6 +21,8 @@ import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Tag;
 import com.edanichev.nounIcons.app.main.Utils.Pictures.BottomSheetView;
 import com.google.android.flexbox.FlexboxLayout;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -124,12 +126,23 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
                 final Animation myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);
                 if (!favorite) {
-                    view.setBackgroundResource(R.drawable.favorite_full);
+
+                    IconicsDrawable icon = new IconicsDrawable(getActivity())
+                            .icon(GoogleMaterial.Icon.gmd_star)
+                            .color(Color.BLACK)
+                            .sizeDp(30);
+                    view.setBackground(icon);
+
                     favorite = true;
                     favoriteButton.startAnimation(myAnim);
                 }
                 else {
-                    view.setBackgroundResource(R.drawable.favorite_empty);
+                    IconicsDrawable icon =new IconicsDrawable(getActivity())
+                            .icon(GoogleMaterial.Icon.gmd_star_border)
+                            .color(Color.BLACK)
+                            .sizeDp(30);
+                    view.setBackground(icon);
+
                     favorite = false;
                     favoriteButton.startAnimation(myAnim);
                 }

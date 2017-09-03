@@ -9,8 +9,7 @@
         android:allowBackup="true"
         android:icon="@drawable/nounproject_logo"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat.Light"        >
-
+        android:theme="@style/MyTheme">
         <activity
             android:name=".main.NounIconsList.View.MainActivity"
             android:label="@string/title_activity_main">

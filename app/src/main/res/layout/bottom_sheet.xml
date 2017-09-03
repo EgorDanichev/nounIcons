@@ -37,7 +37,7 @@
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="5dp"
                 android:layout_marginStart="5dp"
-                android:background="@drawable/ripple_effect" />
+                android:background="@drawable/favorite_empty" />
 
         </FrameLayout>
 
