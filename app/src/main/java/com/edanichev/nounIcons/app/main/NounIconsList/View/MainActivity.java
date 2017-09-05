@@ -2,7 +2,10 @@ package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -24,6 +28,9 @@ import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.MyRecyclerViewAdapter;
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater;
@@ -33,6 +40,10 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.picasso.Picasso;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
@@ -43,6 +54,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -206,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
     }
 
-
     private View.OnClickListener buttonClickListener(){
         return new View.OnClickListener(){
             @Override
@@ -223,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
     private void findView(){
         new DrawerBuilder().withActivity(this).build();
-
         createDrawer();
 
         progressBar = findViewById(R.id.progress);
@@ -253,6 +263,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 result.openDrawer();
                 hideKeyboard(v);
             }
@@ -263,34 +274,96 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
     private void createDrawer(){
 
-
         PrimaryDrawerItem favorite =
                 new PrimaryDrawerItem()
                         .withIdentifier(2)
                         .withName("My favorites")
                         .withIcon( new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_star).color(Color.BLACK).sizeDp(30) );
 
-        AccountHeader headerResult = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withHeaderBackground(R.color.chuck_colorAccent)
-                .withCurrentProfileHiddenInList(true)
-                .addProfiles(new ProfileDrawerItem()
-                        .withName("Tap to login")
-                        .withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_account_circle).color(Color.BLACK).sizeDp(30))
-                ).withTextColor(Color.BLACK)
-                .withSelectionListEnabledForSingleProfile(false)
-                .build();
+        populateProfile();
 
         result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withAccountHeader(headerResult)
+                .withAccountHeader(populateProfile())
                 .withSelectedItem(-1)
-                .addDrawerItems(
-                        favorite
-                )
+                .addDrawerItems(favorite)
                 .build();
 
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                populateProfile();
+            }
+        });
+    }
+
+
+    private AccountHeader populateProfile(){
+
+        ProfileDrawerItem headerProfile;
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+
+            drawerImageLoader();
+            headerProfile = new ProfileDrawerItem()
+                    .withName(user.getDisplayName())
+                    .withIcon(user.getPhotoUrl());
+        } else {
+
+            headerProfile = new ProfileDrawerItem()
+                    .withName("Tap to login")
+                    .withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_account_circle).color(Color.BLACK).sizeDp(30));
+        }
+
+        return new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.chuck_colorAccent)
+                .withCurrentProfileHiddenInList(true)
+                .addProfiles(headerProfile)
+                .withTextColor(Color.BLACK)
+                .withSelectionListEnabledForSingleProfile(false)
+                .withOnAccountHeaderSelectionViewClickListener(accountClickListener())
+                .build();
+    }
+
+    private AccountHeader.OnAccountHeaderSelectionViewClickListener accountClickListener() {
+
+        return new AccountHeader.OnAccountHeaderSelectionViewClickListener() {
+
+            @Override
+            public boolean onClick(View view, IProfile profile) {
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(
+                                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+                                        ))
+                                .build(),
+                        100);
+
+                return true;
+            }
+        }        ;
+    }
+
+    private void drawerImageLoader(){
+
+        DrawerImageLoader.init( new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+            }
+
+        });
     }
 
 
