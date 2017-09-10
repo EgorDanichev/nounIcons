@@ -9,16 +9,8 @@
     <string name="enter_tag_to_search_icons">Enter something to find icons</string>
     <string name="sheet_p1">Search icons</string>
     <string name="search_icons">Search icons</string>
-
-    <string-array name="cats_array_ru">
-        <item>Васька</item>
-        <item>Барсик</item>
-        <item>Мурзик</item>
-        <item>Рыжик</item>
-        <item>Кот Бегемот</item>
-        <item>Кот Матроскин</item>
-        <item>Бублик (у Экслера)</item>
-        <item>Дорофей (у Димона)</item>
-    </string-array>
+    <string name="icon_added_to_favorites">Icon added to favorites</string>
+    <string name="icon_deleted_from_favorites">Icon deleted from favorites</string>
+    <string name="icon_deleted_from_favorites_fail">We had some problems to delete icon from favorites</string>
 
 </resources>

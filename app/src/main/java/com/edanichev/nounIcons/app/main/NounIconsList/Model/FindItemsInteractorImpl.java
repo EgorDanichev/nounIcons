@@ -3,10 +3,10 @@ package com.edanichev.nounIcons.app.main.NounIconsList.Model;
 
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
-import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.TranslateCommand;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.Translation;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -17,7 +17,7 @@ public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallbac
     IconsCallback iconsCallback;
 
     GetIconsCommand getIconsCommand = new GetIconsCommand(this);
-    TranslateCommand translateCommand = new TranslateCommand(this);
+//    TranslateCommand translateCommand = new TranslateCommand(this);
 
 
     public FindItemsInteractorImpl(IconsCallback iconsCallback){
@@ -26,8 +26,8 @@ public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallbac
 
     @Override
     public void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
-        translateCommand.translate(term);
+        getIconsCommand.getIcons(term);
+        //translateCommand.translate(term);
     }
 
     @Override
@@ -48,6 +48,6 @@ public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallbac
     @Override
     public void onTranslateResponse(Translation response) {
 
-        getIconsCommand.getIcons(response.getString());
+
     }
 }

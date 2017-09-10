@@ -1,4 +1,4 @@
-package com.edanichev.nounIcons.app.main.Utils.DB;
+package com.edanichev.nounIcons.app.main.Utils.DB.Realm;
 
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;

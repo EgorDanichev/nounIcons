@@ -1,20 +1,102 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.Presenter;
 
-
-import android.content.Context;
-
+import com.edanichev.nounIcons.app.main.NounIconDetails.IconFavoritesCallback;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentViewInterface;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-public class IconDetailsFragmentPresenter  {
+public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresenterInterface{
 
-
-    private Context contet;
     private IconDetailsFragmentViewInterface iconDetailsFragmentView;
+    private IconFavoritesCallback iconFavoritesCallback;
 
-    public IconDetailsFragmentPresenter(IconDetailsFragmentViewInterface fragment, Context context) {
+    private DatabaseReference mDatabase;
+
+
+
+    public IconDetailsFragmentPresenter (IconDetailsFragmentViewInterface fragment, IconFavoritesCallback iconFavoritesCallback) {
         this.iconDetailsFragmentView = fragment;
+        this.iconFavoritesCallback = iconFavoritesCallback;
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
+    @Override
+    public void addIconToFavorite(IconDetails icon) {
 
+        FirebaseIconDetails firebaseIcon = new FirebaseIconDetails(icon.getId(),icon.getPreview_url_84(),icon.getAttribution_preview_url(),icon.getIcon_url(),icon.getTerm());
+
+        mDatabase.child("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("favoriteIcons")
+                .child(icon.getId())
+                .setValue(firebaseIcon, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        iconFavoritesCallback.onAddIconToFavorites();
+                    }
+                });
+    }
+
+    @Override
+    public void removeIconToFavorite(IconDetails icon) {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        Query query = ref.child("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("favoriteIcons")
+                .child(icon.getId())
+                .equalTo(icon.getId());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                dataSnapshot.getRef().removeValue();
+                iconFavoritesCallback.onSuccessfulRemoveIconFromFavorites();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                iconFavoritesCallback.onFailedRemoveIconFromFavorites();
+
+            }
+        });
+
+    }
+
+    @Override
+    public void isIconInFavorites(final IconDetails icon) {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase
+                .child("users/" + user.getUid())
+                .child("favoriteIcons")
+                .child(icon.getId())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+//                String favorite;
+//                GenericTypeIndicator<String> t = new GenericTypeIndicator<String>() {};
+//                favorite = dataSnapshot.getValue(t);
+
+                if (dataSnapshot.getValue() != null){
+                    iconFavoritesCallback.onIsIconInFavoritesResponse(true);
+                } else iconFavoritesCallback.onIsIconInFavoritesResponse(false);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 }
 

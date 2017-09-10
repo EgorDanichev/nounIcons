@@ -18,9 +18,14 @@
 
 package com.edanichev.nounIcons.app.main.NounIconDetails.Presenter;
 
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+
 public interface IconDetailsFragmentPresenterInterface {
 
+    void addIconToFavorite(IconDetails icon);
 
+    void isIconInFavorites(IconDetails icon);
 
+    void removeIconToFavorite(IconDetails icon);
 
 }

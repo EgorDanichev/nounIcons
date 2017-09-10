@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuthInterceptor;
-import com.edanichev.nounIcons.app.main.Utils.DB.IconsRealmAdapter;
+import com.edanichev.nounIcons.app.main.Utils.DB.Realm.IconsRealmAdapter;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.util.concurrent.TimeUnit;
