@@ -13,7 +13,7 @@ public class UrlPrimaryDrawerItem extends PrimaryDrawerItem {
     protected void bindViewHelper(BaseViewHolder viewHolder) {
         super.bindViewHelper(viewHolder);
 
-        ImageView imageView = (ImageView) viewHolder.itemView.findViewById(R.id.material_drawer_icon);
+        ImageView imageView = viewHolder.itemView.findViewById(R.id.material_drawer_icon);
         imageView.setVisibility(View.GONE);
         if (isSelected()) {
             if (selectedIcon != null && selectedIcon.getUri() != null) {
@@ -33,8 +33,5 @@ public class UrlPrimaryDrawerItem extends PrimaryDrawerItem {
         return this;
     }
 
-    public UrlPrimaryDrawerItem withSelectedIcon(String url) {
-        this.selectedIcon = new ImageHolder(url);
-        return this;
-    }
+
 }

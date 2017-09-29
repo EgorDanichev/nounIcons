@@ -1,16 +1,17 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.View;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,9 +23,9 @@ import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Tag;
 import com.edanichev.nounIcons.app.main.Utils.Pictures.BottomSheetView;
+import com.edanichev.nounIcons.app.main.Utils.Pictures.IconLoader;
+import com.edanichev.nounIcons.app.main.Utils.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -43,15 +44,15 @@ import fisk.chipcloud.ChipListener;
 
 public class IconDetailsFragmentView extends BottomSheetDialogFragment implements IconDetailsFragmentViewInterface, IconFavoritesCallback {
 
-    private ImageView iconImageView;
     private ProgressBar progress;
-    private BottomSheetView bottomSheetView;
+    private BottomSheetView bottomSheetImageView;
     private FlexboxLayout flexBox;
     private ChipCloud chipCloud;
     private TextView iconTermView;
     private Button favoriteButton;
-
     private IconDetails iconData;
+    private Button shareButton;
+
     private boolean favorite = false;
 
     public IconDetailsFragmentPresenterInterface iconDetailsFragmentPresenter;
@@ -65,7 +66,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
         createPresenter();
         receiveIconData();
-        loadImageInBackground();
+        loadIconImage();
         loadIconTerm();
         showTags();
         loadFavoriteButton();
@@ -75,12 +76,12 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     public void showProgress(){
         progress.setVisibility(View.VISIBLE);
-        iconImageView.setVisibility(View.INVISIBLE);
+        bottomSheetImageView.setVisibility(View.INVISIBLE);
     }
 
     public void hideProgress(){
         progress.setVisibility(View.INVISIBLE);
-        iconImageView.setVisibility(View.VISIBLE);
+        bottomSheetImageView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -88,12 +89,12 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
         favorite = isFavorite;
         if (isFavorite) {
-            setFavoriteButtonChecked();
+            setFavoriteButtonStatus(true);
             showFavoriteButton();
 
         } else {
             showFavoriteButton();
-            setFavoriteButtonUnchecked();
+            setFavoriteButtonStatus(false);
         }
 
     }
@@ -104,13 +105,89 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     }
 
     @Override
-    public void onSuccessfulRemoveIconFromFavorites() {
+    public void onSuccessfulRemoveFromFavorites() {
         ((MainActivity) getActivity()).showMessage(getActivity().getResources().getString(R.string.icon_deleted_from_favorites));
     }
 
     @Override
     public void onFailedRemoveIconFromFavorites() {
         ((MainActivity) getActivity()).showMessage(getActivity().getResources().getString(R.string.icon_deleted_from_favorites_fail));
+    }
+
+    private void findView(View myInflatedView) {
+
+        progress = myInflatedView.findViewById(R.id.progress_bar);
+        bottomSheetImageView = myInflatedView.findViewById(R.id.bottom_sheet_view);
+        bottomSheetImageView.setOnClickListener(onIconImageClickListener());
+        flexBox = myInflatedView.findViewById(R.id.flexbox_drawable);
+        iconTermView =  myInflatedView.findViewById(R.id.icon_term);
+        favoriteButton =  myInflatedView.findViewById(R.id.add_to_favorite_button);
+        shareButton = myInflatedView.findViewById(R.id.share_button);
+
+        ChipCloudConfig config = new ChipCloudConfig()
+                .selectMode(ChipCloud.SelectMode.single)
+                .checkedChipColor(Color.parseColor("#FF9800"))
+                .checkedTextColor(Color.parseColor("#000000"))
+                .uncheckedChipColor(Color.parseColor("#000000"))
+                .uncheckedTextColor(Color.parseColor("#FF9800"))
+                .useInsetPadding(true);
+
+        chipCloud = new ChipCloud(getActivity(), flexBox,config);
+        chipCloud.setListener(onChipClickListener());
+
+        favoriteButton.setOnClickListener(onFavoriteButtonClickListener());
+
+    }
+
+    private void createPresenter(){
+        iconDetailsFragmentPresenter = new IconDetailsFragmentPresenter(this,this);
+
+    }
+
+    private void receiveIconData(){
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            iconData = bundle.getParcelable("icon");
+        }
+    }
+
+    private void loadIconImage() {
+
+        showProgress();
+
+        String iconUrl = null;
+
+        if (iconData.getAttribution_preview_url() == null)
+            iconUrl = iconData.getPreview_url();
+        else
+            iconUrl = iconData.getAttribution_preview_url();
+
+        Picasso.with(getActivity()).
+                load(iconUrl).
+                into(bottomSheetImageView, new Callback(){
+
+                    @Override
+                    public void onSuccess() {
+                        hideProgress();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    private void loadIconTerm(){
+
+        iconTermView.setText(iconData.getTerm().toUpperCase());
+
+    }
+
+    private void showTags(){
+        if (getTagsInString() != null )
+            chipCloud.addChips(getTagsInString());
     }
 
     private void loadFavoriteButton(){
@@ -126,74 +203,59 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         favoriteButton.setVisibility(View.VISIBLE);
     }
 
-    private void showTags(){
-        chipCloud.addChips(getTagsInString());
-    }
 
-    private void findView(View myInflatedView) {
-
-        iconImageView = myInflatedView.findViewById(R.id.bottom_sheet_view);
-        iconImageView.setOnClickListener(onImageClickListener());
-        progress = myInflatedView.findViewById(R.id.progress_bar);
-        bottomSheetView = myInflatedView.findViewById(R.id.bottom_sheet_view);
-        flexBox = myInflatedView.findViewById(R.id.flexbox_drawable);
-        iconTermView = (TextView) myInflatedView.findViewById(R.id.icon_term);
-        favoriteButton = (Button) myInflatedView.findViewById(R.id.add_to_favorite_button);
-
-        ChipCloudConfig config = new ChipCloudConfig()
-                .selectMode(ChipCloud.SelectMode.single)
-                .checkedChipColor(Color.parseColor("#FF9800"))
-                .checkedTextColor(Color.parseColor("#000000"))
-                .uncheckedChipColor(Color.parseColor("#000000"))
-                .uncheckedTextColor(Color.parseColor("#FF9800"))
-                .useInsetPadding(true);
-
-        chipCloud = new ChipCloud(getActivity(), flexBox,config);
-        chipCloud.setListener(onChipClickListener());
-
-        favoriteButton.setOnClickListener(favoriteButtonListener());
-
-    }
-
-    private View.OnClickListener favoriteButtonListener(){
+    private View.OnClickListener onFavoriteButtonClickListener(){
 
         return new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
 
-                if (!favorite) {
-                    iconDetailsFragmentPresenter.addIconToFavorite(iconData);
-                    setFavoriteButtonChecked();
-                    favorite = true;
-                }
-                else {
-                    setFavoriteButtonUnchecked();
-                    favorite = false;
-                    iconDetailsFragmentPresenter.removeIconToFavorite(iconData);
-                }
+                if (iconDetailsFragmentPresenter.isAuthorized()) {
 
+                    if (!favorite) {
+                        iconDetailsFragmentPresenter.addIconToFavorite(iconData);
+                        setFavoriteButtonStatus(true);
+                        favorite = true;
+                    } else {
+                        setFavoriteButtonStatus(false);
+                        favorite = false;
+                        iconDetailsFragmentPresenter.removeIconToFavorite(iconData);
+                    }
+                } else {
+                    AlertDialog.Builder ad;
+                    ad = new AlertDialog.Builder(getContext());
+                    ad.setTitle("You need authorization to add to favorites");
+                    ad.setMessage("Do you want to authorize?");
+                    ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int arg1) {
+                            com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.FirebaseAuth.openAuth(getActivity());
+                        }
+                    });
+                    ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int arg1) {
+
+                        }
+                    });
+                    ad.setCancelable(true);
+
+                    ad.show();
+
+                }
             }
         };
     }
 
-    private void receiveIconData(){
+    private View.OnClickListener onIconImageClickListener(){
 
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            iconData = bundle.getParcelable("icon");
-        }
-    }
-
-    private void loadIconTerm(){
-        iconTermView.setText(iconData.getTerm().toUpperCase());
-    }
-
-    private View.OnClickListener onImageClickListener(){
         return new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
+               // shareImage();
+
+                IconShare.shareImage(bottomSheetImageView,getActivity());
+
                 ((MainActivity)getActivity()).closeIconDetails();
             }
         };
@@ -218,64 +280,49 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         };
     }
 
+//    private void shareImage() {
+//
+//        BottomSheetView ivImage = bottomSheetImageView;
+//
+//        Uri bmpUri = getLocalBitmapUri(ivImage);
+//        if (bmpUri != null) {
+//
+//            Intent shareIntent = new Intent();
+//            shareIntent.setAction(Intent.ACTION_SEND);
+//            shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+//            shareIntent.setType("image/*");
+//
+//            startActivity(Intent.createChooser(shareIntent, "Share Image"));
+//        } else {
+//
+//        }
+//    }
+
     private List<String> getTagsInString(){
         List<String> tags = new ArrayList<>();
 
-        for(Tag tag:iconData.getTags()) {
-            if (!Objects.equals(tag.getSlug().trim(), "")) tags.add(tag.getSlug());
+        if (iconData.getTags() != null) {
+            for (Tag tag : iconData.getTags()) {
+                if (!Objects.equals(tag.getSlug().trim(), "")) tags.add(tag.getSlug());
+            }
         }
      return tags;
     }
 
-    private void setFavoriteButtonChecked(){
+    private void setFavoriteButtonStatus(boolean isChecked){
+
         final Animation myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);
 
-        IconicsDrawable icon = new IconicsDrawable(getActivity())
-                .icon(GoogleMaterial.Icon.gmd_star)
-                .color(Color.BLACK)
-                .sizeDp(30);
-        favoriteButton.setBackground(icon);
-        favoriteButton.startAnimation(myAnim);
-
-    }
-
-    private void setFavoriteButtonUnchecked(){
-
-        if (getActivity() != null) {
-            final Animation myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);
-
-            IconicsDrawable icon = new IconicsDrawable(getActivity())
-                    .icon(GoogleMaterial.Icon.gmd_star_border)
-                    .color(Color.BLACK)
-                    .sizeDp(30);
-            favoriteButton.setBackground(icon);
-            favoriteButton.startAnimation(myAnim);
+        if (isChecked) {
+            favoriteButton.setBackground(IconLoader.getCheckedFavoriteButton(getActivity()));
+        } else {
+            favoriteButton.setBackground(IconLoader.getUncheckedFavoriteButton(getActivity()));
         }
 
+        favoriteButton.startAnimation(myAnim);
     }
 
-    private void loadImageInBackground() {
 
-        showProgress();
-        Picasso.with(getActivity()).
-                load(iconData.getAttribution_preview_url()).
-                into(bottomSheetView, new Callback(){
 
-                    @Override
-                    public void onSuccess() {
-                        hideProgress();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
-    private void createPresenter(){
-        iconDetailsFragmentPresenter = new IconDetailsFragmentPresenter(this,this);
-
-    }
 
 }

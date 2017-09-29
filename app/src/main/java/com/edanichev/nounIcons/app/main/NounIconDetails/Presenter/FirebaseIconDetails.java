@@ -8,18 +8,18 @@ public class FirebaseIconDetails {
     public String id;
     public String preview_url_84;
     public String attribution_preview_url;
-    public String icon_url;
+    public String preview_url;
     public String term;
 
     public FirebaseIconDetails() {
-        // Default constructor required for calls to DataSnapshot.getValue(FirebaseIconDetails.class)
+
     }
 
-    public FirebaseIconDetails(String id, String preview_url_84, String attribution_preview_url, String icon_url, String term) {
+    public FirebaseIconDetails(String id, String preview_url_84, String attribution_preview_url, String preview_url, String term) {
         this.id = id;
         this.preview_url_84 = preview_url_84;
         this.attribution_preview_url = attribution_preview_url;
-        this.icon_url = icon_url;
+        this.preview_url = preview_url;
         this.term = term;
     }
 
@@ -47,12 +47,12 @@ public class FirebaseIconDetails {
         this.attribution_preview_url = attribution_preview_url;
     }
 
-    public String getIcon_url() {
-        return icon_url;
+    public String getPreview_url() {
+        return preview_url;
     }
 
-    public void setIcon_url(String icon_url) {
-        this.icon_url = icon_url;
+    public void setPreview_url(String preview_url) {
+        this.preview_url = preview_url;
     }
 
     public String getTerm() {

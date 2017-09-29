@@ -30,12 +30,17 @@ public class NounApp extends Application {
         Realm.init(this);
 
         RealmConfiguration config = new RealmConfiguration.Builder()
-                .schemaVersion(3)
+                .schemaVersion(4)
                 .migration(new RealmMIgration())
                 .build();
 
         realm = Realm.getInstance(config);
         Realm.setDefaultConfiguration(config);
+
+//
+//        realm.beginTransaction();
+//        realm.deleteAll();
+//        realm.commitTransaction();
 
         realm.close();
 

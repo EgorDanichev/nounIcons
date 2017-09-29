@@ -12,14 +12,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresenterInterface{
+public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresenterInterface {
 
     private IconDetailsFragmentViewInterface iconDetailsFragmentView;
     private IconFavoritesCallback iconFavoritesCallback;
 
     private DatabaseReference mDatabase;
-
-
 
     public IconDetailsFragmentPresenter (IconDetailsFragmentViewInterface fragment, IconFavoritesCallback iconFavoritesCallback) {
         this.iconDetailsFragmentView = fragment;
@@ -30,7 +28,7 @@ public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresente
     @Override
     public void addIconToFavorite(IconDetails icon) {
 
-        FirebaseIconDetails firebaseIcon = new FirebaseIconDetails(icon.getId(),icon.getPreview_url_84(),icon.getAttribution_preview_url(),icon.getIcon_url(),icon.getTerm());
+        FirebaseIconDetails firebaseIcon = new FirebaseIconDetails(icon.getId(),icon.getPreview_url_84(),icon.getAttribution_preview_url(),icon.getPreview_url(),icon.getTerm());
 
         mDatabase.child("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("favoriteIcons")
@@ -57,7 +55,7 @@ public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresente
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 dataSnapshot.getRef().removeValue();
-                iconFavoritesCallback.onSuccessfulRemoveIconFromFavorites();
+                iconFavoritesCallback.onSuccessfulRemoveFromFavorites();
             }
 
             @Override
@@ -73,30 +71,35 @@ public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresente
     public void isIconInFavorites(final IconDetails icon) {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        mDatabase
-                .child("users/" + user.getUid())
-                .child("favoriteIcons")
-                .child(icon.getId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        if (user != null) {
+            mDatabase
+                    .child("users/" + user.getUid())
+                    .child("favoriteIcons")
+                    .child(icon.getId())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-//                String favorite;
-//                GenericTypeIndicator<String> t = new GenericTypeIndicator<String>() {};
-//                favorite = dataSnapshot.getValue(t);
+                            if (dataSnapshot.getValue() != null) {
+                                iconFavoritesCallback.onIsIconInFavoritesResponse(true);
+                            } else iconFavoritesCallback.onIsIconInFavoritesResponse(false);
 
-                if (dataSnapshot.getValue() != null){
-                    iconFavoritesCallback.onIsIconInFavoritesResponse(true);
-                } else iconFavoritesCallback.onIsIconInFavoritesResponse(false);
+                        }
 
-            }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
 
-            }
-        });
+        }
+        else iconFavoritesCallback.onIsIconInFavoritesResponse(false);
 
     }
+
+    public boolean isAuthorized (){
+        return FirebaseAuth.getInstance().getCurrentUser() != null ;
+    }
+
 }
 

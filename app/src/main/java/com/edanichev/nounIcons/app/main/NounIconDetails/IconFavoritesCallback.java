@@ -8,7 +8,7 @@ public interface IconFavoritesCallback {
 
     void onAddIconToFavorites();
 
-    void onSuccessfulRemoveIconFromFavorites();
+    void onSuccessfulRemoveFromFavorites();
 
     void onFailedRemoveIconFromFavorites();
 

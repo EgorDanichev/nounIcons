@@ -28,7 +28,8 @@
                 android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:textStyle="bold"
-                gpb:text="DOG" />
+                gpb:text="DOG"
+                android:autoSizeTextType="uniform"/>
 
             <Button
                 android:id="@+id/add_to_favorite_button"
@@ -38,6 +39,15 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/favorite_empty" />
+
+            <Button
+                android:id="@+id/share_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/transparent" />
 
         </FrameLayout>
 

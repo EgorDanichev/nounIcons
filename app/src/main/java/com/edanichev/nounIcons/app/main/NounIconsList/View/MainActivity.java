@@ -20,11 +20,11 @@ import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
-import com.edanichev.nounIcons.app.main.NounIconDrawer.DrawerView;
+import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
-import com.edanichev.nounIcons.app.main.Utils.Recycler.MyRecyclerViewAdapter;
+import com.edanichev.nounIcons.app.main.Utils.Recycler.RecyclerViewAdapter;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater;
@@ -41,11 +41,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity implements MainView,MyRecyclerViewAdapter.ItemClickListener {
+public class MainActivity extends AppCompatActivity implements MainView,RecyclerViewAdapter.ItemClickListener {
 
 
     private final static int NUMBER_OF_COLUMNS = 5;
     private static boolean isKeyboardVisible = false ;
+
+    public DrawerView drawer;
 
     private ProgressBar progressBar;
     private EditText searchText;
@@ -53,10 +55,9 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     private Button searchIconsButton;
     private IconDetailsFragmentView bottomSheetFragment;
     private Toolbar toolbar;
-    private DrawerView drawer;
 
     private MainPresenter presenter;
-    private MyRecyclerViewAdapter iconListAdapter;
+    private RecyclerViewAdapter iconListAdapter;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
@@ -121,23 +122,27 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
 
     @Override
     public void onItemClick(View view, int position) {
-        openIconDetails(position);
+        openIconDetails(iconListAdapter.mData.get(position));
     }
 
     public void closeIconDetails(){
-        if (bottomSheetFragment!= null) bottomSheetFragment.dismiss();
+        if (bottomSheetFragment!= null) {
+            bottomSheetFragment.dismiss();
+            bottomSheetFragment = null;
+        }
 
     }
 
-    public void openIconDetails(int position){
+    public void openIconDetails(IconDetails icon){
+
         if (!isKeyboardVisible) {
             Bundle bundle = new Bundle();
 
-            bundle.putParcelable("icon", iconListAdapter.mData.get(position));
+            bundle.putParcelable("icon", icon);
             bottomSheetFragment = new IconDetailsFragmentView();
+
             bottomSheetFragment.setArguments(bundle);
             bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-
         }
     }
 
@@ -153,9 +158,9 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     }
 
     private void createAdapter() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.items_grid_list);
+        RecyclerView recyclerView = findViewById(R.id.items_grid_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
-        iconListAdapter = new MyRecyclerViewAdapter(this);
+        iconListAdapter = new RecyclerViewAdapter(this);
         iconListAdapter.setClickListener(this);
         recyclerView.setAdapter(iconListAdapter);
     }
@@ -203,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements MainView,MyRecycl
     }
 
     private View.OnClickListener buttonClickListener(){
+
         return new View.OnClickListener(){
             @Override
             public void onClick(View view) {

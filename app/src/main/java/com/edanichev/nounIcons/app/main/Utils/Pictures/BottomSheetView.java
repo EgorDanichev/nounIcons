@@ -34,4 +34,6 @@ public class BottomSheetView extends android.support.v7.widget.AppCompatImageVie
     @Override
     public void onPrepareLoad(Drawable placeHolderDrawable) {
     }
+
+
 }

@@ -28,4 +28,6 @@ public interface IconDetailsFragmentPresenterInterface {
 
     void removeIconToFavorite(IconDetails icon);
 
+    boolean isAuthorized();
+
 }

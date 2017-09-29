@@ -28,7 +28,7 @@ public class GetIconsCommand {
 
         OAuthInterceptor oauthInterceptor = new OAuthInterceptor.Builder()
                 .consumerKey("8d6f079d73054acab464cee59652d02f")
-                .consumerSecret("d2cbb07a4cc34333a2485ca423d9faa6")
+                .consumerSecret("ba5eb891e9fa4de9b6b362b002e9c33d")
                 .build();
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -52,7 +52,6 @@ public class GetIconsCommand {
 
     }
 
-
     public void getIcons(String term) {
 
         final IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
@@ -62,7 +61,6 @@ public class GetIconsCommand {
             iconsCallback.onIconsSearchResponse(iconsRealmAdapter.getIconsFromCache(requestUrl));
             return;
         }
-
 
         service.icons(term).enqueue(
                 new Callback<Icons>() {
@@ -77,7 +75,6 @@ public class GetIconsCommand {
                             iconsRealmAdapter.addIconsToCache(call.request().url().toString(), response.body().getIcons());
                         } else
                             iconsCallback.onEmptyIconsList();
-
                     }
 
                     @Override
