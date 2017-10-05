@@ -29,8 +29,6 @@ public class RealmMIgration implements io.realm.RealmMigration {
 
         if (oldVersion == 4) {
 
-
-
             if (!schema.get(IconDetails.class.getSimpleName()).hasField("preview_url")) {
                 schema.get(IconDetails.class.getSimpleName())
                         .addField("preview_url", String.class);

@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +24,10 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragment
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
+import com.edanichev.nounIcons.app.main.Utils.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.RecyclerViewAdapter;
+import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater;
@@ -41,6 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import fisk.chipcloud.ChipCloud;
+import fisk.chipcloud.ChipListener;
+
 public class MainActivity extends AppCompatActivity implements MainView,RecyclerViewAdapter.ItemClickListener {
 
 
@@ -55,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
     private Button searchIconsButton;
     private IconDetailsFragmentView bottomSheetFragment;
     private Toolbar toolbar;
+    private FlexboxLayout flexBox;
+    private ChipCloud hintCloud;
+    private ViewGroup hintLayout;
 
     private MainPresenter presenter;
     private RecyclerViewAdapter iconListAdapter;
@@ -68,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         presenter = new MainPresenterImpl(this);
         createAdapter();
         registerKeyboardListener();
+        loadSearchHints();
     }
 
     @Override
@@ -231,13 +241,17 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         iconsGridList = findViewById(R.id.items_grid_list);
         searchIconsButton = findViewById(R.id.icon_list_button);
         toolbar = findViewById(R.id.toolbar);
+        flexBox = findViewById(R.id.hint_cloud);
+        hintLayout = findViewById(R.id.hint_layout);
+        hintCloud = new ChipCloud(this, flexBox, ChipConfig.getChipCloudConfig());
 
         searchIconsButton.setOnClickListener(buttonClickListener());
         searchText.setOnKeyListener(searchKeyListener());
         searchText.addTextChangedListener(onSearchTextChangerLitener());
+        hintCloud.setListener(onChipClickListener());
 
         searchText.setCompoundDrawables(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_search).color(Color.DKGRAY).sizeDp(20),null,null,null);
-        searchText.setCompoundDrawablePadding(12);
+        searchText.setCompoundDrawablePadding(15);
 
         searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -260,5 +274,38 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
 
     }
 
+    private void loadSearchHints() {
+
+        List<String> tags = new ArrayList<>();
+
+        tags.add("cat");
+        tags.add("bread");
+
+        hintCloud.addChips(tags);
+    }
+
+    private ChipListener onChipClickListener(){
+
+        return new ChipListener() {
+            @Override
+            public void chipCheckedChange(int i, boolean b, boolean b1) {
+
+                if (b) {
+                    try {
+                        searchIconsList(hintCloud.getLabel(i));
+                    } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+                        e.printStackTrace();
+                    }
+                    closeIconDetails();
+                    hideHintCloud();
+                }
+
+            }
+        };
+    }
+
+    private void hideHintCloud(){
+        hintLayout.setVisibility(View.GONE);
+    }
 
 }

@@ -5,10 +5,11 @@ import android.util.Log;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.OauthConstants.ParameterList;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services.HMACSha1SignatureService;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services.TimestampServiceImpl;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import okhttp3.HttpUrl;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,7 +30,6 @@ public class OAuthInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
-        HttpUrl originalHttpUrl = original.url();
 
         final String nonce = new com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services.TimestampServiceImpl().getNonce();
         final String timestamp = new TimestampServiceImpl().getTimestampInSeconds();
@@ -41,7 +41,7 @@ public class OAuthInterceptor implements Interceptor {
         Log.d("ENCODED PATH", ""+dynamicStructureUrl);
         String firstBaseString = original.method() + "&" + urlEncoded(dynamicStructureUrl);
         Log.d("firstBaseString", firstBaseString);
-        String generatedBaseString = "";
+        String generatedBaseString;
 
 
         if(original.url().encodedQuery()!=null) {
@@ -68,6 +68,8 @@ public class OAuthInterceptor implements Interceptor {
         String baseString = firstBaseString + secoundBaseString;
 
         String signature = new HMACSha1SignatureService().getSignature(baseString, consumerSecret, "");
+
+        Log.d("consumerSecret", consumerSecret);
         Log.d("Signature", signature);
 
         String AuthHeader = "OAuth oauth_consumer_key=\""+consumerKey+"\", oauth_nonce=\""+nonce+"\", oauth_signature=\""+signature+"\", oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\""+timestamp+"\", oauth_version=\"1.0\"" ;
@@ -85,7 +87,6 @@ public class OAuthInterceptor implements Interceptor {
 
         private String consumerKey;
         private String consumerSecret;
-        private int type;
 
         public Builder consumerKey(String consumerKey) {
             if (consumerKey == null) throw new NullPointerException("consumerKey = null");

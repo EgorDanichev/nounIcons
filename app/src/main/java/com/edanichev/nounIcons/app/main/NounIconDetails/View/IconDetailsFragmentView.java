@@ -1,7 +1,6 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.View;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -20,6 +19,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.IconFavoritesCallback;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsFragmentPresenter;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsFragmentPresenterInterface;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
+import com.edanichev.nounIcons.app.main.Utils.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Tag;
 import com.edanichev.nounIcons.app.main.Utils.Pictures.BottomSheetView;
@@ -39,7 +39,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import fisk.chipcloud.ChipCloud;
-import fisk.chipcloud.ChipCloudConfig;
 import fisk.chipcloud.ChipListener;
 
 public class IconDetailsFragmentView extends BottomSheetDialogFragment implements IconDetailsFragmentViewInterface, IconFavoritesCallback {
@@ -70,6 +69,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         loadIconTerm();
         showTags();
         loadFavoriteButton();
+        loadShareButton();
 
         return myInflatedView;
     }
@@ -118,24 +118,17 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
         progress = myInflatedView.findViewById(R.id.progress_bar);
         bottomSheetImageView = myInflatedView.findViewById(R.id.bottom_sheet_view);
-        bottomSheetImageView.setOnClickListener(onIconImageClickListener());
         flexBox = myInflatedView.findViewById(R.id.flexbox_drawable);
         iconTermView =  myInflatedView.findViewById(R.id.icon_term);
         favoriteButton =  myInflatedView.findViewById(R.id.add_to_favorite_button);
         shareButton = myInflatedView.findViewById(R.id.share_button);
 
-        ChipCloudConfig config = new ChipCloudConfig()
-                .selectMode(ChipCloud.SelectMode.single)
-                .checkedChipColor(Color.parseColor("#FF9800"))
-                .checkedTextColor(Color.parseColor("#000000"))
-                .uncheckedChipColor(Color.parseColor("#000000"))
-                .uncheckedTextColor(Color.parseColor("#FF9800"))
-                .useInsetPadding(true);
+        chipCloud = new ChipCloud(getActivity(), flexBox, ChipConfig.getChipCloudConfig());
 
-        chipCloud = new ChipCloud(getActivity(), flexBox,config);
         chipCloud.setListener(onChipClickListener());
-
         favoriteButton.setOnClickListener(onFavoriteButtonClickListener());
+        shareButton.setOnClickListener(onShareButtonClickListener());
+        bottomSheetImageView.setOnClickListener(onIconImageClickListener());
 
     }
 
@@ -195,6 +188,11 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         iconDetailsFragmentPresenter.isIconInFavorites(iconData);
     }
 
+    private void loadShareButton(){
+
+        shareButton.setBackground(IconLoader.getShareButton(getActivity()));
+    }
+
     private void hideFavoriteButton(){
         favoriteButton.setVisibility(View.INVISIBLE);
     }
@@ -202,7 +200,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private void showFavoriteButton(){
         favoriteButton.setVisibility(View.VISIBLE);
     }
-
 
     private View.OnClickListener onFavoriteButtonClickListener(){
 
@@ -225,8 +222,8 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
                 } else {
                     AlertDialog.Builder ad;
                     ad = new AlertDialog.Builder(getContext());
-                    ad.setTitle("You need authorization to add to favorites");
-                    ad.setMessage("Do you want to authorize?");
+                    ad.setTitle("Do you want to authorize?");
+                    ad.setMessage("You need authorization to add icon to favorites");
                     ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int arg1) {
                             com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.FirebaseAuth.openAuth(getActivity());
@@ -246,17 +243,25 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         };
     }
 
-    private View.OnClickListener onIconImageClickListener(){
+    private View.OnClickListener onIconImageClickListener() {
 
         return new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-               // shareImage();
-
-                IconShare.shareImage(bottomSheetImageView,getActivity());
 
                 ((MainActivity)getActivity()).closeIconDetails();
+            }
+        };
+    }
+
+    private View.OnClickListener onShareButtonClickListener() {
+
+        return new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                IconShare.shareImage(bottomSheetImageView,getActivity());
             }
         };
     }
@@ -280,24 +285,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         };
     }
 
-//    private void shareImage() {
-//
-//        BottomSheetView ivImage = bottomSheetImageView;
-//
-//        Uri bmpUri = getLocalBitmapUri(ivImage);
-//        if (bmpUri != null) {
-//
-//            Intent shareIntent = new Intent();
-//            shareIntent.setAction(Intent.ACTION_SEND);
-//            shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-//            shareIntent.setType("image/*");
-//
-//            startActivity(Intent.createChooser(shareIntent, "Share Image"));
-//        } else {
-//
-//        }
-//    }
-
     private List<String> getTagsInString(){
         List<String> tags = new ArrayList<>();
 
@@ -311,18 +298,20 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     private void setFavoriteButtonStatus(boolean isChecked){
 
-        final Animation myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);
-
         if (isChecked) {
             favoriteButton.setBackground(IconLoader.getCheckedFavoriteButton(getActivity()));
         } else {
             favoriteButton.setBackground(IconLoader.getUncheckedFavoriteButton(getActivity()));
         }
 
-        favoriteButton.startAnimation(myAnim);
+        animateButton(favoriteButton);
+
     }
 
-
+    private void animateButton(Button button){
+        final Animation myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);
+        button.startAnimation(myAnim);
+    }
 
 
 }

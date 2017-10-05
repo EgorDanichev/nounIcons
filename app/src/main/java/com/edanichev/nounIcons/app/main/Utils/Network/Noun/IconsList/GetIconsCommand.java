@@ -28,7 +28,7 @@ public class GetIconsCommand {
 
         OAuthInterceptor oauthInterceptor = new OAuthInterceptor.Builder()
                 .consumerKey("8d6f079d73054acab464cee59652d02f")
-                .consumerSecret("ba5eb891e9fa4de9b6b362b002e9c33d")
+                .consumerSecret("ede7fa4a5090413ba11d6ffe0eb96f36")
                 .build();
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

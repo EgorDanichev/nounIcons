@@ -1,8 +1,5 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services;
 
-/**
- * SHA1 SignatureGenerator
- */
 import android.util.Base64;
 import android.util.Log;
 
@@ -22,9 +19,7 @@ public class HMACSha1SignatureService implements SignatureService
     private static final String HMAC_SHA1 = "HmacSHA1";
     private static final String METHOD = "HMAC-SHA1";
 
-    /**
-     * {@inheritDoc}
-     */
+
     public String getSignature(String baseString, String apiSecret, String tokenSecret)
     {
         try
@@ -42,7 +37,7 @@ public class HMACSha1SignatureService implements SignatureService
     private String doSign(String toSign, String keyString) throws Exception
     {
 
-        Log.d("is it signing","----------------------"+toSign);
+        Log.d("is it signing","----------------------" + toSign);
         Log.d("is 22222222",keyString+"");
         SecretKeySpec key = new SecretKeySpec((keyString).getBytes(UTF8), HMAC_SHA1);
         Mac mac = Mac.getInstance(HMAC_SHA1);
@@ -56,9 +51,6 @@ public class HMACSha1SignatureService implements SignatureService
         return Base64.encodeToString(bytes,Base64.NO_WRAP);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getSignatureMethod()
     {
         return METHOD;

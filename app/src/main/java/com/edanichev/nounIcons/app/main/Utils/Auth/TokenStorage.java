@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import static android.content.Context.MODE_PRIVATE;
 
 public class TokenStorage
+
 {
     private static final String TOKEN_STORAGE = "tokenStorage";
     private static final String TOKEN_FIELD_NAME = "token";
@@ -20,6 +21,7 @@ public class TokenStorage
             instance = new TokenStorage(context);
         }
     }
+
     public static TokenStorage getInstance() {
         return instance;
     }
@@ -39,8 +41,5 @@ public class TokenStorage
         return tokenStorage.getString(TOKEN_FIELD_NAME,"");
 
     }
-
-
-
 
 }

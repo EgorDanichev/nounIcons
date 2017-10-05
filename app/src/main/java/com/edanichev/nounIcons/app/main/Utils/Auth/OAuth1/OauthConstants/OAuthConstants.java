@@ -1,8 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.OauthConstants;
 
-/**
- * This class contains OAuth constants, used project-wide
-  */
+
 public class OAuthConstants
 {
     private OAuthConstants(){}
