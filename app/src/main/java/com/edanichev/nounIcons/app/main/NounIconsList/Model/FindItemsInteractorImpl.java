@@ -5,7 +5,7 @@ import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.Translation;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -15,24 +15,21 @@ import java.util.List;
 
 public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallback,TranslateCallback {
     IconsCallback iconsCallback;
-
-    GetIconsCommand getIconsCommand = new GetIconsCommand(this);
 //    TranslateCommand translateCommand = new TranslateCommand(this);
 
-
-    public FindItemsInteractorImpl(IconsCallback iconsCallback){
+    public FindItemsInteractorImpl(IconsCallback iconsCallback) {
        this.iconsCallback = iconsCallback;
     }
 
     @Override
     public void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        getIconsCommand.getIcons(term);
+
+        GetIconsCommand.getInstance(this).getIcons(term);
         //translateCommand.translate(term);
     }
 
     @Override
     public void onIconsSearchResponse(List<IconDetails> icons) {
-
         if (icons!=null)
             iconsCallback.onIconsSearchResponse(icons);
         else iconsCallback.onEmptyIconsList();

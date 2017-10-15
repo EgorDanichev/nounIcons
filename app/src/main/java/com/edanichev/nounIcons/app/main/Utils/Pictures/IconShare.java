@@ -1,6 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.Pictures;
 
-
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,33 +10,40 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class IconShare {
 
+    private static final int RC_LOCATION_CONTACTS_PERM = 124;
+    private static final String[] READ_AND_WRITE =
+            {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
+    @AfterPermissionGranted(RC_LOCATION_CONTACTS_PERM)
     public static void shareImage(ImageView imageView, Activity activity) {
 
-        Uri bmpUri = getLocalBitmapUri(imageView,activity);
-
-
-
-        if (bmpUri != null) {
-
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-            shareIntent.setType("image/*");
-
-
-            activity.startActivity(Intent.createChooser(shareIntent, "Share Image"));
+        if (EasyPermissions.hasPermissions(activity, READ_AND_WRITE)) {
+            Uri bitmapUri = getLocalBitmapUri(imageView, activity);
+            if (bitmapUri != null) {
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+                shareIntent.setType("image/*");
+                activity.startActivity(Intent.createChooser(shareIntent, "Share Image"));
+            }
         } else {
-
+            EasyPermissions.requestPermissions(
+                    activity,
+                    "3333",
+                    RC_LOCATION_CONTACTS_PERM,
+                    READ_AND_WRITE);
         }
     }
 
@@ -44,34 +51,32 @@ public class IconShare {
     private static Uri getLocalBitmapUri (ImageView imageView,Activity activity) {
 
         Drawable drawable = imageView.getDrawable();
-
-        Bitmap bmp = null;
+        Bitmap bitmap;
 
         if (drawable instanceof BitmapDrawable){
-            bmp = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         } else {
             return null;
         }
 
-        Uri bmpUri = null;
+        Uri bitmapUri = null;
         try {
-
             File file =  new File(activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
             FileOutputStream out = new FileOutputStream(file);
 
-            Bitmap imageWithBG = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(),bmp.getConfig());
+            Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),bitmap.getConfig());
             imageWithBG.eraseColor(activity.getResources().getColor(R.color.shared_icon_color));
             Canvas canvas = new Canvas(imageWithBG);
-            canvas.drawBitmap(bmp, 0f, 0f, null);
+            canvas.drawBitmap(bitmap, 0f, 0f, null);
 
-            imageWithBG.compress (Bitmap.CompressFormat.JPEG, 100, out);
+            imageWithBG.compress (Bitmap.CompressFormat.PNG, 100, out);
             out.close();
+            bitmapUri = Uri.fromFile(file);
 
-            bmpUri = Uri.fromFile(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return bmpUri;
+        return bitmapUri;
     }
 
 

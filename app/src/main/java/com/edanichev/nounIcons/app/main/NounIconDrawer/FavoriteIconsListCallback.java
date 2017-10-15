@@ -1,7 +1,7 @@
 package com.edanichev.nounIcons.app.main.NounIconDrawer;
 
 
-import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.FirebaseIconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 
 import java.util.List;
 

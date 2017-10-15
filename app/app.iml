@@ -22,7 +22,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/debug" />
     <exclude-output />
@@ -110,26 +110,23 @@
     <orderEntry type="library" exported="" name="relinker-1.2.2" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-26.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-core-utils-26.0.1" level="project" />
-    <orderEntry type="library" exported="" name="commons-cli-1.2" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.7.2" level="project" />
     <orderEntry type="library" exported="" name="constraint-layout-solver-1.1.0-beta1" level="project" />
+    <orderEntry type="library" exported="" name="commons-cli-1.2" level="project" />
     <orderEntry type="library" exported="" name="converter-scalars-2.1.0" level="project" />
     <orderEntry type="library" exported="" name="cupboard-2.2.0" level="project" />
-    <orderEntry type="library" exported="" name="rxandroid-2.0.1" level="project" />
+    <orderEntry type="library" exported="" name="easypermissions-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-core-11.2.0" level="project" />
     <orderEntry type="library" exported="" name="ChipCloud-3.0.5" level="project" />
     <orderEntry type="library" exported="" name="materialize-1.0.3" level="project" />
-    <orderEntry type="library" exported="" name="reactive-streams-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-database-11.2.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-database-connection-11.2.0" level="project" />
     <orderEntry type="library" exported="" name="stetho-okhttp-1.4.2" level="project" />
     <orderEntry type="library" exported="" name="iconics-views-2.9.3" level="project" />
     <orderEntry type="library" exported="" name="animated-vector-drawable-26.0.1" level="project" />
-    <orderEntry type="library" exported="" name="converter-gson-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="materialdrawer-5.9.5" level="project" />
     <orderEntry type="library" exported="" name="fastadapter-2.6.3" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-26.0.1" level="project" />
-    <orderEntry type="library" exported="" name="dagger-2.6" level="project" />
     <orderEntry type="library" exported="" name="firebase-common-11.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-tasks-11.2.0" level="project" />
     <orderEntry type="library" exported="" name="iconics-core-2.9.3" level="project" />
@@ -147,17 +144,16 @@
     <orderEntry type="library" exported="" name="library-1.0.4" level="project" />
     <orderEntry type="library" exported="" name="google-material-typeface-3.0.1.1.original" level="project" />
     <orderEntry type="library" exported="" name="transition-26.0.1" level="project" />
-    <orderEntry type="library" exported="" name="converter-simplexml-2.3.0" level="project" />
     <orderEntry type="library" exported="" name="jsr305-2.0.1" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-2.0.1" level="project" />
+    <orderEntry type="library" exported="" name="converter-simplexml-2.3.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-11.2.0" level="project" />
     <orderEntry type="library" exported="" name="customtabs-26.0.1" level="project" />
     <orderEntry type="library" exported="" name="stetho_realm-2.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-compat-26.0.1" level="project" />
     <orderEntry type="library" exported="" name="okio-1.13.0" level="project" />
     <orderEntry type="library" exported="" name="retrofit-2.3.0" level="project" />
+    <orderEntry type="library" exported="" name="converter-gson-2.3.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.7" level="project" />
-    <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-26.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-26.0.1" level="project" />
     <orderEntry type="library" exported="" name="realm-annotations-3.5.0" level="project" />

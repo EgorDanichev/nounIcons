@@ -10,7 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 

@@ -18,24 +18,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
+import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.Chip.ChipConfig;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.RecyclerViewAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater;
-
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -104,11 +102,9 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-
     @Override
     public void showIconsList(List<IconDetails> icons) {
         hideProgress();
-
         iconListAdapter.setItems(icons);
         iconListAdapter.notifyDataSetChanged();
         iconsGridList.scrollToPosition(0);
@@ -144,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
     }
 
     public void openIconDetails(IconDetails icon){
-
         if (!isKeyboardVisible) {
             Bundle bundle = new Bundle();
 
@@ -156,8 +151,8 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         }
     }
 
-    private void registerKeyboardListener(){
-        Unregistrar unregistrar = KeyboardVisibilityEvent.registerEventListener(
+    private void registerKeyboardListener() {
+        KeyboardVisibilityEvent.registerEventListener(
                 this,
                 new KeyboardVisibilityEventListener() {
                     @Override
@@ -175,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         recyclerView.setAdapter(iconListAdapter);
     }
 
-    private View.OnKeyListener searchKeyListener(){
+    private View.OnKeyListener searchKeyListener() {
         return new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
@@ -193,9 +188,9 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         };
     }
 
-    private TextWatcher onSearchTextChangerLitener(){
-
+    private TextWatcher onSearchTextChangerListener() {
         return new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -232,8 +227,7 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         };
     }
 
-    private void findView(){
-
+    private void findView() {
         drawer = new DrawerView(this);
 
         progressBar = findViewById(R.id.progress);
@@ -247,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
 
         searchIconsButton.setOnClickListener(buttonClickListener());
         searchText.setOnKeyListener(searchKeyListener());
-        searchText.addTextChangedListener(onSearchTextChangerLitener());
+        searchText.addTextChangedListener(onSearchTextChangerListener());
         hintCloud.setListener(onChipClickListener());
 
         searchText.setCompoundDrawables(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_search).color(Color.DKGRAY).sizeDp(20),null,null,null);
@@ -275,17 +269,19 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
     }
 
     private void loadSearchHints() {
-
-        List<String> tags = new ArrayList<>();
-
-        tags.add("cat");
-        tags.add("bread");
-
-        hintCloud.addChips(tags);
+        if (!NounSharedPreferences.getInstance().isHintSeen()) {
+            List<String> tags = new ArrayList<>();
+            tags.add("cat");
+            tags.add("bread");
+            hintCloud.addChips(tags);
+            NounSharedPreferences.getInstance().setHintSeen(true);
+            showHintCloud();
+        } else {
+            hideHintCloud();
+        }
     }
 
     private ChipListener onChipClickListener(){
-
         return new ChipListener() {
             @Override
             public void chipCheckedChange(int i, boolean b, boolean b1) {
@@ -306,6 +302,10 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
 
     private void hideHintCloud(){
         hintLayout.setVisibility(View.GONE);
+    }
+
+    private void showHintCloud() {
+        hintLayout.setVisibility(View.VISIBLE);
     }
 
 }

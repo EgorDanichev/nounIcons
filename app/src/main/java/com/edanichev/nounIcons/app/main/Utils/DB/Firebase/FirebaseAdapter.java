@@ -1,7 +1,7 @@
 package com.edanichev.nounIcons.app.main.Utils.DB.Firebase;
 
 
-import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.FirebaseIconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.FavoriteIconsListCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

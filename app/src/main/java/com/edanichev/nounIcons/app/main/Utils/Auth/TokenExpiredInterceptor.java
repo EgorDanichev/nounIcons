@@ -19,10 +19,10 @@ public class TokenExpiredInterceptor implements Interceptor {
         {
             TokenCommand tokenCommand = new TokenCommand();
             String token = tokenCommand.token();
-            TokenStorage.getInstance().setToken(token);
+            NounSharedPreferences.getInstance().setToken(token);
 
             Request.Builder requestBuilder = originalRequest.newBuilder()
-                    .header("Authorization", "Bearer " + TokenStorage.getInstance().getToken());
+                    .header("Authorization", "Bearer " + NounSharedPreferences.getInstance().getToken());
             Request newRequest = requestBuilder.build();
 
             return chain.proceed(newRequest);

@@ -2,6 +2,7 @@ package com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList;
 
 import android.support.annotation.NonNull;
 
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuthInterceptor;
 import com.edanichev.nounIcons.app.main.Utils.DB.Realm.IconsRealmAdapter;
@@ -22,8 +23,16 @@ public class GetIconsCommand {
     private Retrofit retrofit;
     private NounIconListService service;
     private IconsCallback iconsCallback;
+    static GetIconsCommand sInstance;
 
-    public GetIconsCommand(IconsCallback callback){
+    public static GetIconsCommand getInstance(IconsCallback callback) {
+        if (sInstance == null) {
+            sInstance = new GetIconsCommand(callback);
+        }
+        return sInstance;
+    }
+
+    private GetIconsCommand(IconsCallback callback) {
         iconsCallback = callback;
 
         OAuthInterceptor oauthInterceptor = new OAuthInterceptor.Builder()
@@ -53,7 +62,6 @@ public class GetIconsCommand {
     }
 
     public void getIcons(String term) {
-
         final IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
         String requestUrl = retrofit.baseUrl().toString() +"icons/"+ term;
 
@@ -67,7 +75,6 @@ public class GetIconsCommand {
 
                     @Override
                     public void onResponse(@NonNull Call<Icons> call, @NonNull Response<Icons> response) {
-
                         if (response.body()!=null) {
                             iconsCallback.onIconsSearchResponse(response.body().getIcons());
 
@@ -78,8 +85,7 @@ public class GetIconsCommand {
                     }
 
                     @Override
-                    public void onFailure(Call<Icons> call, Throwable t) {
-                    }
+                    public void onFailure(Call<Icons> call, Throwable t) {}
                 }
         );
     }

@@ -2,7 +2,7 @@ package com.edanichev.nounIcons.app.main;
 
 import android.app.Application;
 
-import com.edanichev.nounIcons.app.main.Utils.Auth.TokenStorage;
+import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.DB.Realm.RealmMIgration;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
@@ -18,8 +18,7 @@ public class NounApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        TokenStorage.initInstance(this);
+        NounSharedPreferences.initInstance(this);
 
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)

@@ -1,7 +1,7 @@
 package com.edanichev.nounIcons.app.main.Utils.DB.Realm;
 
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.Icons;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
 import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmList;

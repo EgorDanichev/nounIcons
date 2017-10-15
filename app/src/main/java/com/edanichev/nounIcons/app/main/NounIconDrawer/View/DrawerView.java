@@ -8,17 +8,16 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.FirebaseIconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.FavoriteIconsListCallback;
-import com.edanichev.nounIcons.app.main.NounIconDrawer.UrlPrimaryDrawerItem;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
+import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.IconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -60,13 +59,11 @@ public class DrawerView implements FavoriteIconsListCallback {
 
     public DrawerView (Activity activity){
         this.activity = activity;
-
         firebaseAdapter = new FirebaseAdapter(this);
         firebaseAdapter.loadFavoriteIcons();
         createDrawer();
         refreshDrawerItems();
         onAuthStateChangedListener();
-
     }
 
     public void openDrawer() {
@@ -86,10 +83,8 @@ public class DrawerView implements FavoriteIconsListCallback {
         addFavoriteItem();
     }
 
-    private void createDrawer(){
-
+    private void createDrawer() {
         accountHeader = populateProfile();
-
         drawer = new DrawerBuilder()
                 .withActivity(activity)
                 .withToolbar((Toolbar) activity.findViewById(R.id.toolbar))
@@ -100,7 +95,6 @@ public class DrawerView implements FavoriteIconsListCallback {
     }
 
     private void  addFavoriteItem() {
-
         drawer.addItem(new ExpandableDrawerItem()
                 .withIdentifier(FAVORITE_ITEM_ID)
                 .withSelectable(false)
@@ -109,8 +103,7 @@ public class DrawerView implements FavoriteIconsListCallback {
                 .withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_star).color(Color.BLACK).sizeDp(30)));
     }
 
-    private void refreshFavoriteItems(List<FirebaseIconDetails> icons){
-
+    private void refreshFavoriteItems(List<FirebaseIconDetails> icons) {
         for (FirebaseIconDetails icon : icons){
 
             UrlPrimaryDrawerItem newItem = new UrlPrimaryDrawerItem();
@@ -122,14 +115,10 @@ public class DrawerView implements FavoriteIconsListCallback {
             newItem.withIcon(icon.getPreview_url_84());
             drawer.getDrawerItem(FAVORITE_ITEM_ID).getSubItems().add(newItem);
         }
-
         drawer.getAdapter().notifyAdapterDataSetChanged();
-
-        Log.d("EGOR_ERROR","refresh favorite items");
     }
 
     private void addSignOutItem() {
-
         signOutItem = new SecondaryDrawerItem()
                 .withIdentifier(SIGN_OUT_ITEM_ID)
                 .withSelectable(false)
@@ -145,7 +134,6 @@ public class DrawerView implements FavoriteIconsListCallback {
     }
 
     private AccountHeader populateProfile() {
-
         ProfileDrawerItem headerProfile;
         drawerImageLoader();
         headerProfile = currentProfile();
@@ -165,8 +153,7 @@ public class DrawerView implements FavoriteIconsListCallback {
         accountHeader.updateProfile(currentProfile());
     }
 
-    private void refreshSignOut(){
-
+    private void refreshSignOut() {
         if (drawer != null) {
             FirebaseUser user = currentUser();
             if (user != null ){
@@ -177,11 +164,8 @@ public class DrawerView implements FavoriteIconsListCallback {
     }
 
     private ProfileDrawerItem currentProfile() {
-
         FirebaseUser user = currentUser();
-
         if (user != null) {
-
             if (user.getPhotoUrl() != null) {
                 return new ProfileDrawerItem()
                         .withName(user.getDisplayName())
@@ -195,14 +179,12 @@ public class DrawerView implements FavoriteIconsListCallback {
                         .withEmail(user.getEmail())
                         .withIdentifier(PROFILE_ITEM_WITHOUT_PIC_ID);
             }
-
         } else {
             return new ProfileDrawerItem()
                     .withName("Tap to login")
                     .withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_account_circle).color(Color.BLACK).sizeDp(30))
                     .withIdentifier(DEFAULT_PROFILE_ITEM_ID);
         }
-
     }
 
     private FirebaseUser currentUser(){
@@ -210,19 +192,17 @@ public class DrawerView implements FavoriteIconsListCallback {
     }
 
     private AccountHeader.OnAccountHeaderSelectionViewClickListener onAccountClickListener() {
-
         return new AccountHeader.OnAccountHeaderSelectionViewClickListener() {
 
             @Override
             public boolean onClick(View view, IProfile profile) {
-                com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.FirebaseAuth.openAuth(activity);
+                NounFirebaseAuth.openAuth(activity);
                 return true;
             }
         }     ;
     }
 
-    private void drawerImageLoader(){
-
+    private void drawerImageLoader() {
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
 
             @Override
@@ -234,12 +214,10 @@ public class DrawerView implements FavoriteIconsListCallback {
             public void cancel(ImageView imageView) {
                 Picasso.with(imageView.getContext()).cancelRequest(imageView);
             }
-
         });
     }
 
-    private Drawer.OnDrawerItemClickListener onDrawerItemClick(){
-
+    private Drawer.OnDrawerItemClickListener onDrawerItemClick() {
         return new Drawer.OnDrawerItemClickListener() {
             @Override
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -266,13 +244,12 @@ public class DrawerView implements FavoriteIconsListCallback {
                     if (clickedIcon != null)
                     ((MainActivity) activity).openIconDetails(clickedIcon);
                 }
-
                 return true;
             }
         };
     }
 
-    private void onAuthStateChangedListener(){
+    private void onAuthStateChangedListener() {
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -283,8 +260,7 @@ public class DrawerView implements FavoriteIconsListCallback {
         });
     }
 
-    private boolean isFavoriteItem(long itemId){
-
+    private boolean isFavoriteItem(long itemId) {
         boolean result = false;
 
         if (favoriteIcons != null) {
@@ -297,17 +273,14 @@ public class DrawerView implements FavoriteIconsListCallback {
         return result;
     }
 
-    private IconDetails getFavoriteIconById(long id){
-
+    private IconDetails getFavoriteIconById(long id) {
         IconDetails result = null;
         for (FirebaseIconDetails icon :favoriteIcons) {
             if (icon.getId().equals(Long.toString(id))) {
                 result = new IconDetails(icon.getId(),icon.getPreview_url_84(),icon.getAttribution_preview_url(),icon.getPreview_url(),icon.getTerm());
             }
         }
-
         return result;
-
     }
 
 }
