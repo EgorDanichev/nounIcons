@@ -25,7 +25,6 @@ import java.security.SignatureException;
 
 public interface MainPresenter{
 
-    void onItemClicked(int position);
     void onDestroy();
     void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException;
 }

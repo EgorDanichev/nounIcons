@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -96,7 +97,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
             showFavoriteButton();
             setFavoriteButtonStatus(false);
         }
-
     }
 
     @Override
@@ -198,16 +198,15 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         };
     }
 
-    private void saveToFavorites () {
+    private void saveToFavorites() {
             if (!favorite) {
                 iconDetailsFragmentPresenter.addIconToFavorite(iconData);
-
                 setFavoriteButtonStatus(true);
                 favorite = true;
             } else {
+                iconDetailsFragmentPresenter.removeIconToFavorite(iconData);
                 setFavoriteButtonStatus(false);
                 favorite = false;
-                iconDetailsFragmentPresenter.removeIconToFavorite(iconData);
             }
     }
 
@@ -264,7 +263,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         } else {
             favoriteButton.setBackground(IconLoader.getUncheckedFavoriteButton(getActivity()));
         }
-
         animateButton(favoriteButton);
     }
 

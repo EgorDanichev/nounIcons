@@ -1,15 +1,17 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.Model;
 
+import android.support.annotation.NonNull;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class FirebaseIconDetails{
+public class FirebaseIconDetails implements Comparable<FirebaseIconDetails> {
 
-    public String id;
-    public String preview_url_84;
-    public String attribution_preview_url;
-    public String preview_url;
-    public String term;
+    String id;
+    String preview_url_84;
+    String attribution_preview_url;
+    String preview_url;
+    String term;
 
     public FirebaseIconDetails() {
 
@@ -61,5 +63,10 @@ public class FirebaseIconDetails{
 
     public void setTerm(String term) {
         this.term = term;
+    }
+
+    @Override
+    public int compareTo(@NonNull FirebaseIconDetails iconDetails) {
+        return this.getTerm().compareTo(iconDetails.getTerm());
     }
 }

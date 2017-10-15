@@ -54,7 +54,6 @@ public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresente
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 dataSnapshot.getRef().removeValue();
                 iconFavoritesCallback.onSuccessfulRemoveFromFavorites();
             }
@@ -62,7 +61,6 @@ public class IconDetailsFragmentPresenter implements IconDetailsFragmentPresente
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 iconFavoritesCallback.onFailedRemoveIconFromFavorites();
-
             }
         });
 

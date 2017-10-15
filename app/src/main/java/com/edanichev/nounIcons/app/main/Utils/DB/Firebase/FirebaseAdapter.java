@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FirebaseAdapter {
-
     private DatabaseReference mDatabase;
     private FavoriteIconsListCallback favoriteIconsListCallback;
 
@@ -26,7 +25,6 @@ public class FirebaseAdapter {
     }
 
     public void loadFavoriteIcons() {
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -43,14 +41,11 @@ public class FirebaseAdapter {
                             for (DataSnapshot child : children) {
                                 favorites.add(child.getValue(FirebaseIconDetails.class));
                             }
-
                             favoriteIconsListCallback.onFavoriteIconsListResponse(favorites);
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
+                        public void onCancelled(DatabaseError databaseError) { }
                     });
 
 

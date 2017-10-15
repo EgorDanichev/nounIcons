@@ -1,8 +1,14 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,6 +32,8 @@ import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImp
 import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
+import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus;
+import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatusCallback;
 import com.edanichev.nounIcons.app.main.Utils.Recycler.RecyclerViewAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -33,7 +41,6 @@ import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-import net.yslibrary.android.keyboardvisibilityevent.Unregistrar;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -41,11 +48,10 @@ import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipListener;
 
-public class MainActivity extends AppCompatActivity implements MainView,RecyclerViewAdapter.ItemClickListener {
+public class MainActivity extends AppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener, InternetStatusCallback {
 
 
     private final static int NUMBER_OF_COLUMNS = 5;
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
     private FlexboxLayout flexBox;
     private ChipCloud hintCloud;
     private ViewGroup hintLayout;
+    private Snackbar snackbar;
 
     private MainPresenter presenter;
     private RecyclerViewAdapter iconListAdapter;
@@ -76,10 +83,16 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         createAdapter();
         registerKeyboardListener();
         loadSearchHints();
+
+        registerReceiver(broadcastReceiver, new IntentFilter("XXX"));
+        if (!InternetStatus.isNetworkConnected(this)) {
+            showIndefiniteSnack("No internet!");
+        }
     }
 
     @Override
     protected void onDestroy() {
+        unregisterReceiver(broadcastReceiver);
         presenter.onDestroy();
         super.onDestroy();
     }
@@ -285,7 +298,6 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
         return new ChipListener() {
             @Override
             public void chipCheckedChange(int i, boolean b, boolean b1) {
-
                 if (b) {
                     try {
                         searchIconsList(hintCloud.getLabel(i));
@@ -295,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
                     closeIconDetails();
                     hideHintCloud();
                 }
-
             }
         };
     }
@@ -306,6 +317,41 @@ public class MainActivity extends AppCompatActivity implements MainView,Recycler
 
     private void showHintCloud() {
         hintLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onNetworkStatusChanged(boolean isConnected) {
+
+    }
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!intent.getExtras().getBoolean("connected")) {
+                showIndefiniteSnack("No internet!");
+            } else {
+                hideSnack();
+            }
+
+        }
+    };
+
+
+    private void showIndefiniteSnack(final String text) {
+        snackbar = Snackbar.make(iconsGridList, text, Snackbar.LENGTH_INDEFINITE);
+        snackbar.show();
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
+                    showIndefiniteSnack(text);
+                }
+            }
+        });
+    }
+
+    private void hideSnack () {
+        if (snackbar != null) snackbar.dismiss();
     }
 
 }

@@ -23,12 +23,6 @@ public class MainPresenterImpl implements MainPresenter, FindItemsInteractor.OnF
         this.findItemsInteractor = new FindItemsInteractorImpl(this);
     }
 
-    @Override public void onItemClicked(int position) {
-        if (mainView != null) {
-            mainView.showMessage(String.format("Position %d clicked", position + 1));
-        }
-    }
-
     @Override public void onDestroy() {
         mainView = null;
     }
@@ -57,11 +51,6 @@ public class MainPresenterImpl implements MainPresenter, FindItemsInteractor.OnF
             mainView.hideProgress();
         }
     }
-
-    public MainView getMainView() {
-        return mainView;
-    }
-
 
     @Override
     public void onIconsSearchResponse(List<IconDetails> icons) {

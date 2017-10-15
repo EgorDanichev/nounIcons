@@ -38,6 +38,7 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DrawerView implements FavoriteIconsListCallback {
@@ -52,10 +53,9 @@ public class DrawerView implements FavoriteIconsListCallback {
     private AccountHeader accountHeader;
     private Drawer drawer;
     private FirebaseAdapter firebaseAdapter;
-
-    private List<FirebaseIconDetails> favoriteIcons;
-
     private IDrawerItem signOutItem = null;
+    
+    private List<FirebaseIconDetails> favoriteIcons;
 
     public DrawerView (Activity activity){
         this.activity = activity;
@@ -72,9 +72,11 @@ public class DrawerView implements FavoriteIconsListCallback {
 
     @Override
     public void onFavoriteIconsListResponse(List<FirebaseIconDetails> icons) {
-        refreshDrawerItems();
-        refreshFavoriteItems(icons);
+        Collections.sort(icons);
         favoriteIcons = icons;
+
+        refreshDrawerItems();
+        refreshFavoriteItems(favoriteIcons);
     }
 
     private void refreshDrawerItems() {
@@ -140,7 +142,7 @@ public class DrawerView implements FavoriteIconsListCallback {
 
         return new AccountHeaderBuilder()
                 .withActivity(activity)
-                .withHeaderBackground(R.color.chuck_colorAccent)
+                .withHeaderBackground(R.color.main_color)
                 .withCurrentProfileHiddenInList(true)
                 .addProfiles(headerProfile)
                 .withTextColor(Color.BLACK)
