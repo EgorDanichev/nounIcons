@@ -80,6 +80,7 @@
                 </LinearLayout>
 
                 <RelativeLayout
+                    android:id="@+id/hint_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
@@ -130,7 +131,8 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground" />
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:visibility="visible"/>
 
             </RelativeLayout>
 

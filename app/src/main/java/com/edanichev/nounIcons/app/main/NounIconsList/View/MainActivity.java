@@ -6,16 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,21 +23,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import com.arellomobile.mvp.MvpAppCompatActivity;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
-import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus;
-import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatusCallback;
-import com.edanichev.nounIcons.app.main.Utils.Recycler.RecyclerViewAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.iconics.context.IconicsLayoutInflater;
+import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 import java.io.IOException;
@@ -51,43 +49,39 @@ import java.util.concurrent.ExecutionException;
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipListener;
 
-public class MainActivity extends AppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener, InternetStatusCallback {
-
-
+public class MainActivity extends MvpAppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener {
     private final static int NUMBER_OF_COLUMNS = 5;
     private static boolean isKeyboardVisible = false ;
 
     public DrawerView drawer;
 
-    private ProgressBar progressBar;
+    private ProgressBar progressBar ;
     private EditText searchText;
     private RecyclerView iconsGridList;
     private Button searchIconsButton;
-    private IconDetailsFragmentView bottomSheetFragment;
     private Toolbar toolbar;
     private FlexboxLayout flexBox;
     private ChipCloud hintCloud;
     private ViewGroup hintLayout;
     private Snackbar snackbar;
+    private RecyclerView recyclerView;
 
-    private MainPresenter presenter;
+    private IconDetailsFragmentView bottomSheetFragment;
+
+    @InjectPresenter
+    MainPresenterImpl presenter;
+
     private RecyclerViewAdapter iconListAdapter;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
-        LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
+        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         findView();
-        presenter = new MainPresenterImpl(this);
-        createAdapter();
         registerKeyboardListener();
         loadSearchHints();
-
-        registerReceiver(broadcastReceiver, new IntentFilter("XXX"));
-        if (!InternetStatus.isNetworkConnected(this)) {
-            showIndefiniteSnack("No internet!");
-        }
+        checkInternet();
     }
 
     @Override
@@ -105,10 +99,9 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
 
     @Override
     public void hideProgress() {
-        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.GONE);
         iconsGridList.setVisibility(View.VISIBLE);
     }
-
 
     @Override public void showMessage(String message) {
         hideProgress();
@@ -117,19 +110,22 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
 
     @Override
     public void showIconsList(List<IconDetails> icons) {
-        hideProgress();
-        iconListAdapter.setItems(icons);
-        iconListAdapter.notifyDataSetChanged();
-        iconsGridList.scrollToPosition(0);
+        Log.d("EGOR666",presenter.getViewState() + "View.ShowIconsList: " + icons.size());
+        if (icons != null) {
+            hideProgress();
+            createAdapter();
+            iconListAdapter.setItems(icons);
+            iconsGridList.scrollToPosition(0);
+        }
     }
 
     @Override
-    public void emptyQueryError(){
+    public void emptyQueryError() {
         searchText.setError( getResources().getString(R.string.blank_query_error) );
     }
 
     public void searchIconsList(String iconsQuery) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
+        Log.d("EGOR666","Button clicked");
         searchText.setText(iconsQuery);
         presenter.getIconsList(iconsQuery.trim());
     }
@@ -144,23 +140,28 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
         openIconDetails(iconListAdapter.mData.get(position));
     }
 
-    public void closeIconDetails(){
-        if (bottomSheetFragment!= null) {
+    public void openIconDetails(IconDetails icon) {
+        if (!isKeyboardVisible) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("icon", icon);
+            bottomSheetFragment = new IconDetailsFragmentView();
+            bottomSheetFragment.setArguments(bundle);
+            //bottomSheetFragment.setRetainInstance(true);
+            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+        }
+    }
+
+    public void closeIconDetails() {
+        if (bottomSheetFragment != null) {
             bottomSheetFragment.dismiss();
             bottomSheetFragment = null;
         }
-
     }
 
-    public void openIconDetails(IconDetails icon){
-        if (!isKeyboardVisible) {
-            Bundle bundle = new Bundle();
-
-            bundle.putParcelable("icon", icon);
-            bottomSheetFragment = new IconDetailsFragmentView();
-
-            bottomSheetFragment.setArguments(bundle);
-            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+    private void checkInternet() {
+        registerReceiver(broadcastReceiver, new IntentFilter(InternetStatus.NETWORK_CHANGE_MESSAGE));
+        if (!InternetStatus.isNetworkConnected(this)) {
+            showIndefiniteSnack(getString(R.string.no_internet));
         }
     }
 
@@ -176,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
     }
 
     private void createAdapter() {
-        RecyclerView recyclerView = findViewById(R.id.items_grid_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
         iconListAdapter = new RecyclerViewAdapter(this);
         iconListAdapter.setClickListener(this);
@@ -205,24 +205,18 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
         return new TextWatcher() {
 
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void afterTextChanged(Editable editable) {
-                 if (editable.length() == 0){
+                 if (editable.length() == 0) {
                      showIconsList(new ArrayList<IconDetails>());
                 }
-
             }
         };
-
     }
 
     private View.OnClickListener buttonClickListener(){
@@ -250,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
         toolbar = findViewById(R.id.toolbar);
         flexBox = findViewById(R.id.hint_cloud);
         hintLayout = findViewById(R.id.hint_layout);
+        recyclerView = findViewById(R.id.items_grid_list);
         hintCloud = new ChipCloud(this, flexBox, ChipConfig.getChipCloudConfig());
 
         searchIconsButton.setOnClickListener(buttonClickListener());
@@ -304,7 +299,6 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
                     } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
                         e.printStackTrace();
                     }
-                    closeIconDetails();
                     hideHintCloud();
                 }
             }
@@ -319,23 +313,16 @@ public class MainActivity extends AppCompatActivity implements MainView, Recycle
         hintLayout.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void onNetworkStatusChanged(boolean isConnected) {
-
-    }
-
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (!intent.getExtras().getBoolean("connected")) {
-                showIndefiniteSnack("No internet!");
+                showIndefiniteSnack(getString(R.string.no_internet));
             } else {
                 hideSnack();
             }
-
         }
     };
-
 
     private void showIndefiniteSnack(final String text) {
         snackbar = Snackbar.make(iconsGridList, text, Snackbar.LENGTH_INDEFINITE);

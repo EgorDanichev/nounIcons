@@ -1,15 +1,13 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails;
 
-
-
 public interface IconFavoritesCallback {
 
-    void onIsIconInFavoritesResponse(boolean isFavorite);
-
-    void onAddIconToFavorites();
+    void onSuccessfulAddToFavorites();
 
     void onSuccessfulRemoveFromFavorites();
 
     void onFailedRemoveIconFromFavorites();
+
+    void iconInFavoritesStatus(boolean isFavorite);
 
 }

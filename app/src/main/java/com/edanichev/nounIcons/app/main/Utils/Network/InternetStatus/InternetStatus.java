@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 
 public class InternetStatus {
 
+    public static final String NETWORK_CHANGE_MESSAGE = "XXX";
     public static boolean isNetworkConnected(Context context) {
         boolean inConnected = false;
         try {

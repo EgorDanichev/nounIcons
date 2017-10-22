@@ -17,11 +17,12 @@
  */
 
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
+import com.arellomobile.mvp.MvpView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 
 import java.util.List;
 
-public interface MainView {
+public interface MainView extends MvpView {
 
     void showProgress();
     void hideProgress();

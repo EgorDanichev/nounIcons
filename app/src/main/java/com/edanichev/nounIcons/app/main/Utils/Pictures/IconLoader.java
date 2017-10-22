@@ -17,8 +17,6 @@ public class IconLoader {
     }
 
     public static IconicsDrawable getUncheckedFavoriteButton(Activity activity) {
-
-
         return new IconicsDrawable(activity)
                 .icon(GoogleMaterial.Icon.gmd_star_border)
                 .color(Color.BLACK)

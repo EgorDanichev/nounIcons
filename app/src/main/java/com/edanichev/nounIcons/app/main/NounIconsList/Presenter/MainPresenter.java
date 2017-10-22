@@ -23,7 +23,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
-public interface MainPresenter{
+public interface MainPresenter {
 
     void onDestroy();
     void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException;

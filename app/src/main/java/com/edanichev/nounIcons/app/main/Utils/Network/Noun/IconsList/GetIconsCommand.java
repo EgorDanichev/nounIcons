@@ -1,6 +1,7 @@
 package com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
@@ -62,6 +63,7 @@ public class GetIconsCommand {
     }
 
     public void getIcons(String term) {
+        Log.d("EGOR666","network command.getIcons");
         final IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
         String requestUrl = retrofit.baseUrl().toString() +"icons/"+ term;
 
@@ -72,7 +74,6 @@ public class GetIconsCommand {
 
         service.icons(term).enqueue(
                 new Callback<Icons>() {
-
                     @Override
                     public void onResponse(@NonNull Call<Icons> call, @NonNull Response<Icons> response) {
                         if (response.body()!=null) {

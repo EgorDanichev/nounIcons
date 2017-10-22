@@ -57,7 +57,7 @@
                 android:id="@+id/bottom_sheet_view"
                 android:layout_width="match_parent"
                 android:layout_centerHorizontal="true"
-                android:layout_height="270dp"
+                android:layout_height="300dp"
                 app:srcCompat="@drawable/transparent"
                 android:layout_below="@+id/icon_term"/>
 

@@ -4,6 +4,11 @@ public interface IconDetailsFragmentViewInterface {
 
     void showProgress();
     void hideProgress();
-
+    void setFavoriteButtonStatus(boolean isChecked);
+    void showFavoriteButton();
+    void hideFavoriteButton();
+    void showAuthDialog();
+    void showMessageOnAdd();
+    void showMessageOnRemove();
 
 }

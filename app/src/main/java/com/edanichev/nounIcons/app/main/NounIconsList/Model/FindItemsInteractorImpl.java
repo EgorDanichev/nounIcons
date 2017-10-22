@@ -1,6 +1,8 @@
 
 package com.edanichev.nounIcons.app.main.NounIconsList.Model;
 
+import android.util.Log;
+
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.Translation;
@@ -23,17 +25,18 @@ public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallbac
 
     @Override
     public void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
+        Log.d("EGOR666","Interactor.getIconsList");
         GetIconsCommand.getInstance(this).getIcons(term);
         //translateCommand.translate(term);
     }
 
     @Override
     public void onIconsSearchResponse(List<IconDetails> icons) {
+        Log.d("EGOR666","Interactor.onIconsSearchResponse: "+icons.size());
         if (icons!=null)
             iconsCallback.onIconsSearchResponse(icons);
-        else iconsCallback.onEmptyIconsList();
-
+        else
+            iconsCallback.onEmptyIconsList();
     }
 
     @Override
@@ -44,7 +47,5 @@ public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallbac
 
     @Override
     public void onTranslateResponse(Translation response) {
-
-
     }
 }
