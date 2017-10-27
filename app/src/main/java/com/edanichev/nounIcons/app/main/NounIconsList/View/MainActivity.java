@@ -1,10 +1,6 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -29,10 +25,8 @@ import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
-import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
-import com.edanichev.nounIcons.app.main.Utils.Chip.ChipConfig;
+import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
-import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus;
 import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -66,8 +60,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     private Snackbar snackbar;
     private RecyclerView recyclerView;
 
-    private IconDetailsFragmentView bottomSheetFragment;
-
     @InjectPresenter
     MainPresenterImpl presenter;
 
@@ -77,17 +69,16 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setBackgroundDrawable(null);
 
         findView();
         registerKeyboardListener();
-        loadSearchHints();
-        checkInternet();
+        presenter.onCreate(this);
     }
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(broadcastReceiver);
-        presenter.onDestroy();
+        presenter.onDestroy(this);
         super.onDestroy();
     }
 
@@ -103,7 +94,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         iconsGridList.setVisibility(View.VISIBLE);
     }
 
-    @Override public void showMessage(String message) {
+    @Override
+    public void showMessage(String message) {
         hideProgress();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
@@ -125,18 +117,13 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     public void searchIconsList(String iconsQuery) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        Log.d("EGOR666","Button clicked");
         searchText.setText(iconsQuery);
         presenter.getIconsList(iconsQuery.trim());
     }
 
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
     @Override
     public void onItemClick(View view, int position) {
+        hideKeyboard(view);
         openIconDetails(iconListAdapter.mData.get(position));
     }
 
@@ -144,25 +131,42 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         if (!isKeyboardVisible) {
             Bundle bundle = new Bundle();
             bundle.putParcelable("icon", icon);
-            bottomSheetFragment = new IconDetailsFragmentView();
+            IconDetailsFragmentView bottomSheetFragment = new IconDetailsFragmentView();
             bottomSheetFragment.setArguments(bundle);
-            //bottomSheetFragment.setRetainInstance(true);
+            bottomSheetFragment.setRetainInstance(true);
             bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
         }
     }
 
-    public void closeIconDetails() {
-        if (bottomSheetFragment != null) {
-            bottomSheetFragment.dismiss();
-            bottomSheetFragment = null;
-        }
+    @Override
+    public void hideHintCloud(){
+        hintLayout.setVisibility(View.GONE);
     }
 
-    private void checkInternet() {
-        registerReceiver(broadcastReceiver, new IntentFilter(InternetStatus.NETWORK_CHANGE_MESSAGE));
-        if (!InternetStatus.isNetworkConnected(this)) {
-            showIndefiniteSnack(getString(R.string.no_internet));
-        }
+    @Override
+    public void addChipsToHintCloud(List<String> tags) {
+        hintCloud.addChips(tags);
+    }
+
+    @Override
+    public void showHintCloud() {
+        hintLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showSnack(String text) {
+        snackbar = Snackbar.make(iconsGridList, text, Snackbar.LENGTH_INDEFINITE);
+        snackbar.show();
+    }
+
+    @Override
+    public void hideSnack () {
+        if (snackbar != null) snackbar.dismiss();
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void registerKeyboardListener() {
@@ -276,19 +280,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
 
     }
 
-    private void loadSearchHints() {
-        if (!NounSharedPreferences.getInstance().isHintSeen()) {
-            List<String> tags = new ArrayList<>();
-            tags.add("cat");
-            tags.add("bread");
-            hintCloud.addChips(tags);
-            NounSharedPreferences.getInstance().setHintSeen(true);
-            showHintCloud();
-        } else {
-            hideHintCloud();
-        }
-    }
-
     private ChipListener onChipClickListener(){
         return new ChipListener() {
             @Override
@@ -303,42 +294,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
                 }
             }
         };
-    }
-
-    private void hideHintCloud(){
-        hintLayout.setVisibility(View.GONE);
-    }
-
-    private void showHintCloud() {
-        hintLayout.setVisibility(View.VISIBLE);
-    }
-
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (!intent.getExtras().getBoolean("connected")) {
-                showIndefiniteSnack(getString(R.string.no_internet));
-            } else {
-                hideSnack();
-            }
-        }
-    };
-
-    private void showIndefiniteSnack(final String text) {
-        snackbar = Snackbar.make(iconsGridList, text, Snackbar.LENGTH_INDEFINITE);
-        snackbar.show();
-        snackbar.addCallback(new Snackbar.Callback() {
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-                if (event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
-                    showIndefiniteSnack(text);
-                }
-            }
-        });
-    }
-
-    private void hideSnack () {
-        if (snackbar != null) snackbar.dismiss();
     }
 
 }

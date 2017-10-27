@@ -1,7 +1,10 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.AsyncTaskLoader;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.edanichev.nounIcons.app.main.NounIconDetails.IconFavoritesCallback;
@@ -19,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Collections;
 
 public class NounFirebaseAuth {
-//    private static String USER_PATH = "users/" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private static String USER_PATH = "users/";
     private static String FAVORITE_ICONS_PATH = "favoriteIcons";
 
     private static NounFirebaseAuth instance;
@@ -52,12 +55,11 @@ public class NounFirebaseAuth {
                 .build();
     }
 
-    public void addIconToFavorite(IconDetails icon) {
-        FirebaseIconDetails firebaseIcon = new FirebaseIconDetails(icon.getId(),icon.getPreview_url_84(),icon.getAttribution_preview_url(),icon.getPreview_url(),icon.getTerm());
-        mDatabase.child("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid())
+    public void addIconToFavorite(FirebaseIconDetails icon) {
+        mDatabase.child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(FAVORITE_ICONS_PATH)
                 .child(icon.getId())
-                .setValue(firebaseIcon, new DatabaseReference.CompletionListener() {
+                .setValue(icon, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         iconFavoritesCallback.onSuccessfulAddToFavorites();
@@ -66,9 +68,9 @@ public class NounFirebaseAuth {
     }
 
 
-    public void removeIconFromFavorites(IconDetails icon) {
+    public void removeIconFromFavorites(FirebaseIconDetails icon) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        Query query = mDatabase.child("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid())
+        Query query = mDatabase.child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(FAVORITE_ICONS_PATH)
                 .child(icon.getId())
                 .equalTo(icon.getId());
@@ -90,17 +92,15 @@ public class NounFirebaseAuth {
     public void loadFavoriteStatus(IconDetails icon) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             mDatabase
-                    .child("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(USER_PATH+ FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(FAVORITE_ICONS_PATH)
                     .child(icon.getId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() != null) {
-                                Log.d("EGOR777", "response received: true");
                                 iconFavoritesCallback.iconInFavoritesStatus(true);
                             } else {
-                                Log.d("EGOR777", "response received: false");
                                 iconFavoritesCallback.iconInFavoritesStatus(false);
                             }
                         }

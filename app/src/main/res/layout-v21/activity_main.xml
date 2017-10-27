@@ -10,7 +10,7 @@
     android:background="#fff"
     android:animateLayoutChanges="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -27,9 +27,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_below="@+id/toolbar">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -39,6 +40,7 @@
                 android:focusableInTouchMode="true">
 
                 <LinearLayout
+                    android:id="@+id/input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#fff"
@@ -85,13 +87,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
-                    android:layout_marginBottom="5dp">
+                    android:layout_marginBottom="5dp"
+                    android:layout_below="@+id/input_layout">
 
                     <TextView
                         android:id="@+id/search_hint"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="For example:"
+                        android:text="For example: "
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
                         android:textSize="15sp"
@@ -110,7 +113,7 @@
 
                 </RelativeLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -139,7 +142,7 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
 

@@ -109,12 +109,11 @@ public class ParameterList
     public ParameterList sort()
     {
         ParameterList sorted = new ParameterList(params);
-
-        Log.d("saoted",sorted.params.get(0).asUrlEncodedPair());
-        Log.d("saoted",sorted.params.get(1).asUrlEncodedPair());
+//        Log.d("saoted",sorted.params.get(0).asUrlEncodedPair());
+//        Log.d("saoted",sorted.params.get(1).asUrlEncodedPair());
         Collections.sort(sorted.params);
-        Log.d("saoted",sorted.params.get(0).asUrlEncodedPair());
-        Log.d("saoted",sorted.params.get(1).asUrlEncodedPair());
+//        Log.d("saoted",sorted.params.get(0).asUrlEncodedPair());
+//        Log.d("saoted",sorted.params.get(1).asUrlEncodedPair());
         return sorted;
     }
 }

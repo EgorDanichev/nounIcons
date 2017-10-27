@@ -14,7 +14,6 @@ public class FirebaseIconDetails implements Comparable<FirebaseIconDetails> {
     String term;
 
     public FirebaseIconDetails() {
-
     }
 
     public FirebaseIconDetails(String id, String preview_url_84, String attribution_preview_url, String preview_url, String term) {
@@ -69,4 +68,9 @@ public class FirebaseIconDetails implements Comparable<FirebaseIconDetails> {
     public int compareTo(@NonNull FirebaseIconDetails iconDetails) {
         return this.getTerm().compareTo(iconDetails.getTerm());
     }
+
+    public static FirebaseIconDetails converter (IconDetails icon) {
+        return new FirebaseIconDetails(icon.getId(), icon.getPreview_url_84(), icon.getAttribution_preview_url(), icon.getPreview_url(), icon.getTerm());
+    }
+
 }

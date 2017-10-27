@@ -82,12 +82,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             Picasso.with(itemView.getContext())
                     .load(mData.get(position).getPreview_url_84())
                     .placeholder(R.drawable.grid_placeholder)
-                    .noFade()
                     .into(iconImage, new Callback() {
                         @Override
                         public void onSuccess() {
-                            Animation myAnim = AnimationUtils.loadAnimation(mInflater.getContext(),R.anim.grid_cell_animation);
-                            iconImage.startAnimation(myAnim);
+                            //Animation myAnim = AnimationUtils.loadAnimation(mInflater.getContext(),R.anim.grid_cell_animation);
+                            //iconImage.startAnimation(myAnim);
                         }
 
                         @Override

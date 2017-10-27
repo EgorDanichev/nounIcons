@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.StrictMode;
 import android.support.design.widget.Snackbar;
 
 import com.edanichev.nounIcons.app.R;
@@ -42,6 +43,18 @@ public class NounApp extends Application {
         Realm realm = Realm.getInstance(config);
         Realm.setDefaultConfiguration(config);
 
+//        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                .detectDiskReads()
+//                .detectDiskWrites()
+//                .detectNetwork()
+//                .penaltyLog()
+//                .build());
+//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                .detectLeakedSqlLiteObjects()
+//                .detectLeakedClosableObjects()
+//                .penaltyLog()
+//                .penaltyDeath()
+//                .build());
 
 //        realm.beginTransaction();
 //        realm.deleteAll();

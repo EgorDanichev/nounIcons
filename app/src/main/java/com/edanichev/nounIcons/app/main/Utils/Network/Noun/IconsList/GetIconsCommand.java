@@ -23,19 +23,18 @@ public class GetIconsCommand {
 
     private Retrofit retrofit;
     private NounIconListService service;
-    private IconsCallback iconsCallback;
+    private static IconsCallback iconsCallback;
     static GetIconsCommand sInstance;
 
     public static GetIconsCommand getInstance(IconsCallback callback) {
+        iconsCallback = callback;
         if (sInstance == null) {
-            sInstance = new GetIconsCommand(callback);
+            sInstance = new GetIconsCommand();
         }
         return sInstance;
     }
 
-    private GetIconsCommand(IconsCallback callback) {
-        iconsCallback = callback;
-
+    private GetIconsCommand() {
         OAuthInterceptor oauthInterceptor = new OAuthInterceptor.Builder()
                 .consumerKey("8d6f079d73054acab464cee59652d02f")
                 .consumerSecret("ede7fa4a5090413ba11d6ffe0eb96f36")
@@ -63,7 +62,6 @@ public class GetIconsCommand {
     }
 
     public void getIcons(String term) {
-        Log.d("EGOR666","network command.getIcons");
         final IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
         String requestUrl = retrofit.baseUrl().toString() +"icons/"+ term;
 

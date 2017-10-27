@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.edanichev.nounIcons.app.R;
@@ -21,13 +21,15 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsPre
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsPresenterInterface;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
-import com.edanichev.nounIcons.app.main.Utils.Chip.ChipConfig;
+import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Tag;
-import com.edanichev.nounIcons.app.main.Utils.Pictures.BottomSheetView;
-import com.edanichev.nounIcons.app.main.Utils.Pictures.IconLoader;
-import com.edanichev.nounIcons.app.main.Utils.Pictures.IconShare;
+import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
+import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.BottomSheetView;
+import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
+import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import java.io.IOException;
@@ -51,9 +53,10 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private FlexboxLayout flexBox;
     private ChipCloud chipCloud;
     private TextView iconTermView;
-    private Button favoriteButton;
+    private ImageButton favoriteButton;
     private IconDetails iconData;
-    private Button shareButton;
+    private ImageButton shareButton;
+    private Button iconButton;
 
     private MainActivity activity;
     public IconDetailsPresenterInterface iconDetailsPresenter;
@@ -61,14 +64,11 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     @Override
     public void onStop() {
-        Log.d("_EGOR888","onStop: " + this);
         super.onStop();
     }
 
     @Override
     public void onDestroy() {
-        Log.d("_EGOR888","onDestroy: " + this);
-        Log.d("_EGOR888","onDestroy: " + iconDetailsPresenter);
         iconDetailsPresenter.onDestroy();
         iconDetailsPresenter = null;
         super.onDestroy();
@@ -101,13 +101,12 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     @Override
     public void onDestroyView() {
-        Log.d("_EGOR888","onDestroyView: " + this);
         super.onDestroyView();
     }
 
     public void showProgress(){
         progress.setVisibility(View.VISIBLE);
-        bottomSheetImageView.setVisibility(View.INVISIBLE);
+        //bottomSheetImageView.setVisibility(View.INVISIBLE);
     }
 
     public void hideProgress(){
@@ -127,43 +126,26 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     @Override
     public void showAuthDialog() {
-        AlertDialog.Builder dialog;
-        dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle("Do you want to authorize?");
-        dialog.setMessage("You need authorization to add icon to favorites");
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                startActivityForResult(NounFirebaseAuth.getAuthIntent(), AUTH_REQUEST_CODE);
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {}
-        });
-        dialog.setCancelable(true);
-        dialog.show();
+        DialogShower.showAuthDialog(activity,AUTH_REQUEST_CODE);
     }
 
     @Override
     public void setFavoriteButtonStatus(boolean isChecked) {
-        Log.d("_EGOR888","seting button status to: " + isChecked +"  "+ this);
         if (isChecked) {
-            favoriteButton.setBackground(IconLoader.getCheckedFavoriteButton(activity));
+            favoriteButton.setImageDrawable(IconLoader.getCheckedFavoriteButton(activity));
         } else {
-            favoriteButton.setBackground(IconLoader.getUncheckedFavoriteButton(activity));
+            favoriteButton.setImageDrawable(IconLoader.getUncheckedFavoriteButton(activity));
         }
-        animateButton(favoriteButton);
+        //animateButton(favoriteButton);
     }
 
-    private void animateButton(final Button button) {
+    private void animateButton(final ImageButton button) {
         final Animation myAnim = AnimationUtils.loadAnimation(activity, R.anim.bounce);
         button.startAnimation(myAnim);
     }
 
     private void createPresenter() {
         iconDetailsPresenter = new IconDetailsPresenter(this);
-        Log.d("_EGOR888","onCreateView: " + this);
-        Log.d("_EGOR888","onCreateView: " + iconDetailsPresenter);
     }
 
     @Override
@@ -171,6 +153,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         if (requestCode == AUTH_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 iconDetailsPresenter.onFavoriteButtonClick(iconData);
+                activity.showMessage("Hello " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName() + "!");
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -179,6 +162,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private void findView(View myInflatedView) {
         progress = myInflatedView.findViewById(R.id.progress_bar);
         bottomSheetImageView = myInflatedView.findViewById(R.id.bottom_sheet_view);
+        iconButton = myInflatedView.findViewById(R.id.icon_button);
         flexBox = myInflatedView.findViewById(R.id.flexbox_drawable);
         iconTermView =  myInflatedView.findViewById(R.id.icon_term);
         favoriteButton =  myInflatedView.findViewById(R.id.add_to_favorite_button);
@@ -187,7 +171,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         chipCloud.setListener(onChipClickListener());
         favoriteButton.setOnClickListener(onFavoriteButtonClickListener());
         shareButton.setOnClickListener(onShareButtonClickListener());
-        bottomSheetImageView.setOnClickListener(onIconImageClickListener());
+        iconButton.setOnClickListener(onIconImageClickListener());
     }
 
     private void receiveIconData() {
@@ -208,7 +192,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         Picasso.with(activity).
                 load(iconUrl).
                 into(bottomSheetImageView, new Callback() {
-
                     @Override
                     public void onSuccess() {
                         hideProgress();
@@ -230,7 +213,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     private void loadFavoriteButton() {
         hideFavoriteButton();
-        Log.d("_EGOR888","loading favorites from view: " + iconDetailsPresenter);
         iconDetailsPresenter.loadFavoriteStatus(iconData);
     }
 
@@ -261,7 +243,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         return new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                activity.closeIconDetails();
+                dismiss();
             }
         };
     }
@@ -276,7 +258,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         };
     }
 
-    private ChipListener onChipClickListener(){
+    private ChipListener onChipClickListener() {
         return new ChipListener() {
             @Override
             public void chipCheckedChange(int i, boolean b, boolean b1) {
@@ -286,7 +268,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
                     } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
                         e.printStackTrace();
                     }
-                    activity.closeIconDetails();
+                    dismiss();
                 }
             }
         };
@@ -301,6 +283,5 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         }
      return tags;
     }
-
 
 }

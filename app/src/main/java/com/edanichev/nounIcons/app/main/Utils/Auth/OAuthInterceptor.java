@@ -33,14 +33,14 @@ public class OAuthInterceptor implements Interceptor {
 
         final String nonce = new com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services.TimestampServiceImpl().getNonce();
         final String timestamp = new TimestampServiceImpl().getTimestampInSeconds();
-        Log.d("nonce", nonce);
-        Log.d("time", timestamp);
+//        Log.d("nonce", nonce);
+//        Log.d("time", timestamp);
 
         String dynamicStructureUrl = original.url().scheme() + "://" + original.url().host() + original.url().encodedPath();
 
-        Log.d("ENCODED PATH", ""+dynamicStructureUrl);
+//        Log.d("ENCODED PATH", ""+dynamicStructureUrl);
         String firstBaseString = original.method() + "&" + urlEncoded(dynamicStructureUrl);
-        Log.d("firstBaseString", firstBaseString);
+//        Log.d("firstBaseString", firstBaseString);
         String generatedBaseString;
 
 
@@ -56,12 +56,12 @@ public class OAuthInterceptor implements Interceptor {
         ParameterList result = new ParameterList();
         result.addQuerystring(generatedBaseString);
         generatedBaseString=result.sort().asOauthBaseString();
-        Log.d("Sorted","00--"+result.sort().asOauthBaseString());
+//        Log.d("Sorted","00--"+result.sort().asOauthBaseString());
 
         String secoundBaseString = "&" + generatedBaseString;
 
         if (firstBaseString.contains("%3F")) {
-            Log.d("iff","yess iff");
+//            Log.d("iff","yess iff");
             secoundBaseString = "%26" + urlEncoded(generatedBaseString);
         }
 
@@ -69,11 +69,10 @@ public class OAuthInterceptor implements Interceptor {
 
         String signature = new HMACSha1SignatureService().getSignature(baseString, consumerSecret, "");
 
-        Log.d("consumerSecret", consumerSecret);
-        Log.d("Signature", signature);
+//        Log.d("consumerSecret", consumerSecret);
+//        Log.d("Signature", signature);
 
         String AuthHeader = "OAuth oauth_consumer_key=\""+consumerKey+"\", oauth_nonce=\""+nonce+"\", oauth_signature=\""+signature+"\", oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\""+timestamp+"\", oauth_version=\"1.0\"" ;
-
 
         Request.Builder requestBuilder = original.newBuilder()
                 .addHeader("Authorization", AuthHeader);
@@ -84,7 +83,6 @@ public class OAuthInterceptor implements Interceptor {
 
 
     public static final class Builder {
-
         private String consumerKey;
         private String consumerSecret;
 
@@ -112,9 +110,8 @@ public class OAuthInterceptor implements Interceptor {
     public String urlEncoded(String url) {
         String encodedurl = "";
         try {
-
             encodedurl = URLEncoder.encode(url, "UTF-8");
-            Log.d("TEST", encodedurl);
+//            Log.d("TEST", encodedurl);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

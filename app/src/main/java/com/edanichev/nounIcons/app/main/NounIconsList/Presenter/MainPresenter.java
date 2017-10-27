@@ -18,6 +18,8 @@
 
 package com.edanichev.nounIcons.app.main.NounIconsList.Presenter;
 
+import android.app.Activity;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +27,7 @@ import java.security.SignatureException;
 
 public interface MainPresenter {
 
-    void onDestroy();
+    void onDestroy(Activity activity);
     void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException;
+    void onCreate(Activity activity);
 }

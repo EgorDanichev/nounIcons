@@ -2,6 +2,7 @@ package com.edanichev.nounIcons.app.main.NounIconDrawer.View;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -49,7 +50,7 @@ public class DrawerView implements FavoriteIconsListCallback {
     private static long PROFILE_ITEM_WITHOUT_PIC_ID = 123;
     private static long DEFAULT_PROFILE_ITEM_ID = 123;
 
-    private Activity activity;
+    private MainActivity activity;
     private AccountHeader accountHeader;
     private Drawer drawer;
     private FirebaseAdapter firebaseAdapter;
@@ -57,8 +58,8 @@ public class DrawerView implements FavoriteIconsListCallback {
     
     private List<FirebaseIconDetails> favoriteIcons;
 
-    public DrawerView (Activity activity){
-        this.activity = activity;
+    public DrawerView (Context context){
+        this.activity = (MainActivity) context;
         firebaseAdapter = new FirebaseAdapter(this);
         firebaseAdapter.loadFavoriteIcons();
         createDrawer();
@@ -225,15 +226,15 @@ public class DrawerView implements FavoriteIconsListCallback {
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
 
                 if (drawerItem.getIdentifier() == SIGN_OUT_ITEM_ID) {
-
                     AuthUI.getInstance()
-                            .signOut((FragmentActivity) activity)
+                            .signOut(activity)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         refreshSignOut();
                                         refreshProfile();
+                                        activity.showMessage("Bye Bye!");
                                     }
                         }
                     });
@@ -244,7 +245,7 @@ public class DrawerView implements FavoriteIconsListCallback {
 
                     IconDetails clickedIcon = getFavoriteIconById(drawerItem.getIdentifier()) ;
                     if (clickedIcon != null)
-                    ((MainActivity) activity).openIconDetails(clickedIcon);
+                    activity.openIconDetails(clickedIcon);
                 }
                 return true;
             }

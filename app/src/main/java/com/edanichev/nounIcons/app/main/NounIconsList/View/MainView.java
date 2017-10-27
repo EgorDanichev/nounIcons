@@ -29,5 +29,10 @@ public interface MainView extends MvpView {
     void showMessage(String message);
     void showIconsList(List<IconDetails> icons);
     void emptyQueryError();
+    void showHintCloud();
+    void hideHintCloud();
+    void addChipsToHintCloud(List<String> tags);
+    void showSnack(String text);
+    void hideSnack();
 }
 

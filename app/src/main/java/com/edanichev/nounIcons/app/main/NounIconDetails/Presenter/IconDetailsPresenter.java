@@ -1,19 +1,11 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.Presenter;
 
-import android.util.Log;
-
 import com.edanichev.nounIcons.app.main.NounIconDetails.IconFavoritesCallback;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentViewInterface;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 public class IconDetailsPresenter implements IconDetailsPresenterInterface, IconFavoritesCallback {
 
@@ -22,20 +14,17 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
 
     public IconDetailsPresenter(IconDetailsFragmentViewInterface view) {
         this.view = view;
-        Log.d("_EGOR777","in presenter constructor: " + this.view);
-        Log.d("_EGOR777","in presenter constructor: " + this);
-
     }
 
     @Override
     public void onFavoriteButtonClick(IconDetails icon) {
         if (isAuthorized()) {
             if (!favorite) {
-                NounFirebaseAuth.getInstance(this).addIconToFavorite(icon);
+                addToFavorites(FirebaseIconDetails.converter(icon));
                 view.setFavoriteButtonStatus(true);
                 favorite = true;
             } else {
-                NounFirebaseAuth.getInstance(this).removeIconFromFavorites(icon);
+                removeToFavorites(FirebaseIconDetails.converter(icon));
                 view.setFavoriteButtonStatus(false);
                 favorite = false;
             }
@@ -46,7 +35,6 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
 
     @Override
     public void loadFavoriteStatus(final IconDetails icon) {
-        Log.d("_EGOR777","loading fav status from presenter: " + this);
         NounFirebaseAuth.getInstance(this).loadFavoriteStatus(icon);
     }
 
@@ -61,12 +49,13 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
 
     @Override
     public void onSuccessfulAddToFavorites() {
+        if (view != null)
         view.showMessageOnAdd();
     }
 
     @Override
     public void onSuccessfulRemoveFromFavorites() {
-        view.showMessageOnRemove();
+        if (view != null) view.showMessageOnRemove();
     }
 
     @Override
@@ -74,17 +63,38 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
 
     @Override
     public void iconInFavoritesStatus(boolean isFavorite) {
-        Log.d("_EGOR777","status received: " + this + "  "+ isFavorite);
-        Log.d("_EGOR777","status received: " + view + "  "+ isFavorite);
-        if (isFavorite) {
-            view.setFavoriteButtonStatus(true);
-            view.showFavoriteButton();
-            favorite = true;
-        } else {
-            view.setFavoriteButtonStatus(false);
-            view.showFavoriteButton();
-            favorite = false;
+        if (view != null) {
+            if (isFavorite) {
+                view.setFavoriteButtonStatus(true);
+                view.showFavoriteButton();
+                favorite = true;
+            } else {
+                view.setFavoriteButtonStatus(false);
+                view.showFavoriteButton();
+                favorite = false;
+            }
         }
     }
+
+    private void addToFavorites(final FirebaseIconDetails icon) {
+        NimbleTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                NounFirebaseAuth.getInstance(IconDetailsPresenter.this).addIconToFavorite(icon);
+            }
+        });
+    }
+
+    private void removeToFavorites(final FirebaseIconDetails icon) {
+        NimbleTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                NounFirebaseAuth.getInstance(IconDetailsPresenter.this).removeIconFromFavorites(icon);
+            }
+        });
+    }
+
 }
+
+
 

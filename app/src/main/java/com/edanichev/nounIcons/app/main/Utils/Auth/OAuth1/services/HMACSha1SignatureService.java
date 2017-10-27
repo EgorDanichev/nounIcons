@@ -1,8 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services;
 
 import android.util.Base64;
-import android.util.Log;
-
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.OauthConstants.OAuthEncoder;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.OauthConstants.OAuthSignatureException;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.utils.Preconditions;
@@ -37,8 +35,8 @@ public class HMACSha1SignatureService implements SignatureService
     private String doSign(String toSign, String keyString) throws Exception
     {
 
-        Log.d("is it signing","----------------------" + toSign);
-        Log.d("is 22222222",keyString+"");
+//        Log.d("is it signing","----------------------" + toSign);
+//        Log.d("is 22222222",keyString+"");
         SecretKeySpec key = new SecretKeySpec((keyString).getBytes(UTF8), HMAC_SHA1);
         Mac mac = Mac.getInstance(HMAC_SHA1);
         mac.init(key);
