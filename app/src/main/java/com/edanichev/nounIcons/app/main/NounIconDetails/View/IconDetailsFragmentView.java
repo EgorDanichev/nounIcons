@@ -47,8 +47,8 @@ import java.util.concurrent.ExecutionException;
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipListener;
 
-public class IconDetailsFragmentView extends BottomSheetDialogFragment implements
-        IconDetailsFragmentViewInterface {
+public class IconDetailsFragmentView extends BottomSheetDialogFragment implements IconDetailsFragmentViewInterface {
+    private final static String ICON_KEY = "icon";
     private final static int AUTH_REQUEST_CODE = 100;
 
     private ProgressBar progress;
@@ -65,9 +65,8 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     public IIconDetailsPresenter iconDetailsPresenter;
 
     public static void openIconDetails(IconDetails icon, FragmentManager fragmentManager) {
-
         Bundle bundle = new Bundle();
-        bundle.putParcelable("icon", icon);
+        bundle.putParcelable(ICON_KEY, icon);
         BottomSheetDialogFragment bottomSheetFragment = new IconDetailsFragmentView();
         bottomSheetFragment.setArguments(bundle);
         bottomSheetFragment.setRetainInstance(true);
@@ -204,7 +203,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private void receiveIconData() {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            iconData = bundle.getParcelable("icon");
+            iconData = bundle.getParcelable(ICON_KEY);
         }
     }
 
