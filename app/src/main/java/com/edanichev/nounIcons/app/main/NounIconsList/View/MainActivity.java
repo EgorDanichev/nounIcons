@@ -1,7 +1,6 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -32,10 +31,9 @@ import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
+import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
@@ -268,33 +266,24 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
 
         progressBar = findViewById(R.id.progress);
         searchText = findViewById(R.id.search_edit);
+        setSearchTextDefault();
         iconsGridList = findViewById(R.id.items_grid_list);
         searchIconsButton = findViewById(R.id.icon_list_button);
         toolbar = findViewById(R.id.toolbar);
         flexBox = findViewById(R.id.hint_cloud);
         hintLayout = findViewById(R.id.hint_layout);
         recyclerView = findViewById(R.id.items_grid_list);
-        hintCloud = new ChipCloud(this, flexBox, ChipConfig.getChipCloudConfig());
         emptyResponseLayout = findViewById(R.id.empty_response_layout);
         emptyResponseText = findViewById(R.id.empty_response_text);
+        hintCloud = new ChipCloud(this, flexBox, ChipConfig.getChipCloudConfig());
 
         searchIconsButton.setOnClickListener(buttonClickListener);
         searchText.setOnKeyListener(searchKeyListener());
         searchText.addTextChangedListener(onSearchTextChangerListener);
         hintCloud.setListener(onChipClickListener());
 
-        searchText.setCompoundDrawables(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_search).color(Color.DKGRAY).sizeDp(20), null, null, null);
-        searchText.setCompoundDrawablePadding(15);
-
-        searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                searchText.setCompoundDrawables(null, null, null, null);
-            }
-        });
-
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_view_headline).color(Color.BLACK).sizeDp(24));
+        toolbar.setNavigationIcon(IconLoader.getBurgerIcon());
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -356,6 +345,20 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
             emptyResponseLayout.startAnimation(NounAnimations.getBecomeInvisibleAnimation());
             emptyResponseLayout.setVisibility(View.GONE);
         }
+    }
+
+    private void setSearchTextDefault() {
+
+        searchText.setCompoundDrawables(IconLoader.getSearchIcon(), null, null, null);
+        searchText.setCompoundDrawablePadding(15);
+
+        searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                searchText.setCompoundDrawables(null, null, null, null);
+            }
+        });
+
     }
 
 }

@@ -10,15 +10,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.FavoriteIconsListCallback;
-import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
-import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
+import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -47,8 +48,8 @@ public class DrawerView implements FavoriteIconsListCallback {
     private static long FAVORITE_ITEM_ID = 1;
     private static long SIGN_OUT_ITEM_ID = 2;
     private static long PROFILE_ITEM_WITH_PIC_ID = 123;
-    private static long PROFILE_ITEM_WITHOUT_PIC_ID = 123;
-    private static long DEFAULT_PROFILE_ITEM_ID = 123;
+    private static long PROFILE_ITEM_WITHOUT_PIC_ID = 1234;
+    private static long DEFAULT_PROFILE_ITEM_ID = 1235;
 
     private Activity activity;
     private AccountHeader accountHeader;
@@ -101,7 +102,7 @@ public class DrawerView implements FavoriteIconsListCallback {
                 .withIdentifier(FAVORITE_ITEM_ID)
                 .withSelectable(false)
                 .withSubItems()
-                .withName("My favorites")
+                .withName(activity.getResources().getString(R.string.my_favorites))
                 .withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_star).color(Color.BLACK).sizeDp(30)));
     }
 
@@ -124,7 +125,7 @@ public class DrawerView implements FavoriteIconsListCallback {
         signOutItem = new SecondaryDrawerItem()
                 .withIdentifier(SIGN_OUT_ITEM_ID)
                 .withSelectable(false)
-                .withName("Sign Out")
+                .withName(activity.getResources().getString(R.string.sign_out))
                 .withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_exit_to_app).color(Color.BLACK).sizeDp(30));
 
         drawer.addStickyFooterItem(signOutItem);
@@ -182,14 +183,14 @@ public class DrawerView implements FavoriteIconsListCallback {
             } else {
                 return new ProfileDrawerItem()
                         .withName(user.getDisplayName())
-                        .withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_account_circle).color(Color.BLACK).sizeDp(30))
+                        .withIcon(IconLoader.getEmptyAccountIcon())
                         .withEmail(user.getEmail())
                         .withIdentifier(PROFILE_ITEM_WITHOUT_PIC_ID);
             }
         } else {
             return new ProfileDrawerItem()
-                    .withName("Tap to login")
-                    .withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_account_circle).color(Color.BLACK).sizeDp(30))
+                    .withName(activity.getResources().getString(R.string.empty_account_header))
+                    .withIcon(IconLoader.getEmptyAccountIcon())
                     .withIdentifier(DEFAULT_PROFILE_ITEM_ID);
         }
     }
@@ -257,7 +258,7 @@ public class DrawerView implements FavoriteIconsListCallback {
                                     if (task.isSuccessful()) {
                                         refreshSignOut();
                                         refreshProfile();
-                                        ((MainActivity) activity).showMessage("Bye Bye!");
+                                        Toast.makeText(activity, activity.getResources().getString(R.string.last_word), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });

@@ -82,6 +82,8 @@ public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPre
             List<String> tags = new ArrayList<>();
             tags.add("cat");
             tags.add("bread");
+            tags.add("dog");
+            tags.add("information");
             getViewState().addChipsToHintCloud(tags);
             NounSharedPreferences.getInstance().setHintSeen(true);
             getViewState().showHintCloud();

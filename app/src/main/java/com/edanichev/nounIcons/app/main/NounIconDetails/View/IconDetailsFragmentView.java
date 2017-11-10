@@ -70,7 +70,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         BottomSheetDialogFragment bottomSheetFragment = new IconDetailsFragmentView();
         bottomSheetFragment.setArguments(bundle);
         bottomSheetFragment.setRetainInstance(true);
-
         bottomSheetFragment.show(fragmentManager, bottomSheetFragment.getTag());
     }
 
@@ -166,9 +165,9 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     @Override
     public void setFavoriteButtonStatus(boolean isChecked) {
         if (isChecked) {
-            favoriteButton.setImageDrawable(IconLoader.getCheckedFavoriteButton(getContext()));
+            favoriteButton.setImageDrawable(IconLoader.getCheckedFavoriteButton());
         } else {
-            favoriteButton.setImageDrawable(IconLoader.getUncheckedFavoriteButton(getContext()));
+            favoriteButton.setImageDrawable(IconLoader.getUncheckedFavoriteButton());
         }
         animateButton(favoriteButton);
     }
@@ -253,7 +252,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     }
 
     private void loadShareButton() {
-        shareButton.setBackground(IconLoader.getShareButton(getContext()));
+        shareButton.setBackground(IconLoader.getShareButton());
     }
 
     private View.OnClickListener onFavoriteButtonClickListener() {
