@@ -12,4 +12,5 @@
     <string name="icon_deleted_from_favorites">Icon removed from favorites &#128465;</string>
     <string name="icon_deleted_from_favorites_fail">We had some problems to delete icon from favorites</string>
     <string name="no_internet">No internet connection</string>
+    <string name="we_didn_t_find_any_icons">We didn’t find any icons for "%1$s"</string>
 </resources>

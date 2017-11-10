@@ -1,45 +1,38 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
+import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    public List<IconDetails> mData = new ArrayList<>();
-    private LayoutInflater mInflater;
+    public List<IconDetails> iconsList = new ArrayList<>();
     private ItemClickListener mClickListener;
 
-    public RecyclerViewAdapter(Context context) {
-        this.mInflater = LayoutInflater.from(context);
-    }
-
-    public void setItems(List<IconDetails> data) {
-        if (data != null) {
-            mData = data;
+    public void setItems(List<IconDetails> icons) {
+        if (icons != null) {
+            iconsList = icons;
             notifyDataSetChanged();
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.grid_cell_layout, parent, false);
-        return new ViewHolder(view);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_cell_layout, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
@@ -53,7 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return iconsList.size();
     }
 
     public void setClickListener(ItemClickListener itemClickListener) {
@@ -65,7 +58,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView iconImage ;
+        ImageView iconImage;
+        Animation animation = NounAnimations.getIconBindAnimation();
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -78,15 +72,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
 
-        protected void bind (int position) throws IOException {
+        protected void bind(int position) throws IOException {
             Picasso.with(itemView.getContext())
-                    .load(mData.get(position).getPreview_url_84())
+                    .load(iconsList.get(position).getPreview_url_84())
                     .placeholder(R.drawable.grid_placeholder)
                     .into(iconImage, new Callback() {
                         @Override
                         public void onSuccess() {
-                            //Animation myAnim = AnimationUtils.loadAnimation(mInflater.getContext(),R.anim.grid_cell_animation);
-                            //iconImage.startAnimation(myAnim);
+                            iconImage.startAnimation(animation);
                         }
 
                         @Override

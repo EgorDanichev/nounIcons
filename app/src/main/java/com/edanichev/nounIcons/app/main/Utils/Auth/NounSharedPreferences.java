@@ -6,15 +6,13 @@ import android.content.SharedPreferences;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class NounSharedPreferences
-
-{
+public class NounSharedPreferences {
     private static final String TOKEN_STORAGE = "sharedPreferences";
     private static final String TOKEN_FIELD_NAME = "token";
     private static final String HINT_IS_SEEN_FIELD_NAME = "hintIsSeen";
+    private static final String AUTH_DIALOG_SHOWN = "authDialogShown";
 
     private SharedPreferences sharedPreferences;
-
     private static NounSharedPreferences instance;
 
     public static void initInstance(Context context) {
@@ -38,8 +36,7 @@ public class NounSharedPreferences
     }
 
     public String getToken() {
-        return sharedPreferences.getString(TOKEN_FIELD_NAME,"");
-
+        return sharedPreferences.getString(TOKEN_FIELD_NAME, "");
     }
 
     public void setHintSeen(boolean isSeen) {
@@ -49,8 +46,18 @@ public class NounSharedPreferences
     }
 
     public boolean isHintSeen() {
-        return sharedPreferences.getBoolean(HINT_IS_SEEN_FIELD_NAME,false);
-
+        return sharedPreferences.getBoolean(HINT_IS_SEEN_FIELD_NAME, false);
     }
+
+    public void setAuthDialogShown(boolean isShown) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(AUTH_DIALOG_SHOWN, isShown);
+        editor.apply();
+    }
+
+    public boolean isAuthDialogShown() {
+        return sharedPreferences.getBoolean(AUTH_DIALOG_SHOWN, false);
+    }
+
 
 }

@@ -22,9 +22,8 @@ public class TranslateCommand {
     private TranslateService service;
     TranslateCallback translateCallback;
 
-    public TranslateCommand(TranslateCallback callback){
+    public TranslateCommand(TranslateCallback callback) {
         translateCallback = callback;
-
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -46,18 +45,16 @@ public class TranslateCommand {
                 .build();
 
         service = retrofit.create(TranslateService.class);
-
     }
 
+    public void translate(String text) {
 
-    public void translate (String text) {
-
-        service.translate("en",text,"Bearer "+ NounSharedPreferences.getInstance().getToken()).enqueue(
+        service.translate("en", text, "Bearer " + NounSharedPreferences.getInstance().getToken()).enqueue(
                 new Callback<Translation>() {
                     @Override
                     public void onResponse(Call<Translation> call, Response<Translation> response) {
 
-                        if (response.body()!=null) {
+                        if (response.body() != null) {
                             translateCallback.onTranslateResponse(response.body());
                         }
                     }

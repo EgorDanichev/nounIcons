@@ -10,5 +10,5 @@ public interface IconDetailsFragmentViewInterface {
     void showAuthDialog();
     void showMessageOnAdd();
     void showMessageOnRemove();
-
+    void onSuccessAuth();
 }

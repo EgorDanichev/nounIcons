@@ -1,72 +1,47 @@
 package com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
+import com.edanichev.nounIcons.app.main.NounApp;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
-import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
-import com.edanichev.nounIcons.app.main.Utils.Auth.OAuthInterceptor;
 import com.edanichev.nounIcons.app.main.Utils.DB.Realm.IconsRealmAdapter;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.EmptyIconsListEvent;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.IconsListEvent;
 
-import java.util.concurrent.TimeUnit;
+import org.greenrobot.eventbus.EventBus;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GetIconsCommand {
+    @Inject
+    Retrofit retrofit;
+    @Inject
+    IconsRealmAdapter iconsRealmAdapter;
 
-    private Retrofit retrofit;
     private NounIconListService service;
-    private static IconsCallback iconsCallback;
-    static GetIconsCommand sInstance;
+    private static GetIconsCommand instance;
 
-    public static GetIconsCommand getInstance(IconsCallback callback) {
-        iconsCallback = callback;
-        if (sInstance == null) {
-            sInstance = new GetIconsCommand();
+    public static GetIconsCommand getInstance() {
+        if (instance == null) {
+            instance = new GetIconsCommand();
         }
-        return sInstance;
+        return instance;
     }
 
-    private GetIconsCommand() {
-        OAuthInterceptor oauthInterceptor = new OAuthInterceptor.Builder()
-                .consumerKey("8d6f079d73054acab464cee59652d02f")
-                .consumerSecret("ede7fa4a5090413ba11d6ffe0eb96f36")
-                .build();
-
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
-                .addInterceptor(oauthInterceptor)
-                .addNetworkInterceptor(new StethoInterceptor())
-                .build();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.thenounproject.com/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    public GetIconsCommand() {
+        NounApp.app().getComponent().inject(this);
         service = retrofit.create(NounIconListService.class);
-
     }
 
     public void getIcons(String term) {
-        final IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
-        String requestUrl = retrofit.baseUrl().toString() +"icons/"+ term;
-
-        if(iconsRealmAdapter.checkIfExists(requestUrl)){
-            iconsCallback.onIconsSearchResponse(iconsRealmAdapter.getIconsFromCache(requestUrl));
+        String requestUrl = retrofit.baseUrl().toString() + "icons/" + term;
+        if (iconsRealmAdapter.checkCacheExists(requestUrl)) {
+            EventBus.getDefault().post(new IconsListEvent(iconsRealmAdapter.getIconsFromCache(requestUrl)));
             return;
         }
 
@@ -74,17 +49,16 @@ public class GetIconsCommand {
                 new Callback<Icons>() {
                     @Override
                     public void onResponse(@NonNull Call<Icons> call, @NonNull Response<Icons> response) {
-                        if (response.body()!=null) {
-                            iconsCallback.onIconsSearchResponse(response.body().getIcons());
-
-                            IconsRealmAdapter iconsRealmAdapter = new IconsRealmAdapter();
+                        if (response.body() != null) {
+                            EventBus.getDefault().post(new IconsListEvent(response.body().getIcons()));
                             iconsRealmAdapter.addIconsToCache(call.request().url().toString(), response.body().getIcons());
                         } else
-                            iconsCallback.onEmptyIconsList();
+                            EventBus.getDefault().post(new EmptyIconsListEvent(true));
                     }
 
                     @Override
-                    public void onFailure(Call<Icons> call, Throwable t) {}
+                    public void onFailure(@NonNull Call<Icons> call, Throwable t) {
+                    }
                 }
         );
     }

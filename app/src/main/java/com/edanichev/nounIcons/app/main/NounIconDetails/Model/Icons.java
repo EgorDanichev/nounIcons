@@ -7,7 +7,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 
-public class Icons extends RealmObject{
+public class Icons extends RealmObject {
 
     @Index
     private String request;
@@ -34,7 +34,7 @@ public class Icons extends RealmObject{
         this.icons = icons;
     }
 
-    public Icons(){
+    public Icons() {
 
     }
 

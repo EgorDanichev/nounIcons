@@ -1,7 +1,5 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth;
 
-import android.util.Log;
-
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.OauthConstants.ParameterList;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services.HMACSha1SignatureService;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.services.TimestampServiceImpl;
@@ -13,8 +11,6 @@ import java.net.URLEncoder;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-
-
 
 public class OAuthInterceptor implements Interceptor {
 
@@ -44,18 +40,16 @@ public class OAuthInterceptor implements Interceptor {
         String generatedBaseString;
 
 
-        if(original.url().encodedQuery()!=null) {
+        if (original.url().encodedQuery() != null) {
             generatedBaseString = original.url().encodedQuery() + "&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + nonce + "&oauth_signature_method=HMAC-SHA1&oauth_timestamp=" + timestamp + "&oauth_version=1.0";
-        }
-        else
-        {
+        } else {
             generatedBaseString = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + nonce + "&oauth_signature_method=HMAC-SHA1&oauth_timestamp=" + timestamp + "&oauth_version=1.0";
 
         }
 
         ParameterList result = new ParameterList();
         result.addQuerystring(generatedBaseString);
-        generatedBaseString=result.sort().asOauthBaseString();
+        generatedBaseString = result.sort().asOauthBaseString();
 //        Log.d("Sorted","00--"+result.sort().asOauthBaseString());
 
         String secoundBaseString = "&" + generatedBaseString;
@@ -72,7 +66,7 @@ public class OAuthInterceptor implements Interceptor {
 //        Log.d("consumerSecret", consumerSecret);
 //        Log.d("Signature", signature);
 
-        String AuthHeader = "OAuth oauth_consumer_key=\""+consumerKey+"\", oauth_nonce=\""+nonce+"\", oauth_signature=\""+signature+"\", oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\""+timestamp+"\", oauth_version=\"1.0\"" ;
+        String AuthHeader = "OAuth oauth_consumer_key=\"" + consumerKey + "\", oauth_nonce=\"" + nonce + "\", oauth_signature=\"" + signature + "\", oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"" + timestamp + "\", oauth_version=\"1.0\"";
 
         Request.Builder requestBuilder = original.newBuilder()
                 .addHeader("Authorization", AuthHeader);

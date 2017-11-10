@@ -1,16 +1,16 @@
-
 package com.edanichev.nounIcons.app.main.NounIconsList.Presenter;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.edanichev.nounIcons.app.main.NounApp;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractor;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractorImpl;
-import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainView;
 import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus;
@@ -27,17 +27,26 @@ public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPre
 
     private FindItemsInteractor findItemsInteractor;
 
-    public MainPresenterImpl () {
-        this.findItemsInteractor = new FindItemsInteractorImpl(this);
+    public MainPresenterImpl() {
     }
 
-    @Override public void onDestroy(Activity activity) {
+    @Override
+    public void onDestroy() {
+        if (findItemsInteractor != null) {
+            findItemsInteractor.onDestroy();
+            findItemsInteractor = null;
+        }
 //        activity.unregisterReceiver(broadcastReceiver);
     }
 
     @Override
     public void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-//        checkInternet((Activity) getViewState());
+        checkInternet();
+        if (this.findItemsInteractor == null) {
+            this.findItemsInteractor = new FindItemsInteractorImpl(this);
+            findItemsInteractor.onCreate();
+        }
+
         if (!term.equals("")) {
             getViewState().showProgress();
             findItemsInteractor.getIconsList(term);
@@ -47,23 +56,25 @@ public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPre
     }
 
     @Override
-    public void onCreate(Activity activity) {
+    public void onCreate() {
         loadHintCloud();
-        checkInternet(activity);
+        checkInternet();
     }
 
     @Override
     public void onEmptyIconsList() {
-        getViewState().showMessage("No icons found!");
+        getViewState().onEmptyIconsList();
+        //getViewState().showMessage("No icons found!");
     }
 
-    @Override public void onFinished(List<String> items) {
+    @Override
+    public void onFinished(List<String> items) {
         getViewState().hideProgress();
     }
 
     @Override
     public void onIconsSearchResponse(List<IconDetails> icons) {
-            getViewState().showIconsList(icons);
+        getViewState().showIconsList(icons);
     }
 
     private void loadHintCloud() {
@@ -75,13 +86,13 @@ public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPre
             NounSharedPreferences.getInstance().setHintSeen(true);
             getViewState().showHintCloud();
         } else {
-           getViewState().hideHintCloud();
+            getViewState().hideHintCloud();
         }
     }
 
-    private void checkInternet(Activity activity) {
-       // activity.registerReceiver(broadcastReceiver, new IntentFilter(InternetStatus.NETWORK_CHANGE_MESSAGE));
-        if (!InternetStatus.isNetworkConnected(activity)) {
+    private void checkInternet() {
+        // activity.registerReceiver(broadcastReceiver, new IntentFilter(InternetStatus.NETWORK_CHANGE_MESSAGE));
+        if (!InternetStatus.isNetworkConnected(NounApp.app())) {
             getViewState().showSnack("No internet connection");
         } else
             getViewState().hideSnack();

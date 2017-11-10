@@ -11,6 +11,10 @@ public interface FindItemsInteractor {
     interface OnFinishedListener {
         void onFinished(List<String> items);
     }
+
     void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException;
 
+    void onDestroy();
+
+    void onCreate();
 }

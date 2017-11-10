@@ -1,13 +1,16 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.Presenter;
 
-import com.edanichev.nounIcons.app.main.NounIconDetails.IconFavoritesCallback;
+import android.support.annotation.NonNull;
+
+import com.edanichev.nounIcons.app.main.NounIconDetails.IconChangeFavoritesCallback;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
-import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentViewInterface;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
-import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
+import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentViewInterface;
+import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
+import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class IconDetailsPresenter implements IconDetailsPresenterInterface, IconFavoritesCallback {
+public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFavoritesCallback {
 
     private IconDetailsFragmentViewInterface view;
     private boolean favorite = false;
@@ -35,7 +38,7 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
 
     @Override
     public void loadFavoriteStatus(final IconDetails icon) {
-        NounFirebaseAuth.getInstance(this).loadFavoriteStatus(icon);
+        FirebaseAdapter.getInstance(this).loadFavoriteStatus(icon);
     }
 
     @Override
@@ -43,14 +46,20 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
         view = null;
     }
 
-    public boolean isAuthorized (){
-        return FirebaseAuth.getInstance().getCurrentUser() != null ;
+    @Override
+    public void onAuthDialogShow() {
+        onAuthStateChangedListener();
+        NounSharedPreferences.getInstance().setAuthDialogShown(true);
+    }
+
+    public boolean isAuthorized() {
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     @Override
     public void onSuccessfulAddToFavorites() {
         if (view != null)
-        view.showMessageOnAdd();
+            view.showMessageOnAdd();
     }
 
     @Override
@@ -59,7 +68,8 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
     }
 
     @Override
-    public void onFailedRemoveIconFromFavorites() {}
+    public void onFailedRemoveIconFromFavorites() {
+    }
 
     @Override
     public void iconInFavoritesStatus(boolean isFavorite) {
@@ -77,19 +87,33 @@ public class IconDetailsPresenter implements IconDetailsPresenterInterface, Icon
     }
 
     private void addToFavorites(final FirebaseIconDetails icon) {
-        NimbleTask.execute(new Runnable() {
+        NounAsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                NounFirebaseAuth.getInstance(IconDetailsPresenter.this).addIconToFavorite(icon);
+                FirebaseAdapter.getInstance(IconDetailsPresenter.this).addIconToFavorite(icon);
             }
         });
     }
 
     private void removeToFavorites(final FirebaseIconDetails icon) {
-        NimbleTask.execute(new Runnable() {
+        NounAsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                NounFirebaseAuth.getInstance(IconDetailsPresenter.this).removeIconFromFavorites(icon);
+                FirebaseAdapter.getInstance(IconDetailsPresenter.this).removeIconFromFavorites(icon);
+            }
+        });
+    }
+
+    private void onAuthStateChangedListener() {
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (NounSharedPreferences.getInstance().isAuthDialogShown()) {
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                        NounSharedPreferences.getInstance().setAuthDialogShown(false);
+                        view.onSuccessAuth();
+                    }
+                }
             }
         });
     }

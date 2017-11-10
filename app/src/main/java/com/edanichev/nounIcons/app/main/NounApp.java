@@ -1,30 +1,30 @@
 package com.edanichev.nounIcons.app.main;
 
 import android.app.Application;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.StrictMode;
-import android.support.design.widget.Snackbar;
 
-import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.DB.Realm.RealmMIgration;
+import com.edanichev.nounIcons.app.main.Utils.di.Component.AppComponent;
+import com.edanichev.nounIcons.app.main.Utils.di.Component.DaggerAppComponent;
+import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerNetworkModule;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
-import java.lang.reflect.Type;
-import java.time.Duration;
+import org.greenrobot.eventbus.EventBus;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-
 public class NounApp extends Application {
+    private final static String BASE_NOUN_URL = "http://api.thenounproject.com/";
+    private AppComponent component;
+    private static NounApp app;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        app = this;
+
         NounSharedPreferences.initInstance(this);
 
         Stetho.initialize(
@@ -34,14 +34,16 @@ public class NounApp extends Application {
                         .build());
 
         Realm.init(this);
-
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .schemaVersion(4)
                 .migration(new RealmMIgration())
                 .build();
-
         Realm realm = Realm.getInstance(config);
         Realm.setDefaultConfiguration(config);
+
+        EventBus.builder()
+                .sendNoSubscriberEvent(false)
+                .installDefaultEventBus();
 
 //        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 //                .detectDiskReads()
@@ -61,6 +63,19 @@ public class NounApp extends Application {
 //        realm.commitTransaction();
 
         realm.close();
+    }
+
+    public static NounApp app() {
+        return app;
+    }
+
+    public AppComponent getComponent() {
+        if (component == null) {
+            component = DaggerAppComponent.builder()
+                    .daggerNetworkModule(new DaggerNetworkModule(BASE_NOUN_URL))
+                    .build();
+        }
+        return this.component;
     }
 
 }

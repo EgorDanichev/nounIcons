@@ -1,5 +1,5 @@
-<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:gpb="http://schemas.android.com/tools"
     android:id="@+id/bottomsheet"
     android:layout_width="match_parent"
@@ -10,71 +10,72 @@
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="350dp">
 
             <TextView
                 android:id="@+id/icon_term"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
+                android:layout_margin="5dp"
                 android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textAlignment="viewStart"
                 android:textColor="@android:color/black"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
-                app:autoSizeMaxTextSize="35sp"
-                app:autoSizeMinTextSize="12sp"
-                app:autoSizeStepGranularity="10sp"
-                app:autoSizeTextType="uniform"
-                gpb:text="DOG" />
+                gpb:text="DOGASDSADSAnjjjjjhugiugigkkljljlkjo
+                ojojj;lj'
+                klkD" />
 
             <ImageButton
                 android:id="@+id/add_to_favorite_button"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_margin="0dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
+                android:layout_gravity="center_vertical|right"
+                android:layout_margin="5dp"
                 android:background="@drawable/circle_ripple_effect" />
 
             <ImageButton
                 android:id="@+id/share_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical|left"
-                android:layout_margin="5dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:background="@drawable/circle_ripple_effect"/>
+                android:layout_gravity="center_vertical|left"
+                android:layout_margin="5dp"
+                android:background="@drawable/circle_ripple_effect" />
 
             <Button
                 android:id="@+id/icon_button"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:background="@drawable/transparent"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:background="@drawable/transparent" />
 
             <com.edanichev.nounIcons.app.main.Utils.UI.Pictures.BottomSheetView
                 android:id="@+id/bottom_sheet_view"
-                android:layout_width="match_parent"
-                android:layout_centerHorizontal="true"
+                android:layout_width="300dp"
                 android:layout_height="300dp"
-                app:srcCompat="@drawable/transparent"
-                android:layout_below="@+id/icon_term"/>
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/transparent" />
 
             <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
                 android:id="@+id/progress_bar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true" />
 
         </RelativeLayout>
 
@@ -86,17 +87,17 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="35dp"/>
+                android:layout_height="35dp" />
 
             <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/flexbox_drawable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
                 app:alignContent="space_around"
                 app:alignItems="flex_start"
                 app:flexWrap="wrap"
-                app:showDivider="middle"
-                android:paddingBottom="5dp"/>
+                app:showDivider="middle" />
 
         </FrameLayout>
 

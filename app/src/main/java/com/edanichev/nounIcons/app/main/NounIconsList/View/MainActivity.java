@@ -3,6 +3,7 @@ package com.edanichev.nounIcons.app.main.NounIconsList.View;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,29 +11,36 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.edanichev.nounIcons.app.R;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
+import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
-import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
+import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
+
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -40,16 +48,17 @@ import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipListener;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends MvpAppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener {
+public class MainActivity extends MvpAppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener, EasyPermissions.PermissionCallbacks {
     private final static int NUMBER_OF_COLUMNS = 5;
-    private static boolean isKeyboardVisible = false ;
 
     public DrawerView drawer;
 
-    private ProgressBar progressBar ;
+    private ProgressBar progressBar;
     private EditText searchText;
     private RecyclerView iconsGridList;
     private Button searchIconsButton;
@@ -59,27 +68,40 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     private ViewGroup hintLayout;
     private Snackbar snackbar;
     private RecyclerView recyclerView;
+    private RelativeLayout emptyResponseLayout;
+    private TextView emptyResponseText;
+
+    IconDetailsFragmentView bottomSheetFragment;
 
     @InjectPresenter
     MainPresenterImpl presenter;
 
     private RecyclerViewAdapter iconListAdapter;
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setBackgroundDrawable(null);
 
         findView();
-        registerKeyboardListener();
-        presenter.onCreate(this);
+        presenter.onCreate();
     }
 
     @Override
     protected void onDestroy() {
-        presenter.onDestroy(this);
+        presenter.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        if (getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        }
+        super.onResume();
     }
 
     @Override
@@ -95,6 +117,11 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     @Override
+    public void onEmptyIconsList() {
+        showEmptyIconsListMessage();
+    }
+
+    @Override
     public void showMessage(String message) {
         hideProgress();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -102,18 +129,18 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
 
     @Override
     public void showIconsList(List<IconDetails> icons) {
-        Log.d("EGOR666",presenter.getViewState() + "View.ShowIconsList: " + icons.size());
         if (icons != null) {
             hideProgress();
             createAdapter();
             iconListAdapter.setItems(icons);
             iconsGridList.scrollToPosition(0);
+            hideEmptyIconsListMessage();
         }
     }
 
     @Override
     public void emptyQueryError() {
-        searchText.setError( getResources().getString(R.string.blank_query_error) );
+        searchText.setError(getResources().getString(R.string.blank_query_error));
     }
 
     public void searchIconsList(String iconsQuery) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
@@ -123,23 +150,17 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
 
     @Override
     public void onItemClick(View view, int position) {
-        hideKeyboard(view);
-        openIconDetails(iconListAdapter.mData.get(position));
+        hideKeyboard();
+        openIconDetails(iconListAdapter.iconsList.get(position));
     }
 
     public void openIconDetails(IconDetails icon) {
-        if (!isKeyboardVisible) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("icon", icon);
-            IconDetailsFragmentView bottomSheetFragment = new IconDetailsFragmentView();
-            bottomSheetFragment.setArguments(bundle);
-            bottomSheetFragment.setRetainInstance(true);
-            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-        }
+        hideKeyboard();
+        IconDetailsFragmentView.openIconDetails(icon, getSupportFragmentManager());
     }
 
     @Override
-    public void hideHintCloud(){
+    public void hideHintCloud() {
         hintLayout.setVisibility(View.GONE);
     }
 
@@ -160,13 +181,13 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     @Override
-    public void hideSnack () {
+    public void hideSnack() {
         if (snackbar != null) snackbar.dismiss();
     }
 
-    private void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
     }
 
     private void registerKeyboardListener() {
@@ -175,14 +196,13 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
                 new KeyboardVisibilityEventListener() {
                     @Override
                     public void onVisibilityChanged(boolean isOpen) {
-                        isKeyboardVisible = isOpen;
                     }
                 });
     }
 
     private void createAdapter() {
         recyclerView.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
-        iconListAdapter = new RecyclerViewAdapter(this);
+        iconListAdapter = new RecyclerViewAdapter();
         iconListAdapter.setClickListener(this);
         recyclerView.setAdapter(iconListAdapter);
     }
@@ -194,7 +214,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     try {
                         searchIconsList(searchText.getText().toString());
-                        hideKeyboard(v);
+                        hideKeyboard();
                     } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
                         e.printStackTrace();
                     }
@@ -205,38 +225,43 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         };
     }
 
-    private TextWatcher onSearchTextChangerListener() {
-        return new TextWatcher() {
+    private TextWatcher onSearchTextChangerListener = new TextWatcher() {
 
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                 if (editable.length() == 0) {
-                     showIconsList(new ArrayList<IconDetails>());
-                }
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (editable.length() == 0) {
+                showEmptyIconsList();
             }
-        };
+        }
+    };
+
+    private void showEmptyIconsList() {
+        hideProgress();
+        createAdapter();
+        iconListAdapter.setItems(new ArrayList<IconDetails>());
+        iconsGridList.scrollToPosition(0);
     }
 
-    private View.OnClickListener buttonClickListener(){
 
-        return new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                try {
-                    searchIconsList(searchText.getText().toString());
-                    hideKeyboard(view);
-                } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-                    e.printStackTrace();
-                }
+    private View.OnClickListener buttonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            try {
+                searchIconsList(searchText.getText().toString());
+                hideKeyboard();
+            } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+                e.printStackTrace();
             }
-        };
-    }
+        }
+    };
 
     private void findView() {
         drawer = new DrawerView(this);
@@ -250,19 +275,21 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         hintLayout = findViewById(R.id.hint_layout);
         recyclerView = findViewById(R.id.items_grid_list);
         hintCloud = new ChipCloud(this, flexBox, ChipConfig.getChipCloudConfig());
+        emptyResponseLayout = findViewById(R.id.empty_response_layout);
+        emptyResponseText = findViewById(R.id.empty_response_text);
 
-        searchIconsButton.setOnClickListener(buttonClickListener());
+        searchIconsButton.setOnClickListener(buttonClickListener);
         searchText.setOnKeyListener(searchKeyListener());
-        searchText.addTextChangedListener(onSearchTextChangerListener());
+        searchText.addTextChangedListener(onSearchTextChangerListener);
         hintCloud.setListener(onChipClickListener());
 
-        searchText.setCompoundDrawables(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_search).color(Color.DKGRAY).sizeDp(20),null,null,null);
+        searchText.setCompoundDrawables(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_search).color(Color.DKGRAY).sizeDp(20), null, null, null);
         searchText.setCompoundDrawablePadding(15);
 
         searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                searchText.setCompoundDrawables(null,null,null,null);
+                searchText.setCompoundDrawables(null, null, null, null);
             }
         });
 
@@ -274,13 +301,12 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
             @Override
             public void onClick(View v) {
                 drawer.openDrawer();
-                hideKeyboard(v);
+                hideKeyboard();
             }
         });
-
     }
 
-    private ChipListener onChipClickListener(){
+    private ChipListener onChipClickListener() {
         return new ChipListener() {
             @Override
             public void chipCheckedChange(int i, boolean b, boolean b1) {
@@ -294,6 +320,42 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
                 }
             }
         };
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        if (requestCode == IconShare.RC_LOCATION_CONTACTS_PERM) {
+            if (bottomSheetFragment != null)
+                bottomSheetFragment.shareIconImage();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+    }
+
+    private void showEmptyIconsListMessage() {
+        progressBar.setVisibility(View.GONE);
+        iconsGridList.setVisibility(View.GONE);
+
+        String emptyText;
+        emptyText = String.format(getString(R.string.we_didn_t_find_any_icons), '"' + searchText.getText().toString() + '"');
+        emptyResponseText.setText(emptyText);
+        emptyResponseLayout.setVisibility(View.VISIBLE);
+        emptyResponseLayout.startAnimation(NounAnimations.getBecomeVisibleAnimation());
+    }
+
+    private void hideEmptyIconsListMessage() {
+        if (emptyResponseLayout.getVisibility() == View.VISIBLE) {
+            emptyResponseLayout.startAnimation(NounAnimations.getBecomeInvisibleAnimation());
+            emptyResponseLayout.setVisibility(View.GONE);
+        }
     }
 
 }

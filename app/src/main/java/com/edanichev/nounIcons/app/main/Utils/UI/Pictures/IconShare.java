@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.widget.ImageView;
 
 import com.edanichev.nounIcons.app.R;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class IconShare {
 
-    private static final int RC_LOCATION_CONTACTS_PERM = 124;
+    public static final int RC_LOCATION_CONTACTS_PERM = 124;
     private static final String[] READ_AND_WRITE =
             {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -40,19 +41,18 @@ public class IconShare {
         } else {
             EasyPermissions.requestPermissions(
                     activity,
-                    "3333",
+                    "You have to grant permissions to share",
                     RC_LOCATION_CONTACTS_PERM,
                     READ_AND_WRITE);
         }
     }
 
-
-    private static Uri getLocalBitmapUri (ImageView imageView,Activity activity) {
+    private static Uri getLocalBitmapUri(ImageView imageView, Activity activity) {
 
         Drawable drawable = imageView.getDrawable();
         Bitmap bitmap;
 
-        if (drawable instanceof BitmapDrawable){
+        if (drawable instanceof BitmapDrawable) {
             bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         } else {
             return null;
@@ -60,15 +60,15 @@ public class IconShare {
 
         Uri bitmapUri = null;
         try {
-            File file =  new File(activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
+            File file = new File(activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
             FileOutputStream out = new FileOutputStream(file);
 
-            Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),bitmap.getConfig());
+            Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
             imageWithBG.eraseColor(activity.getResources().getColor(R.color.shared_icon_color));
             Canvas canvas = new Canvas(imageWithBG);
             canvas.drawBitmap(bitmap, 0f, 0f, null);
 
-            imageWithBG.compress (Bitmap.CompressFormat.PNG, 100, out);
+            imageWithBG.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.close();
             bitmapUri = Uri.fromFile(file);
 
@@ -77,7 +77,6 @@ public class IconShare {
         }
         return bitmapUri;
     }
-
 
 
 }

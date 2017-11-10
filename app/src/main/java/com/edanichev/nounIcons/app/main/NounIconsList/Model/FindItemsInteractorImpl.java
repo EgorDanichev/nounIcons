@@ -2,40 +2,57 @@ package com.edanichev.nounIcons.app.main.NounIconsList.Model;
 
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.EmptyIconsListEvent;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.IconsListEvent;
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate.Translation;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
-import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.List;
 
-public class FindItemsInteractorImpl implements FindItemsInteractor,IconsCallback,TranslateCallback {
+
+public class FindItemsInteractorImpl implements FindItemsInteractor, TranslateCallback {
+
     IconsCallback iconsCallback;
 //    TranslateCommand translateCommand = new TranslateCommand(this);
 
     public FindItemsInteractorImpl(IconsCallback iconsCallback) {
-       this.iconsCallback = iconsCallback;
+        this.iconsCallback = iconsCallback;
     }
 
     @Override
     public void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        GetIconsCommand.getInstance(this).getIcons(term);
+        GetIconsCommand.getInstance().getIcons(term);
         //translateCommand.translate(term);
     }
 
     @Override
-    public void onIconsSearchResponse(List<IconDetails> icons) {
-        if (icons!=null)
-            iconsCallback.onIconsSearchResponse(icons);
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onCreate() {
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe
+    public void onIconsSearchResponse(IconsListEvent event) {
+        if (event.icons != null)
+            iconsCallback.onIconsSearchResponse(event.icons);
         else
             iconsCallback.onEmptyIconsList();
     }
 
-    @Override
-    public void onEmptyIconsList() {
-        iconsCallback.onEmptyIconsList();
+    @Subscribe
+    public void onEmptyIconsList(EmptyIconsListEvent event) {
+        if (event.isEmpty)
+            iconsCallback.onEmptyIconsList();
 
     }
 

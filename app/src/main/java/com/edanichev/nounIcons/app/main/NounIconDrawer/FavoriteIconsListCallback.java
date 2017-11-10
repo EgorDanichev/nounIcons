@@ -8,6 +8,4 @@ import java.util.List;
 public interface FavoriteIconsListCallback {
 
     void onFavoriteIconsListResponse(List<FirebaseIconDetails> icons);
-
-
 }
