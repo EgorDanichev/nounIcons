@@ -19,6 +19,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragment
 import com.edanichev.nounIcons.app.main.NounIconDrawer.FavoriteIconsListCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
+import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -48,8 +49,8 @@ public class DrawerView implements FavoriteIconsListCallback {
     private static long FAVORITE_ITEM_ID = 1;
     private static long SIGN_OUT_ITEM_ID = 2;
     private static long PROFILE_ITEM_WITH_PIC_ID = 123;
-    private static long PROFILE_ITEM_WITHOUT_PIC_ID = 1234;
-    private static long DEFAULT_PROFILE_ITEM_ID = 1235;
+    private static long PROFILE_ITEM_WITHOUT_PIC_ID = 123;
+    private static long DEFAULT_PROFILE_ITEM_ID = 123;
 
     private Activity activity;
     private AccountHeader accountHeader;
@@ -205,7 +206,9 @@ public class DrawerView implements FavoriteIconsListCallback {
                 @Override
                 public boolean onClick(View view, IProfile profile) {
                     if (currentUser() == null) {
-                        activity.startActivity(NounFirebaseAuth.getAuthIntent());
+                        Context context;
+                        activity.startActivityForResult(NounFirebaseAuth.getAuthIntent(), 300);
+                        DialogShower.showLoadingDialog(activity);
                         return true;
                     }
                     return false;
@@ -306,5 +309,7 @@ public class DrawerView implements FavoriteIconsListCallback {
         }
         return result;
     }
+
+
 
 }

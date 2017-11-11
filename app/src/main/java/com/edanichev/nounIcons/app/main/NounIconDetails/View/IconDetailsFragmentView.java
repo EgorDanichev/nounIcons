@@ -176,6 +176,26 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         IconShare.shareImage(bottomSheetImageView, activity);
     }
 
+    @Override
+    public void hideFavoriteButton() {
+        favoriteButton.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showFavoriteButton() {
+        favoriteButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showLoaderDialog() {
+        DialogShower.showLoadingDialog(getContext());
+    }
+
+    @Override
+    public void hideLoaderDialog() {
+        DialogShower.hideLoadingDialog();
+    }
+
     private void animateButton(final ImageButton button) {
         button.startAnimation(NounAnimations.getFavoriteButtonAnimation());
     }
@@ -209,10 +229,12 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private void loadIconImage() {
         showProgress();
         String iconUrl;
+
         if (iconData.getAttribution_preview_url() == null)
             iconUrl = iconData.getPreview_url();
         else
             iconUrl = iconData.getAttribution_preview_url();
+
         Picasso.with(getContext())
                 .load(iconUrl)
                 .into(bottomSheetImageView, new Callback() {
@@ -239,16 +261,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private void loadFavoriteButton() {
         hideFavoriteButton();
         iconDetailsPresenter.loadFavoriteStatus(iconData);
-    }
-
-    @Override
-    public void hideFavoriteButton() {
-        favoriteButton.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void showFavoriteButton() {
-        favoriteButton.setVisibility(View.VISIBLE);
     }
 
     private void loadShareButton() {

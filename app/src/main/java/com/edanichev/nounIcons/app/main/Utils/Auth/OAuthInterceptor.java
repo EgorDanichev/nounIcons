@@ -13,10 +13,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class OAuthInterceptor implements Interceptor {
-
     private final String consumerKey;
     private final String consumerSecret;
-
 
     private OAuthInterceptor(String consumerKey, String consumerSecret) {
         this.consumerKey = consumerKey;
@@ -93,7 +91,6 @@ public class OAuthInterceptor implements Interceptor {
         }
 
         public OAuthInterceptor build() {
-
             if (consumerKey == null) throw new IllegalStateException("consumerKey not set");
             if (consumerSecret == null) throw new IllegalStateException("consumerSecret not set");
 

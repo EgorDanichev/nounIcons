@@ -48,8 +48,9 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
 
     @Override
     public void onAuthDialogShow() {
-        onAuthStateChangedListener();
-        NounSharedPreferences.getInstance().setAuthDialogShown(true);
+        view.showLoaderDialog();
+        registerAuthStateChangedListener();
+        NounSharedPreferences.setAuthDialogShown(true);
     }
 
     public boolean isAuthorized() {
@@ -104,14 +105,15 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
         });
     }
 
-    private void onAuthStateChangedListener() {
+    private void registerAuthStateChangedListener() {
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (NounSharedPreferences.getInstance().isAuthDialogShown()) {
+                if (NounSharedPreferences.isAuthDialogShown()) {
                     if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                        NounSharedPreferences.getInstance().setAuthDialogShown(false);
+                        NounSharedPreferences.setAuthDialogShown(false);
                         view.onSuccessAuth();
+                        view.hideLoaderDialog();
                     }
                 }
             }

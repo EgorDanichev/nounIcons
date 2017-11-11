@@ -9,8 +9,8 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.edanichev.nounIcons.app.main.NounApp;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
-import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractor;
-import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindItemsInteractorImpl;
+import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindIconsInteractor;
+import com.edanichev.nounIcons.app.main.NounIconsList.Model.FindIconsInteractorImpl;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainView;
 import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus;
@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @InjectViewState
-public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPresenter, FindItemsInteractor.OnFinishedListener, IconsCallback {
+public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPresenter, FindIconsInteractor.OnFinishedListener, IconsCallback {
 
-    private FindItemsInteractor findItemsInteractor;
+    private FindIconsInteractor findItemsInteractor;
 
     public MainPresenterImpl() {
     }
@@ -43,7 +43,7 @@ public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPre
     public void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
         checkInternet();
         if (this.findItemsInteractor == null) {
-            this.findItemsInteractor = new FindItemsInteractorImpl(this);
+            this.findItemsInteractor = new FindIconsInteractorImpl(this);
             findItemsInteractor.onCreate();
         }
 
@@ -78,14 +78,14 @@ public class MainPresenterImpl extends MvpPresenter<MainView> implements MainPre
     }
 
     private void loadHintCloud() {
-        if (!NounSharedPreferences.getInstance().isHintSeen()) {
+        if (!NounSharedPreferences.isHintSeen()) {
             List<String> tags = new ArrayList<>();
             tags.add("cat");
             tags.add("bread");
             tags.add("dog");
             tags.add("information");
             getViewState().addChipsToHintCloud(tags);
-            NounSharedPreferences.getInstance().setHintSeen(true);
+            NounSharedPreferences.setHintSeen(true);
             getViewState().showHintCloud();
         } else {
             getViewState().hideHintCloud();

@@ -1,5 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.di.Modules;
 
+import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuthInterceptor;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
@@ -25,8 +26,8 @@ public class DaggerNetworkModule {
     @Singleton
     public OAuthInterceptor provideOAuthInterceptor() {
         return new OAuthInterceptor.Builder()
-                .consumerKey("8d6f079d73054acab464cee59652d02f")
-                .consumerSecret("ede7fa4a5090413ba11d6ffe0eb96f36")
+                .consumerKey(NounSharedPreferences.getNounApiConfig().getNoun_key())
+                .consumerSecret(NounSharedPreferences.getNounApiConfig().getNoun_secret())
                 .build();
     }
 

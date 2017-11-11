@@ -3,7 +3,9 @@ package com.edanichev.nounIcons.app.main;
 import android.app.Application;
 
 import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
+import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
 import com.edanichev.nounIcons.app.main.Utils.DB.Realm.RealmMIgration;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.NounApiConfigEvent;
 import com.edanichev.nounIcons.app.main.Utils.di.Component.AppComponent;
 import com.edanichev.nounIcons.app.main.Utils.di.Component.DaggerAppComponent;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerNetworkModule;
@@ -11,6 +13,7 @@ import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -45,6 +48,9 @@ public class NounApp extends Application {
                 .sendNoSubscriberEvent(false)
                 .installDefaultEventBus();
 
+        EventBus.getDefault().register(this);
+        FirebaseAdapter.getConfigKey();
+
 //        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 //                .detectDiskReads()
 //                .detectDiskWrites()
@@ -57,7 +63,6 @@ public class NounApp extends Application {
 //                .penaltyLog()
 //                .penaltyDeath()
 //                .build());
-
 //        realm.beginTransaction();
 //        realm.deleteAll();
 //        realm.commitTransaction();
@@ -78,4 +83,8 @@ public class NounApp extends Application {
         return this.component;
     }
 
+    @Subscribe
+    public void onNounApiConfigResponse(NounApiConfigEvent event) {
+        NounSharedPreferences.setNounApiConfig(event.getNoun_key(), event.getNoun_secret());
+    }
 }

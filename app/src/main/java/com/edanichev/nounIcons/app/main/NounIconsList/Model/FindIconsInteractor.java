@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.List;
 
-public interface FindItemsInteractor {
+public interface FindIconsInteractor {
 
     interface OnFinishedListener {
         void onFinished(List<String> items);

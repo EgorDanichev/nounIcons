@@ -16,12 +16,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
 
-public class FindItemsInteractorImpl implements FindItemsInteractor, TranslateCallback {
+public class FindIconsInteractorImpl implements FindIconsInteractor, TranslateCallback {
 
     IconsCallback iconsCallback;
 //    TranslateCommand translateCommand = new TranslateCommand(this);
 
-    public FindItemsInteractorImpl(IconsCallback iconsCallback) {
+    public FindIconsInteractorImpl(IconsCallback iconsCallback) {
         this.iconsCallback = iconsCallback;
     }
 
@@ -53,7 +53,6 @@ public class FindItemsInteractorImpl implements FindItemsInteractor, TranslateCa
     public void onEmptyIconsList(EmptyIconsListEvent event) {
         if (event.isEmpty)
             iconsCallback.onEmptyIconsList();
-
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -31,6 +32,7 @@ import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
+import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
@@ -318,6 +320,14 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 300) {
+            DialogShower.hideLoadingDialog();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
         if (requestCode == IconShare.RC_LOCATION_CONTACTS_PERM) {
             if (bottomSheetFragment != null)
@@ -348,10 +358,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     private void setSearchTextDefault() {
-
         searchText.setCompoundDrawables(IconLoader.getSearchIcon(), null, null, null);
         searchText.setCompoundDrawablePadding(15);
-
         searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {

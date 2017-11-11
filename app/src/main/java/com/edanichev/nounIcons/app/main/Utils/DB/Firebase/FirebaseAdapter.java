@@ -5,6 +5,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.IconChangeFavoritesCallb
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.FavoriteIconsListCallback;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.NounApiConfigEvent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -14,21 +15,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FirebaseAdapter {
     private static String USER_PATH = "users/";
     private static String FAVORITE_ICONS_PATH = "favoriteIcons";
+    private static String CONFIG_PATH = "config/";
+    private static String KEY_PATH = "noun_key";
+    private static String SECRET_PATH = "noun_secret";
 
     private static FirebaseAdapter instance;
-    private DatabaseReference mDatabase;
+    private static DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private FavoriteIconsListCallback favoriteIconsListCallback;
     private IconChangeFavoritesCallback iconChangeFavoritesCallback;
-
-    private FirebaseAdapter() {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-    }
 
     public static FirebaseAdapter getInstance(IconChangeFavoritesCallback callback) {
         if (instance == null) {
@@ -54,14 +56,12 @@ public class FirebaseAdapter {
         return instance;
     }
 
-
     public void loadFavoriteIcons() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
-            mDatabase
-                    .child("users/" + user.getUid())
-                    .child("favoriteIcons")
+            mDatabase.child(USER_PATH + user.getUid())
+                    .child(FAVORITE_ICONS_PATH)
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -95,7 +95,6 @@ public class FirebaseAdapter {
     }
 
     public void removeIconFromFavorites(FirebaseIconDetails icon) {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         Query query = mDatabase.child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(FAVORITE_ICONS_PATH)
                 .child(icon.getId())
@@ -117,8 +116,7 @@ public class FirebaseAdapter {
 
     public void loadFavoriteStatus(IconDetails icon) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            mDatabase
-                    .child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
+            mDatabase.child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(FAVORITE_ICONS_PATH)
                     .child(icon.getId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -138,5 +136,21 @@ public class FirebaseAdapter {
         } else iconChangeFavoritesCallback.iconInFavoritesStatus(false);
     }
 
+    public static void getConfigKey() {
+        mDatabase.child(CONFIG_PATH)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String key = dataSnapshot.child(KEY_PATH).getValue().toString();
+                        String secret = dataSnapshot.child(SECRET_PATH).getValue().toString();
+                        EventBus.getDefault().post(new NounApiConfigEvent(key, secret));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+    }
 
 }

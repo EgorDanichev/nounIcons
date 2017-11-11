@@ -49,7 +49,7 @@ public class TranslateCommand {
 
     public void translate(String text) {
 
-        service.translate("en", text, "Bearer " + NounSharedPreferences.getInstance().getToken()).enqueue(
+        service.translate("en", text, "Bearer " + NounSharedPreferences.getToken()).enqueue(
                 new Callback<Translation>() {
                     @Override
                     public void onResponse(Call<Translation> call, Response<Translation> response) {
