@@ -6,9 +6,13 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.IconChangeFavoritesCallb
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentViewInterface;
+import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFavoritesCallback {
 
@@ -21,7 +25,7 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
 
     @Override
     public void onFavoriteButtonClick(IconDetails icon) {
-        if (isAuthorized()) {
+        if (NounFirebaseAuth.isAuthorized()) {
             if (!favorite) {
                 addToFavorites(FirebaseIconDetails.converter(icon));
                 view.setFavoriteButtonStatus(true);
@@ -48,13 +52,9 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
 
     @Override
     public void onAuthDialogShow() {
-        view.showLoaderDialog();
+        //view.showLoaderDialog();
         registerAuthStateChangedListener();
         NounSharedPreferences.setAuthDialogShown(true);
-    }
-
-    public boolean isAuthorized() {
-        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     @Override
@@ -110,10 +110,11 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (NounSharedPreferences.isAuthDialogShown()) {
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    if (NounFirebaseAuth.isAuthorized()) {
                         NounSharedPreferences.setAuthDialogShown(false);
-                        view.onSuccessAuth();
-                        view.hideLoaderDialog();
+                        EventBus.getDefault().post(new AuthEvent(true));
+                    } else {
+                        EventBus.getDefault().post(new AuthEvent(false));
                     }
                 }
             }

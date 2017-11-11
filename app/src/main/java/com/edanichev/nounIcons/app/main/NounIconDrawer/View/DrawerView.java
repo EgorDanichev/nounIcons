@@ -162,8 +162,7 @@ public class DrawerView implements FavoriteIconsListCallback {
 
     private void refreshSignOut() {
         if (drawer != null) {
-            FirebaseUser user = currentUser();
-            if (user != null) {
+            if (NounFirebaseAuth.isAuthorized()) {
                 if (signOutItem == null) {
                     addSignOutItem();
                 }
@@ -173,8 +172,8 @@ public class DrawerView implements FavoriteIconsListCallback {
     }
 
     private ProfileDrawerItem currentProfile() {
-        FirebaseUser user = currentUser();
-        if (user != null) {
+        FirebaseUser user = NounFirebaseAuth.getCurrentUser();
+        if (NounFirebaseAuth.isAuthorized()) {
             if (user.getPhotoUrl() != null) {
                 return new ProfileDrawerItem()
                         .withName(user.getDisplayName())
@@ -196,17 +195,14 @@ public class DrawerView implements FavoriteIconsListCallback {
         }
     }
 
-    private FirebaseUser currentUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
+
 
     private AccountHeader.OnAccountHeaderSelectionViewClickListener onAccountClickListener =
             new AccountHeader.OnAccountHeaderSelectionViewClickListener() {
 
                 @Override
                 public boolean onClick(View view, IProfile profile) {
-                    if (currentUser() == null) {
-                        Context context;
+                    if (!NounFirebaseAuth.isAuthorized()) {
                         activity.startActivityForResult(NounFirebaseAuth.getAuthIntent(), 300);
                         DialogShower.showLoadingDialog(activity);
                         return true;
@@ -219,7 +215,7 @@ public class DrawerView implements FavoriteIconsListCallback {
             new AccountHeader.OnAccountHeaderProfileImageListener() {
                 @Override
                 public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
-                    if (currentUser() == null) {
+                    if (!NounFirebaseAuth.isAuthorized()) {
                         activity.startActivity(NounFirebaseAuth.getAuthIntent());
                         return true;
                     }

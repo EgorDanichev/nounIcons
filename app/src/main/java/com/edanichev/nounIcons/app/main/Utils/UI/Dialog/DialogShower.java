@@ -13,7 +13,7 @@ public class DialogShower {
 
     private static SweetAlertDialog loadingDialog;
 
-    public static void showAuthDialog(final Context context, final int authRequestCode) {
+    public static void showAuthDialog(final Context context) {
         AlertDialog.Builder dialog;
         dialog = new AlertDialog.Builder(context);
         dialog.setTitle("Do you want to authorize?");
@@ -25,6 +25,7 @@ public class DialogShower {
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
+                hideLoadingDialog();
             }
         });
         dialog.setCancelable(true);

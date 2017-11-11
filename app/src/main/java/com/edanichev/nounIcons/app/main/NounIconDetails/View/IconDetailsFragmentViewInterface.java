@@ -1,5 +1,7 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.View;
 
+import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
+
 public interface IconDetailsFragmentViewInterface {
 
     void showProgress();
@@ -18,9 +20,8 @@ public interface IconDetailsFragmentViewInterface {
 
     void showMessageOnRemove();
 
-    void onSuccessAuth();
+    void onAuthResult(AuthEvent event);
 
     void showLoaderDialog();
 
-    void hideLoaderDialog();
 }

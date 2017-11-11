@@ -2,6 +2,7 @@ package com.edanichev.nounIcons.app.main.NounIconDetails.View;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -25,6 +26,8 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Tag;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IIconDetailsPresenter;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
+import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
 import com.edanichev.nounIcons.app.main.Utils.String.StringUtils;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
@@ -33,9 +36,11 @@ import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.BottomSheetView;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -69,7 +74,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         bundle.putParcelable(ICON_KEY, icon);
         BottomSheetDialogFragment bottomSheetFragment = new IconDetailsFragmentView();
         bottomSheetFragment.setArguments(bundle);
-        bottomSheetFragment.setRetainInstance(true);
         bottomSheetFragment.show(fragmentManager, bottomSheetFragment.getTag());
     }
 
@@ -86,6 +90,8 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         loadFavoriteButton();
         loadShareButton();
 
+        EventBus.getDefault().register(this);
+
         return myInflatedView;
     }
 
@@ -95,11 +101,12 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
-                FrameLayout bottomSheet = dialog.findViewById(android.support.design.R.id.design_bottom_sheet);
-                BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
-                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                behavior.setPeekHeight(BottomSheetBehavior.PEEK_HEIGHT_AUTO);
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
+                    FrameLayout bottomSheet = dialog.findViewById(android.support.design.R.id.design_bottom_sheet);
+                    BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+                    behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
             }
         });
     }
@@ -114,11 +121,11 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     @Override
     public void onDestroy() {
+        EventBus.getDefault().unregister(this);
         iconDetailsPresenter.onDestroy();
         iconDetailsPresenter = null;
         super.onDestroy();
     }
-
 
     @Override
     public void onDestroyView() {
@@ -149,17 +156,22 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    @Subscribe
     @Override
-    public void onSuccessAuth() {
-        iconDetailsPresenter.onFavoriteButtonClick(iconData);
-        showMessage("Hello " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName() + "!");
-        animateButton(favoriteButton);
+    public void onAuthResult(AuthEvent event) {
+        if (event.isSucess()) {
+            iconDetailsPresenter.onFavoriteButtonClick(iconData);
+            showMessage("Hello " + NounFirebaseAuth.getCurrentUserName() + "!");
+            animateButton(favoriteButton);
+        }
+        DialogShower.hideLoadingDialog();
     }
 
     @Override
     public void showAuthDialog() {
+        DialogShower.showAuthDialog(getContext());
         iconDetailsPresenter.onAuthDialogShow();
-        DialogShower.showAuthDialog(getContext(), AUTH_REQUEST_CODE);
+        showLoaderDialog();
     }
 
     @Override
@@ -189,11 +201,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     @Override
     public void showLoaderDialog() {
         DialogShower.showLoadingDialog(getContext());
-    }
-
-    @Override
-    public void hideLoaderDialog() {
-        DialogShower.hideLoadingDialog();
     }
 
     private void animateButton(final ImageButton button) {

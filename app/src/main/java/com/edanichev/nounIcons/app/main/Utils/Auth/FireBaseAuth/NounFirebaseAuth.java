@@ -3,6 +3,8 @@ package com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth;
 import android.content.Intent;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Collections;
 
@@ -16,6 +18,18 @@ public class NounFirebaseAuth {
                         Collections.singletonList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
                         ))
                 .build();
+    }
+
+    public static boolean isAuthorized() {
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
+    }
+
+    public static String getCurrentUserName() {
+        return FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+    }
+
+    public static FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 
 }

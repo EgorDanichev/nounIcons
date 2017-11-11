@@ -1218,6 +1218,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/egordanichev/.android/build-cache/7e30e14df4a78ce9dbc50fd92923d0dad49fce70/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.2"
+        sha1="3a5e4ce73da12101fb0d97bff95ba9b04e3821e4">
+        <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_fb3a8cf3c101bfd9310016a6e1a99228a2e9fd2e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/egordanichev/.android/build-cache/53225ea4d62aa6ebfd09ee4b21dfeb9a682278fe/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -1582,7 +1591,7 @@
         jumboMode="true"
         optimize="true"
         revision="26.0.2"
-        sha1="d4c5a1355117806b76c1b1205259485819d03ed9">
+        sha1="d1eb05b40e3d50a015243055d8357a6fed5a6452">
         <dex dex="/Users/egordanichev/alfabank/egorgit/nounIcons/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_c062bc93fd7456a8a4fe7e2e9591d21ba202a4d5/classes.dex" />
     </item>
     <item

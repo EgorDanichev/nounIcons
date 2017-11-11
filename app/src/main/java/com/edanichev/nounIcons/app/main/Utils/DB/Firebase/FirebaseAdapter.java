@@ -5,9 +5,8 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.IconChangeFavoritesCallb
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.FavoriteIconsListCallback;
+import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.NounApiConfigEvent;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,18 +48,9 @@ public class FirebaseAdapter {
         return instance;
     }
 
-    public static FirebaseAdapter getInstance() {
-        if (instance == null) {
-            instance = new FirebaseAdapter();
-        }
-        return instance;
-    }
-
     public void loadFavoriteIcons() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            mDatabase.child(USER_PATH + user.getUid())
+        if (NounFirebaseAuth.isAuthorized()) {
+            mDatabase.child(USER_PATH + NounFirebaseAuth.getCurrentUser().getUid())
                     .child(FAVORITE_ICONS_PATH)
                     .addValueEventListener(new ValueEventListener() {
                         @Override
@@ -83,7 +73,7 @@ public class FirebaseAdapter {
     }
 
     public void addIconToFavorite(FirebaseIconDetails icon) {
-        mDatabase.child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
+        mDatabase.child(USER_PATH + NounFirebaseAuth.getCurrentUser().getUid())
                 .child(FAVORITE_ICONS_PATH)
                 .child(icon.getId())
                 .setValue(icon, new DatabaseReference.CompletionListener() {
@@ -95,7 +85,7 @@ public class FirebaseAdapter {
     }
 
     public void removeIconFromFavorites(FirebaseIconDetails icon) {
-        Query query = mDatabase.child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
+        Query query = mDatabase.child(USER_PATH + NounFirebaseAuth.getCurrentUser().getUid())
                 .child(FAVORITE_ICONS_PATH)
                 .child(icon.getId())
                 .equalTo(icon.getId());
@@ -115,8 +105,8 @@ public class FirebaseAdapter {
     }
 
     public void loadFavoriteStatus(IconDetails icon) {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            mDatabase.child(USER_PATH + FirebaseAuth.getInstance().getCurrentUser().getUid())
+        if (NounFirebaseAuth.isAuthorized()) {
+            mDatabase.child(USER_PATH + NounFirebaseAuth.getCurrentUser().getUid())
                     .child(FAVORITE_ICONS_PATH)
                     .child(icon.getId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {

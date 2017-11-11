@@ -30,6 +30,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
+import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
@@ -323,6 +324,9 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 300) {
             DialogShower.hideLoadingDialog();
+            if (NounFirebaseAuth.isAuthorized()) {
+                showMessage("Hello " + NounFirebaseAuth.getCurrentUserName() + "!");
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

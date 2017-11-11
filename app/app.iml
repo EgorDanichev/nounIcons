@@ -106,6 +106,7 @@
     <orderEntry type="library" exported="" name="firebase-core-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="realm-android-library-4.1.1" level="project" />
     <orderEntry type="library" exported="" name="relinker-1.2.2" level="project" />
+    <orderEntry type="library" exported="" name="tinydancer-0.1.2" level="project" />
     <orderEntry type="library" exported="" name="constraint-layout-solver-1.1.0-beta1" level="project" />
     <orderEntry type="library" exported="" name="commons-cli-1.2" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.7.2" level="project" />
