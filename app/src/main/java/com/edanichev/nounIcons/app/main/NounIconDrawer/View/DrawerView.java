@@ -71,6 +71,14 @@ public class DrawerView implements FavoriteIconsListCallback {
         drawer.openDrawer();
     }
 
+    public void closeDrawer() {
+        drawer.closeDrawer();
+    }
+
+    public boolean isDrawerOpen() {
+        return drawer.isDrawerOpen();
+    }
+
     @Override
     public void onFavoriteIconsListResponse(List<FirebaseIconDetails> icons) {
         Collections.sort(icons);
@@ -128,7 +136,6 @@ public class DrawerView implements FavoriteIconsListCallback {
                 .withSelectable(false)
                 .withName(activity.getResources().getString(R.string.sign_out))
                 .withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_exit_to_app).color(Color.BLACK).sizeDp(30));
-
         drawer.addStickyFooterItem(signOutItem);
     }
 

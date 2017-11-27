@@ -30,7 +30,7 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/md_white_1000"
@@ -86,7 +86,6 @@
                     android:id="@+id/hint_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/input_layout"
                     android:layout_marginBottom="5dp"
                     android:paddingLeft="30dp">
 
@@ -97,7 +96,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
                         android:maxLines="1"
-                        android:text="For example: "
+                        android:text="@string/for_example"
                         android:textSize="15sp" />
 
                     <com.google.android.flexbox.FlexboxLayout
@@ -113,55 +112,60 @@
 
                 </RelativeLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/empty_response_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="20dp"
+                    android:orientation="vertical"
                     android:visibility="gone">
-
-
-                    <ImageView
-                        android:id="@+id/empty_response_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/no_icons_found" />
 
                     <TextView
                         android:id="@+id/empty_response_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/empty_response_image"
+                        android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
                         android:text="@string/we_didn_t_find_any_icons"
                         android:textSize="30sp" />
 
+                    <ImageView
+                        android:id="@+id/empty_response_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/no_icons_found" />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
+                        android:id="@+id/progress"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/items_grid_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:clickable="true" />
+
                 </RelativeLayout>
 
-                <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
-                    android:id="@+id/progress"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_centerInParent="true"
-                    android:visibility="invisible" />
-
-                android:focusable="true"
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/items_grid_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true" />
-                <!--android:foreground="?android:attr/selectableItemBackground"-->
-
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
 

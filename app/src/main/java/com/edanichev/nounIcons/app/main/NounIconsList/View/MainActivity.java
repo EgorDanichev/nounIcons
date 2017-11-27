@@ -19,17 +19,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.edanichev.nounIcons.app.R;
+import com.edanichev.nounIcons.app.main.NounApp;
+import com.edanichev.nounIcons.app.main.NounHintCloud.Model.CloudTagsModel;
+import com.edanichev.nounIcons.app.main.NounHintCloud.Presenter.HintCloudPresenter;
+import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
-import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.MainPresenterImpl;
+import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.IconListPresenter;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
@@ -39,23 +43,21 @@ import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
 
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipListener;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends MvpAppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener, EasyPermissions.PermissionCallbacks {
-    private final static int NUMBER_OF_COLUMNS = 5;
+public class MainActivity extends MvpAppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener, EasyPermissions.PermissionCallbacks, HintCloudView {
+    private final static int NUMBER_OF_COLUMNS = 3;
 
     public DrawerView drawer;
 
@@ -68,14 +70,28 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     private ChipCloud hintCloud;
     private ViewGroup hintLayout;
     private Snackbar snackbar;
-    private RecyclerView recyclerView;
-    private RelativeLayout emptyResponseLayout;
+    private ViewGroup emptyResponseLayout;
     private TextView emptyResponseText;
 
-    IconDetailsFragmentView bottomSheetFragment;
+    private IconDetailsFragmentView bottomSheetFragment;
 
     @InjectPresenter
-    MainPresenterImpl presenter;
+    @Inject
+    IconListPresenter iconListPresenter;
+
+    @ProvidePresenter
+    IconListPresenter provideIconListPresenter() {
+        return iconListPresenter;
+    }
+
+    @InjectPresenter
+    @Inject
+    HintCloudPresenter hintCloudPresenter;
+
+    @ProvidePresenter
+    HintCloudPresenter provideHintCloudPresenter() {
+        return hintCloudPresenter;
+    }
 
     private RecyclerViewAdapter iconListAdapter;
 
@@ -84,20 +100,32 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindow().setBackgroundDrawable(null);
 
+        NounApp.app().getComponent().inject(this);
         findView();
-        presenter.onCreate();
+
+        iconListPresenter.attachView(this);
+        iconListPresenter.onCreate();
+
+        hintCloudPresenter.attachView(this);
+        hintCloudPresenter.onCreate();
     }
 
     @Override
     protected void onDestroy() {
-        presenter.onDestroy();
+        iconListPresenter.onDestroy();
+//        iconListPresenter.detachView(this);
+//        hintCloudPresenter.detachView(this);
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
+        int i = searchText.length();
+        if (i > 0) {
+            searchIconsList(searchText.getText().toString());
+        }
+
         if (getWindow() != null) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -144,9 +172,9 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         searchText.setError(getResources().getString(R.string.blank_query_error));
     }
 
-    public void searchIconsList(String iconsQuery) throws IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+    public void searchIconsList(String iconsQuery) {
         searchText.setText(iconsQuery);
-        presenter.getIconsList(iconsQuery.trim());
+        iconListPresenter.getIconsList(iconsQuery.trim());
     }
 
     @Override
@@ -157,7 +185,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
 
     public void openIconDetails(IconDetails icon) {
         hideKeyboard();
-        IconDetailsFragmentView.openIconDetails(icon, getSupportFragmentManager());
+        bottomSheetFragment = IconDetailsFragmentView.openIconDetails(icon, getSupportFragmentManager());
     }
 
     @Override
@@ -166,7 +194,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     @Override
-    public void addChipsToHintCloud(List<String> tags) {
+    public void addChipsToHintCloud(CloudTagsModel tags) {
         hintCloud.addChips(tags);
     }
 
@@ -191,34 +219,21 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
     }
 
-    private void registerKeyboardListener() {
-        KeyboardVisibilityEvent.registerEventListener(
-                this,
-                new KeyboardVisibilityEventListener() {
-                    @Override
-                    public void onVisibilityChanged(boolean isOpen) {
-                    }
-                });
-    }
-
     private void createAdapter() {
-        recyclerView.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
+        iconsGridList.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
         iconListAdapter = new RecyclerViewAdapter();
         iconListAdapter.setClickListener(this);
-        recyclerView.setAdapter(iconListAdapter);
+        iconsGridList.setAdapter(iconListAdapter);
     }
 
     private View.OnKeyListener searchKeyListener() {
         return new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    try {
-                        searchIconsList(searchText.getText().toString());
-                        hideKeyboard();
-                    } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-                        e.printStackTrace();
-                    }
+                boolean isEnterKeyPressed = event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER;
+
+                if (isEnterKeyPressed) {
+                    searchIconsList(searchText.getText().toString());
+                    hideKeyboard();
                     return true;
                 }
                 return false;
@@ -251,20 +266,16 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         iconsGridList.scrollToPosition(0);
     }
 
-
     private View.OnClickListener buttonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            try {
-                searchIconsList(searchText.getText().toString());
-                hideKeyboard();
-            } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-                e.printStackTrace();
-            }
+            searchIconsList(searchText.getText().toString());
+            hideKeyboard();
         }
     };
 
     private void findView() {
+        getWindow().setBackgroundDrawable(null);
         drawer = new DrawerView(this);
 
         progressBar = findViewById(R.id.progress);
@@ -275,7 +286,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         toolbar = findViewById(R.id.toolbar);
         flexBox = findViewById(R.id.hint_cloud);
         hintLayout = findViewById(R.id.hint_layout);
-        recyclerView = findViewById(R.id.items_grid_list);
         emptyResponseLayout = findViewById(R.id.empty_response_layout);
         emptyResponseText = findViewById(R.id.empty_response_text);
         hintCloud = new ChipCloud(this, flexBox, ChipConfig.getChipCloudConfig());
@@ -303,11 +313,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
             @Override
             public void chipCheckedChange(int i, boolean b, boolean b1) {
                 if (b) {
-                    try {
-                        searchIconsList(hintCloud.getLabel(i));
-                    } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-                        e.printStackTrace();
-                    }
+                    searchIconsList(hintCloud.getLabel(i));
                     hideHintCloud();
                 }
             }
@@ -325,7 +331,9 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         if (requestCode == 300) {
             DialogShower.hideLoadingDialog();
             if (NounFirebaseAuth.isAuthorized()) {
-                showMessage("Hello " + NounFirebaseAuth.getCurrentUserName() + "!");
+                StringBuilder sb = new StringBuilder();
+                sb.append("Hello ").append(NounFirebaseAuth.getCurrentUserName()).append("!");
+                showMessage(sb.toString());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -347,8 +355,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         progressBar.setVisibility(View.GONE);
         iconsGridList.setVisibility(View.GONE);
 
-        String emptyText;
-        emptyText = String.format(getString(R.string.we_didn_t_find_any_icons), '"' + searchText.getText().toString() + '"');
+        String emptyText = String.format(getString(R.string.we_didn_t_find_any_icons), '"' + searchText.getText().toString() + '"');
         emptyResponseText.setText(emptyText);
         emptyResponseLayout.setVisibility(View.VISIBLE);
         emptyResponseLayout.startAnimation(NounAnimations.getBecomeVisibleAnimation());
@@ -370,7 +377,15 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
                 searchText.setCompoundDrawables(null, null, null, null);
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
     }
 
 }

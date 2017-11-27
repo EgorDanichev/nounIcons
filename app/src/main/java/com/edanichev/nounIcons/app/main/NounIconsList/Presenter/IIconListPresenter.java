@@ -18,16 +18,23 @@
 
 package com.edanichev.nounIcons.app.main.NounIconsList.Presenter;
 
+import com.edanichev.nounIcons.app.main.NounIconsList.Model.Events.EmptyIconsListFromInteractorEvent;
+import com.edanichev.nounIcons.app.main.NounIconsList.Model.Events.IconsListFromInteractorEvent;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
-public interface MainPresenter {
+public interface IIconListPresenter {
 
     void onDestroy();
 
     void getIconsList(String term) throws IOException, NoSuchAlgorithmException, SignatureException, InvalidKeyException;
 
     void onCreate();
+
+    void onEmptyIconsList(EmptyIconsListFromInteractorEvent event);
+
+    void onIconsSearchResponse(IconsListFromInteractorEvent event);
 }

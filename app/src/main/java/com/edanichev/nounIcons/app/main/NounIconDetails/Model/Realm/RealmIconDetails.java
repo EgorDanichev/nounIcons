@@ -1,23 +1,28 @@
-package com.edanichev.nounIcons.app.main.NounIconDetails.Model;
+package com.edanichev.nounIcons.app.main.NounIconDetails.Model.Realm;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Tag;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
-public class IconDetails implements Parcelable{
+public class RealmIconDetails extends RealmObject implements Parcelable {
 
     private String id;
     private String preview_url_84;
     private String attribution_preview_url;
     private String preview_url;
     private String term;
-    private List<Tag> tags;
+    private RealmList<RealmTag> tags;
 
-    protected IconDetails(Parcel in) {
+    protected RealmIconDetails(Parcel in) {
         id = in.readString();
         preview_url_84 = in.readString();
         attribution_preview_url = in.readString();
@@ -25,25 +30,17 @@ public class IconDetails implements Parcelable{
         term = in.readString();
     }
 
-    public IconDetails() {
+    public RealmIconDetails() {
 
     }
 
-    public IconDetails(String id, String preview_url_84, String attribution_preview_url, String preview_url, String term, List<Tag> tags) {
+    public RealmIconDetails(String id, String preview_url_84, String attribution_preview_url, String preview_url, String term, RealmList<RealmTag> tags) {
         this.id = id;
         this.preview_url_84 = preview_url_84;
         this.attribution_preview_url = attribution_preview_url;
         this.preview_url = preview_url;
         this.term = term;
         this.tags = tags;
-    }
-
-    public IconDetails(String id, String preview_url_84, String attribution_preview_url, String preview_url, String term) {
-        this.id = id;
-        this.preview_url_84 = preview_url_84;
-        this.attribution_preview_url = attribution_preview_url;
-        this.preview_url = preview_url;
-        this.term = term;
     }
 
     public String getId() {
@@ -66,7 +63,7 @@ public class IconDetails implements Parcelable{
         return term;
     }
 
-    public List<Tag> getTags() {
+    public RealmList<RealmTag> getTags() {
         return tags;
     }
 
@@ -84,18 +81,33 @@ public class IconDetails implements Parcelable{
         parcel.writeString(term);
     }
 
-    public static final Creator<IconDetails> CREATOR = new Creator<IconDetails>() {
+    public static final Creator<RealmIconDetails> CREATOR = new Creator<RealmIconDetails>() {
         @Override
-        public IconDetails createFromParcel(Parcel in) {
-            return new IconDetails(in);
+        public RealmIconDetails createFromParcel(Parcel in) {
+            return new RealmIconDetails(in);
         }
 
         @Override
-        public IconDetails[] newArray(int size) {
-            return new IconDetails[size];
+        public RealmIconDetails[] newArray(int size) {
+            return new RealmIconDetails[size];
         }
     };
 
+    public static RealmList<RealmTag> convertToRealm(List<Tag> tags) {
+        RealmList<RealmTag> realmTags = new RealmList<>();
+        for (Tag tag : tags)
+            realmTags.add(new RealmTag(tag.getId(), tag.getSlug()));
 
+        return realmTags;
+    }
+
+    public static List<Tag> convertFromRealm(RealmList<RealmTag> realmTags) {
+        List<Tag> tags = new ArrayList<>();
+
+        for (RealmTag realmTag : realmTags) {
+            tags.add(new Tag(realmTag.getId(), realmTag.getSlug()));
+        }
+        return tags;
+    }
 
 }

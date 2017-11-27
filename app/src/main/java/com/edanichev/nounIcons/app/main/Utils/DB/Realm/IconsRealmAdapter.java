@@ -2,40 +2,51 @@ package com.edanichev.nounIcons.app.main.Utils.DB.Realm;
 
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
+import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Realm.RealmIcons;
 
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmList;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class IconsRealmAdapter {
-    private Realm realm;
 
     public IconsRealmAdapter() {
-        this.realm = Realm.getDefaultInstance();
     }
 
-    public void addIconsToCache(String request, List<IconDetails> icons) {
+    public void addIconsToCache(String requestUrl, List<IconDetails> icons) {
+        Realm realm = Realm.getInstance(config);
 
-        if (!checkCacheExists(request)) {
+        if (!checkCacheExists(requestUrl)) {
+            RealmIcons iconsForCache = new RealmIcons(requestUrl, icons);
             realm.beginTransaction();
-            Icons iconsForCache = new Icons((RealmList<IconDetails>) icons);
-            iconsForCache.setRequest(request);
             realm.copyToRealm(iconsForCache);
             realm.commitTransaction();
+            realm.close();
         }
     }
 
     public boolean checkCacheExists(String request) {
-        RealmResults<Icons> query = realm.where(Icons.class)
+        Realm realm = Realm.getInstance(config);
+
+        RealmResults<RealmIcons> query = realm.where(RealmIcons.class)
                 .equalTo("request", request).findAll();
         return query.size() != 0;
     }
 
-    public List<IconDetails> getIconsFromCache(String request) {
-        RealmResults<Icons> query = realm.where(Icons.class)
+    public Icons getIconsFromCache(String request) {
+        Realm realm = Realm.getInstance(config);
+
+        RealmResults<RealmIcons> query = realm.where(RealmIcons.class)
                 .equalTo("request", request).findAll();
-        return query.get(0).getIcons();
+
+        return RealmIcons.convertFromRealm(query.get(0));
     }
+
+    private RealmConfiguration config = new RealmConfiguration.Builder()
+            .schemaVersion(0)
+            .migration(new RealmMigration())
+            .build();
+
 }

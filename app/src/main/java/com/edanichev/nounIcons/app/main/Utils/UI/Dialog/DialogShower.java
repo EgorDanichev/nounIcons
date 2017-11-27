@@ -21,6 +21,7 @@ public class DialogShower {
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
                 context.startActivity(NounFirebaseAuth.getAuthIntent());
+                DialogShower.showLoadingDialog(context);
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {

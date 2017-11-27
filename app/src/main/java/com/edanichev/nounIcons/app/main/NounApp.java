@@ -2,12 +2,13 @@ package com.edanichev.nounIcons.app.main;
 
 import android.app.Application;
 
-import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
-import com.edanichev.nounIcons.app.main.Utils.DB.Realm.RealmMIgration;
+import com.edanichev.nounIcons.app.main.Utils.DB.Realm.RealmMigration;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.NounApiConfigEvent;
+import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.di.Component.AppComponent;
 import com.edanichev.nounIcons.app.main.Utils.di.Component.DaggerAppComponent;
+import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerDBModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerNetworkModule;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
@@ -37,12 +38,14 @@ public class NounApp extends Application {
                         .build());
 
         Realm.init(this);
+
         RealmConfiguration config = new RealmConfiguration.Builder()
-                .schemaVersion(4)
-                .migration(new RealmMIgration())
+                .schemaVersion(0)
+                .migration(new RealmMigration())
                 .build();
         Realm realm = Realm.getInstance(config);
         Realm.setDefaultConfiguration(config);
+        realm.close();
 
         EventBus.builder()
                 .sendNoSubscriberEvent(false)
@@ -63,11 +66,11 @@ public class NounApp extends Application {
 //                .penaltyLog()
 //                .penaltyDeath()
 //                .build());
+
 //        realm.beginTransaction();
 //        realm.deleteAll();
 //        realm.commitTransaction();
 
-        realm.close();
     }
 
     public static NounApp app() {
@@ -78,6 +81,7 @@ public class NounApp extends Application {
         if (component == null) {
             component = DaggerAppComponent.builder()
                     .daggerNetworkModule(new DaggerNetworkModule(BASE_NOUN_URL))
+                    .daggerDBModule(new DaggerDBModule())
                     .build();
         }
         return this.component;
@@ -85,6 +89,6 @@ public class NounApp extends Application {
 
     @Subscribe
     public void onNounApiConfigResponse(NounApiConfigEvent event) {
-        NounSharedPreferences.setNounApiConfig(event.getNoun_key(), event.getNoun_secret());
+        NounSharedPreferences.getInstance().setNounApiConfig(event.getNoun_key(), event.getNoun_secret());
     }
 }

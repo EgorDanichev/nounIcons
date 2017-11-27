@@ -1,7 +1,11 @@
 package com.edanichev.nounIcons.app.main.Utils.di.Modules;
 
-import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
+import android.content.Context;
+
 import com.edanichev.nounIcons.app.main.Utils.Auth.OAuthInterceptor;
+import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.IInternetStatus;
+import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus;
+import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPreferences;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.util.concurrent.TimeUnit;
@@ -12,6 +16,7 @@ import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
@@ -26,8 +31,8 @@ public class DaggerNetworkModule {
     @Singleton
     public OAuthInterceptor provideOAuthInterceptor() {
         return new OAuthInterceptor.Builder()
-                .consumerKey(NounSharedPreferences.getNounApiConfig().getNoun_key())
-                .consumerSecret(NounSharedPreferences.getNounApiConfig().getNoun_secret())
+                .consumerKey(NounSharedPreferences.getInstance().getNounApiConfig().getNoun_key())
+                .consumerSecret(NounSharedPreferences.getInstance().getNounApiConfig().getNoun_secret())
                 .build();
     }
 
@@ -50,7 +55,14 @@ public class DaggerNetworkModule {
                 .baseUrl(mBaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    public IInternetStatus provideIInternetStatus(Context context) {
+        return new InternetStatus(context);
     }
 
 }

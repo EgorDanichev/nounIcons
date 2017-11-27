@@ -1,6 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate;
 
-import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
+import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.TokenExpiredInterceptor;
 import com.edanichev.nounIcons.app.main.Utils.XML.XmlInterceptor;
@@ -49,7 +49,7 @@ public class TranslateCommand {
 
     public void translate(String text) {
 
-        service.translate("en", text, "Bearer " + NounSharedPreferences.getToken()).enqueue(
+        service.translate("en", text, "Bearer " + NounSharedPreferences.getInstance().getToken()).enqueue(
                 new Callback<Translation>() {
                     @Override
                     public void onResponse(Call<Translation> call, Response<Translation> response) {

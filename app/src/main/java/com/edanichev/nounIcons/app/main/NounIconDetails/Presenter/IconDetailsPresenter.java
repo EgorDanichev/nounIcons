@@ -7,9 +7,9 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetail
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentViewInterface;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
-import com.edanichev.nounIcons.app.main.Utils.Auth.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
+import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPreferences;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.greenrobot.eventbus.EventBus;
@@ -52,9 +52,8 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
 
     @Override
     public void onAuthDialogShow() {
-        //view.showLoaderDialog();
         registerAuthStateChangedListener();
-        NounSharedPreferences.setAuthDialogShown(true);
+        NounSharedPreferences.getInstance().setAuthDialogShown(true);
     }
 
     @Override
@@ -109,12 +108,10 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (NounSharedPreferences.isAuthDialogShown()) {
+                if (NounSharedPreferences.getInstance().isAuthDialogShown()) {
                     if (NounFirebaseAuth.isAuthorized()) {
-                        NounSharedPreferences.setAuthDialogShown(false);
+                        NounSharedPreferences.getInstance().setAuthDialogShown(false);
                         EventBus.getDefault().post(new AuthEvent(true));
-                    } else {
-                        EventBus.getDefault().post(new AuthEvent(false));
                     }
                 }
             }

@@ -4,10 +4,18 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class InternetStatus {
+import javax.inject.Inject;
 
-    public static final String NETWORK_CHANGE_MESSAGE = "XXX";
-    public static boolean isNetworkConnected(Context context) {
+public class InternetStatus implements IInternetStatus {
+
+    private Context context;
+
+    @Inject
+    public InternetStatus(Context context) {
+        this.context = context;
+    }
+
+    public boolean isNetworkConnected() {
         boolean inConnected = false;
         try {
             ConnectivityManager connectivity = (ConnectivityManager) context

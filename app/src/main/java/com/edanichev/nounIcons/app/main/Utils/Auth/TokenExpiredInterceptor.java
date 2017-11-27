@@ -1,6 +1,8 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth;
 
 import com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Token.TokenCommand;
+import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPreferences;
+
 import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -19,10 +21,10 @@ public class TokenExpiredInterceptor implements Interceptor {
         {
             TokenCommand tokenCommand = new TokenCommand();
             String token = tokenCommand.token();
-            NounSharedPreferences.setToken(token);
+            NounSharedPreferences.getInstance().setToken(token);
 
             Request.Builder requestBuilder = originalRequest.newBuilder()
-                    .header("Authorization", "Bearer " + NounSharedPreferences.getToken());
+                    .header("Authorization", "Bearer " + NounSharedPreferences.getInstance().getToken());
             Request newRequest = requestBuilder.build();
 
             return chain.proceed(newRequest);

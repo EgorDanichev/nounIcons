@@ -42,19 +42,13 @@ import com.squareup.picasso.Picasso;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipListener;
 
 public class IconDetailsFragmentView extends BottomSheetDialogFragment implements IconDetailsFragmentViewInterface {
     private final static String ICON_KEY = "icon";
-    private final static int AUTH_REQUEST_CODE = 100;
 
     private ProgressBar progress;
     private BottomSheetView bottomSheetImageView;
@@ -69,12 +63,15 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private Activity activity;
     public IIconDetailsPresenter iconDetailsPresenter;
 
-    public static void openIconDetails(IconDetails icon, FragmentManager fragmentManager) {
+    public static IconDetailsFragmentView openIconDetails(IconDetails icon, FragmentManager fragmentManager) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(ICON_KEY, icon);
-        BottomSheetDialogFragment bottomSheetFragment = new IconDetailsFragmentView();
+
+        IconDetailsFragmentView bottomSheetFragment = new IconDetailsFragmentView();
         bottomSheetFragment.setArguments(bundle);
         bottomSheetFragment.show(fragmentManager, bottomSheetFragment.getTag());
+
+        return bottomSheetFragment;
     }
 
     @Nullable
@@ -164,14 +161,15 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
             showMessage("Hello " + NounFirebaseAuth.getCurrentUserName() + "!");
             animateButton(favoriteButton);
         }
-        DialogShower.hideLoadingDialog();
+
+        hideLoaderDialog();
+
     }
 
     @Override
     public void showAuthDialog() {
-        DialogShower.showAuthDialog(getContext());
         iconDetailsPresenter.onAuthDialogShow();
-        showLoaderDialog();
+        DialogShower.showAuthDialog(getContext());
     }
 
     @Override
@@ -201,6 +199,10 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     @Override
     public void showLoaderDialog() {
         DialogShower.showLoadingDialog(getContext());
+    }
+
+    public void hideLoaderDialog() {
+        DialogShower.hideLoadingDialog();
     }
 
     private void animateButton(final ImageButton button) {
@@ -307,14 +309,10 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
             @Override
             public void chipCheckedChange(int i, boolean b, boolean b1) {
                 if (b) {
-                    try {
-                        if (activity instanceof MainActivity) {
-                            ((MainActivity) activity).searchIconsList(chipCloud.getLabel(i));
-                        } else {
-                            return;
-                        }
-                    } catch (IOException | ExecutionException | InterruptedException | NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-                        e.printStackTrace();
+                    if (activity instanceof MainActivity) {
+                        ((MainActivity) activity).searchIconsList(chipCloud.getLabel(i));
+                    } else {
+                        return;
                     }
                     dismiss();
                 }
