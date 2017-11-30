@@ -31,14 +31,12 @@ public class IconListPresenter extends MvpPresenter<MainView> implements IIconLi
 
     @Override
     public void onCreate() {
-        EventBus.getDefault().register(this);
         searchIconsInteractor.onCreate();
         checkInternet();
     }
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
         if (searchIconsInteractor != null) {
             searchIconsInteractor.onDestroy();
             searchIconsInteractor = null;
@@ -50,27 +48,10 @@ public class IconListPresenter extends MvpPresenter<MainView> implements IIconLi
         checkInternet();
         if (!term.equals("")) {
             getViewState().showProgress();
-
             searchIconsInteractor.getIcons(term, this);
-
-            //searchIconsInteractor.getIconsList(term);
-
         } else {
             getViewState().emptyQueryError();
         }
-    }
-
-    @Subscribe
-    @Override
-    public void onEmptyIconsList(EmptyIconsListFromInteractorEvent event) {
-        if (event.isEmpty)
-            getViewState().onEmptyIconsList();
-    }
-
-    @Subscribe
-    @Override
-    public void onIconsSearchResponse(IconsListFromInteractorEvent event) {
-        getViewState().showIconsList(event.icons);
     }
 
     @Override
@@ -89,5 +70,4 @@ public class IconListPresenter extends MvpPresenter<MainView> implements IIconLi
         else
             getViewState().hideSnack();
     }
-
 }

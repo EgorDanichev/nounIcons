@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -20,19 +18,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounApp;
+import com.edanichev.nounIcons.app.main.NounBase.BaseActivity;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Model.CloudTagsModel;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Presenter.HintCloudPresenter;
 import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
-import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.IconListPresenter;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
@@ -43,10 +39,6 @@ import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,20 +48,16 @@ import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipListener;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends MvpAppCompatActivity implements MainView, RecyclerViewAdapter.ItemClickListener, EasyPermissions.PermissionCallbacks, HintCloudView {
-    private final static int NUMBER_OF_COLUMNS = 3;
-
-    public DrawerView drawer;
+public class MainActivity extends BaseActivity implements MainView, RecyclerViewAdapter.ItemClickListener, EasyPermissions.PermissionCallbacks, HintCloudView {
+    private final static int NUMBER_OF_COLUMNS = 4;
 
     private ProgressBar progressBar;
     private EditText searchText;
     private RecyclerView iconsGridList;
     private Button searchIconsButton;
-    private Toolbar toolbar;
     private FlexboxLayout flexBox;
     private ChipCloud hintCloud;
     private ViewGroup hintLayout;
-    private Snackbar snackbar;
     private ViewGroup emptyResponseLayout;
     private TextView emptyResponseText;
 
@@ -95,15 +83,20 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
 
     private RecyclerViewAdapter iconListAdapter;
 
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+//    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    protected void initializeDagger() {
         NounApp.app().getComponent().inject(this);
-        findView();
+    }
 
+    @Override
+    protected void initializePresenter() {
         iconListPresenter.attachView(this);
         iconListPresenter.onCreate();
 
@@ -112,17 +105,22 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
     protected void onDestroy() {
         iconListPresenter.onDestroy();
-//        iconListPresenter.detachView(this);
-//        hintCloudPresenter.detachView(this);
+        iconListPresenter.detachView(this);
+        hintCloudPresenter.onDestroy();
+        hintCloudPresenter.detachView(this);
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-        int i = searchText.length();
-        if (i > 0) {
+        if (searchText.length() > 0) {
             searchIconsList(searchText.getText().toString());
         }
 
@@ -148,12 +146,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     @Override
     public void onEmptyIconsList() {
         showEmptyIconsListMessage();
-    }
-
-    @Override
-    public void showMessage(String message) {
-        hideProgress();
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -201,22 +193,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     @Override
     public void showHintCloud() {
         hintLayout.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showSnack(String text) {
-        snackbar = Snackbar.make(iconsGridList, text, Snackbar.LENGTH_INDEFINITE);
-        snackbar.show();
-    }
-
-    @Override
-    public void hideSnack() {
-        if (snackbar != null) snackbar.dismiss();
-    }
-
-    private void hideKeyboard() {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
     }
 
     private void createAdapter() {
@@ -274,16 +250,15 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         }
     };
 
-    private void findView() {
+    @Override
+    protected void findView() {
         getWindow().setBackgroundDrawable(null);
-        drawer = new DrawerView(this);
 
         progressBar = findViewById(R.id.progress);
         searchText = findViewById(R.id.search_edit);
         setSearchTextDefault();
         iconsGridList = findViewById(R.id.items_grid_list);
         searchIconsButton = findViewById(R.id.icon_list_button);
-        toolbar = findViewById(R.id.toolbar);
         flexBox = findViewById(R.id.hint_cloud);
         hintLayout = findViewById(R.id.hint_layout);
         emptyResponseLayout = findViewById(R.id.empty_response_layout);
@@ -294,18 +269,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
         searchText.setOnKeyListener(searchKeyListener());
         searchText.addTextChangedListener(onSearchTextChangerListener);
         hintCloud.setListener(onChipClickListener());
-
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(IconLoader.getBurgerIcon());
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawer.openDrawer();
-                hideKeyboard();
-            }
-        });
     }
 
     private ChipListener onChipClickListener() {
@@ -348,8 +311,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-    }
+    public void onPermissionsDenied(int requestCode, List<String> perms) {}
 
     private void showEmptyIconsListMessage() {
         progressBar.setVisibility(View.GONE);
@@ -377,15 +339,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Recy
                 searchText.setCompoundDrawables(null, null, null, null);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawer.isDrawerOpen()) {
-            drawer.closeDrawer();
-        } else {
-            super.onBackPressed();
-        }
     }
 
 }

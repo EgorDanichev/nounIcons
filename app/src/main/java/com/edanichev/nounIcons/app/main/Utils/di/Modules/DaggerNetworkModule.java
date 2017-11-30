@@ -28,7 +28,6 @@ public class DaggerNetworkModule {
     }
 
     @Provides
-    @Singleton
     public OAuthInterceptor provideOAuthInterceptor() {
         return new OAuthInterceptor.Builder()
                 .consumerKey(NounSharedPreferences.getInstance().getNounApiConfig().getNoun_key())
@@ -37,7 +36,6 @@ public class DaggerNetworkModule {
     }
 
     @Provides
-    @Singleton
     public OkHttpClient provideOkHttpClient(OAuthInterceptor oauthInterceptor) {
         return new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)

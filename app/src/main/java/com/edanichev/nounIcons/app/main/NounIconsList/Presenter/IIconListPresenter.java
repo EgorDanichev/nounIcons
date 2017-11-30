@@ -18,9 +18,6 @@
 
 package com.edanichev.nounIcons.app.main.NounIconsList.Presenter;
 
-import com.edanichev.nounIcons.app.main.NounIconsList.Model.Events.EmptyIconsListFromInteractorEvent;
-import com.edanichev.nounIcons.app.main.NounIconsList.Model.Events.IconsListFromInteractorEvent;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -34,7 +31,4 @@ public interface IIconListPresenter {
 
     void onCreate();
 
-    void onEmptyIconsList(EmptyIconsListFromInteractorEvent event);
-
-    void onIconsSearchResponse(IconsListFromInteractorEvent event);
 }

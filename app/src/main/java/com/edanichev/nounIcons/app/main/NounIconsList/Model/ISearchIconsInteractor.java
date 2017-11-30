@@ -11,15 +11,9 @@ import java.security.SignatureException;
 
 public interface ISearchIconsInteractor {
 
-    void getIconsList(String term);
-
     void onDestroy();
 
     void onCreate();
 
-    void onIconsSearchResponse(IconsListFromCommandEvent event);
-
-    void onEmptyIconsList(EmptyIconsListFromCommandEvent event);
-
-    void getIcons (String term, IconsCallback callback);
+    void getIcons(String term, IconsCallback callback);
 }

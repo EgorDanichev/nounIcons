@@ -39,14 +39,6 @@ public class NounApp extends Application {
 
         Realm.init(this);
 
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .schemaVersion(0)
-                .migration(new RealmMigration())
-                .build();
-        Realm realm = Realm.getInstance(config);
-        Realm.setDefaultConfiguration(config);
-        realm.close();
-
         EventBus.builder()
                 .sendNoSubscriberEvent(false)
                 .installDefaultEventBus();

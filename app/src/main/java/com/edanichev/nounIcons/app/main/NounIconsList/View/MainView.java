@@ -1,11 +1,12 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import com.arellomobile.mvp.MvpView;
+import com.edanichev.nounIcons.app.main.NounBase.IBaseActivityView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 
 import java.util.List;
 
-public interface MainView extends MvpView {
+public interface MainView extends MvpView, IBaseActivityView {
 
     void showProgress();
 
@@ -13,14 +14,9 @@ public interface MainView extends MvpView {
 
     void onEmptyIconsList();
 
-    void showMessage(String message);
-
     void showIconsList(List<IconDetails> icons);
 
     void emptyQueryError();
 
-    void showSnack(String text);
-
-    void hideSnack();
 }
 

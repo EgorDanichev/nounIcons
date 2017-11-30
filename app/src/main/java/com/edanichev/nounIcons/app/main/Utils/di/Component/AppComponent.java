@@ -1,16 +1,15 @@
 package com.edanichev.nounIcons.app.main.Utils.di.Component;
 
-import com.edanichev.nounIcons.app.main.NounHintCloud.Model.IHintCloudInteractor;
-import com.edanichev.nounIcons.app.main.NounHintCloud.Presenter.HintCloudPresenter;
+import com.edanichev.nounIcons.app.main.NounIconsList.Model.SearchIconsInteractor;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
-import com.edanichev.nounIcons.app.main.Utils.BuildConfig.INounConfig;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
-import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.INounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerApplicationContextModule;
+import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerCommandModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerConfigModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerDBModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerInteractorModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerNetworkModule;
+import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerRXModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerSharedPreferencesModule;
 
 import javax.inject.Singleton;
@@ -24,18 +23,21 @@ import dagger.Component;
         DaggerSharedPreferencesModule.class,
         DaggerInteractorModule.class,
         DaggerConfigModule.class,
-        DaggerApplicationContextModule.class
+        DaggerApplicationContextModule.class,
+        DaggerRXModule.class,
+        DaggerCommandModule.class
 })
 public interface AppComponent {
-    void inject(GetIconsCommand target);
 
     void inject(MainActivity activity);
 
-    INounSharedPreferences prefs();
+    void inject(SearchIconsInteractor interactor);
 
-    IHintCloudInteractor interactor();
-
-    HintCloudPresenter hintCloudPresenter();
-
-    INounConfig config();
+//    INounSharedPreferences prefs();
+//
+//    IHintCloudInteractor interactor();
+//
+//    HintCloudPresenter hintCloudPresenter();
+//
+//    INounConfig config();
 }
