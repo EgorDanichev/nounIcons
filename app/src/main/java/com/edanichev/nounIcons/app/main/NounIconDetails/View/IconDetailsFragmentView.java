@@ -161,9 +161,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
             showMessage("Hello " + NounFirebaseAuth.getCurrentUserName() + "!");
             animateButton(favoriteButton);
         }
-
         hideLoaderDialog();
-
     }
 
     @Override
@@ -250,6 +248,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
                     @Override
                     public void onSuccess() {
                         hideProgress();
+                        bottomSheetImageView.startAnimation(NounAnimations.getBecomeVisibleAnimation(NounAnimations.LONG_FADE));
                     }
 
                     @Override

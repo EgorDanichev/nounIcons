@@ -18,17 +18,11 @@ public class DialogShower {
         dialog = new AlertDialog.Builder(context);
         dialog.setTitle("Do you want to authorize?");
         dialog.setMessage("You need authorization to add icon to favorites");
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                context.startActivity(NounFirebaseAuth.getAuthIntent());
-                DialogShower.showLoadingDialog(context);
-            }
+        dialog.setPositiveButton("Yes", (dialog1, arg1) -> {
+            context.startActivity(NounFirebaseAuth.getAuthIntent());
+            DialogShower.showLoadingDialog(context);
         });
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                hideLoadingDialog();
-            }
-        });
+        dialog.setNegativeButton("No", (dialog12, arg1) -> hideLoadingDialog());
         dialog.setCancelable(true);
         dialog.show();
     }

@@ -31,6 +31,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.IconListPresenter;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.NounIconListService;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
@@ -82,13 +83,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     }
 
     private RecyclerViewAdapter iconListAdapter;
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//    }
 
     @Override
     protected void initializeDagger() {
@@ -238,7 +232,7 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     private void showEmptyIconsList() {
         hideProgress();
         createAdapter();
-        iconListAdapter.setItems(new ArrayList<IconDetails>());
+        iconListAdapter.setItems(new ArrayList<>());
         iconsGridList.scrollToPosition(0);
     }
 
@@ -311,7 +305,8 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {}
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+    }
 
     private void showEmptyIconsListMessage() {
         progressBar.setVisibility(View.GONE);
@@ -320,7 +315,7 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         String emptyText = String.format(getString(R.string.we_didn_t_find_any_icons), '"' + searchText.getText().toString() + '"');
         emptyResponseText.setText(emptyText);
         emptyResponseLayout.setVisibility(View.VISIBLE);
-        emptyResponseLayout.startAnimation(NounAnimations.getBecomeVisibleAnimation());
+        emptyResponseLayout.startAnimation(NounAnimations.getBecomeVisibleAnimation(NounAnimations.LONG_FADE));
     }
 
     private void hideEmptyIconsListMessage() {
@@ -333,12 +328,7 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     private void setSearchTextDefault() {
         searchText.setCompoundDrawables(IconLoader.getSearchIcon(), null, null, null);
         searchText.setCompoundDrawablePadding(15);
-        searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                searchText.setCompoundDrawables(null, null, null, null);
-            }
-        });
+        searchText.setOnFocusChangeListener((view, b) -> searchText.setCompoundDrawables(null, null, null, null));
     }
 
 }

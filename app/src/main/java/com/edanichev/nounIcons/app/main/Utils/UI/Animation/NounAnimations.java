@@ -9,6 +9,9 @@ public class NounAnimations {
     private final static float FULLY_VISIBLE = 1.0f;
     private final static float FULLY_INVISIBLE = 0.0f;
 
+    public final static int SHORT_FADE = 500;
+    public final static int LONG_FADE = 500;
+
     public static Animation getBecomeInvisibleAnimation() {
         Animation animation = new AlphaAnimation(FULLY_VISIBLE, FULLY_INVISIBLE);
         animation.setDuration(500);
@@ -16,9 +19,9 @@ public class NounAnimations {
         return animation;
     }
 
-    public static Animation getBecomeVisibleAnimation() {
+    public static Animation getBecomeVisibleAnimation(int duration) {
         Animation animation = new AlphaAnimation(FULLY_INVISIBLE, FULLY_VISIBLE);
-        animation.setDuration(1000);
+        animation.setDuration(duration);
         animation.setFillAfter(true);
         return animation;
     }
