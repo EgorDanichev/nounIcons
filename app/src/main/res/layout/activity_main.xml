@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/md_white_1000"
+    android:background="@color/white_color"
     android:clipToPadding="false"
     tools:context="com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity">
 
@@ -30,10 +30,10 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/md_white_1000"
+                android:background="@color/white_color"
                 android:elevation="4dp"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -43,7 +43,7 @@
                     android:id="@+id/input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/md_white_1000"
+                    android:background="@color/white_color"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:orientation="horizontal">
@@ -55,7 +55,7 @@
                         android:layout_gravity="bottom"
                         android:layout_marginTop="10dp"
                         android:layout_weight="20"
-                        android:backgroundTint="@android:color/black"
+                        android:backgroundTint="@color/black_color"
                         android:textColorHint="@color/chuck_status_requested">
 
                         <EditText
@@ -66,10 +66,10 @@
                             android:hint="@string/enter_tag_to_search_icons"
                             android:inputType="text|textNoSuggestions"
                             android:maxLines="1"
-                            android:shadowColor="@android:color/black"
-                            android:textColor="@android:color/black"
+                            android:shadowColor="@color/black_color"
+                            android:textColor="@color/black_color"
                             android:textColorHint="@color/chuck_status_requested"
-                            android:textColorLink="@android:color/black" />
+                            android:textColorLink="@color/black_color" />
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -86,7 +86,6 @@
                     android:id="@+id/hint_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/input_layout"
                     android:layout_marginBottom="5dp"
                     android:paddingLeft="30dp">
 
@@ -97,7 +96,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
                         android:maxLines="1"
-                        android:text="For example: "
+                        android:text="@string/for_example"
                         android:textSize="15sp" />
 
                     <com.google.android.flexbox.FlexboxLayout
@@ -113,12 +112,11 @@
 
                 </RelativeLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -149,8 +147,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal">
+                    android:layout_height="match_parent">
 
                     <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
                         android:id="@+id/progress"
@@ -164,7 +161,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_centerHorizontal="true"
-                        android:layout_centerInParent="true"
                         android:clickable="true" />
 
                 </RelativeLayout>

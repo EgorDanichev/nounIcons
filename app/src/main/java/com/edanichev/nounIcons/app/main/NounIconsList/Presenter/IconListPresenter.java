@@ -32,7 +32,6 @@ public class IconListPresenter extends MvpPresenter<MainView> implements IIconLi
     @Override
     public void onCreate() {
         searchIconsInteractor.onCreate();
-        checkInternet();
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 
 import java.util.List;
 
-public interface MainView extends MvpView, IBaseActivityView {
+public interface MainView extends IBaseActivityView {
 
     void showProgress();
 

@@ -1,6 +1,8 @@
 package com.edanichev.nounIcons.app.main.NounBase;
 
-public interface IBaseActivityView {
+import com.arellomobile.mvp.MvpView;
+
+public interface IBaseActivityView extends MvpView {
     void showSnack(String text);
 
     void hideSnack();

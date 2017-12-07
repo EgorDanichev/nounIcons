@@ -1,37 +1,35 @@
 <resources>
+
     <style name="AppTheme" parent="android:Theme.DeviceDefault.Light.DarkActionBar">
         <item name="android:windowActionBarOverlay">true</item>
     </style>
 
-
     <style name="TextAppearence.App.TextInputLayout" parent="@android:style/TextAppearance">
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">@color/black_color</item>
         <item name="colorControlNormal">@android:color/darker_gray</item>
 
-        <item name="colorControlActivated">@android:color/black</item>
+        <item name="colorControlActivated">@color/black_color</item>
         <item name="colorControlHighlight">@android:color/darker_gray</item>
     </style>
 
     <style name="MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@android:color/white</item>
-        <item name="colorPrimaryDark">@android:color/black</item>
-        <item name="colorAccent">@android:color/black</item>
+        <item name="colorPrimary">@color/white_color</item>
+        <item name="colorPrimaryDark">@color/black_color</item>
+        <item name="colorAccent">@color/black_color</item>
     </style>
 
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="android:textColorPrimary">@color/chuck_colorAccent</item>
-        <item name="actionMenuTextColor">@color/chuck_colorAccent</item>
-        <item name="colorAccent">@android:color/background_dark</item>
-        <item name="colorControlNormal">@android:color/background_dark</item>
-        <item name="colorControlActivated">@android:color/background_dark</item>
-        <item name="colorControlHighlight">@android:color/background_dark</item>
+        <item name="android:textColorPrimary">@color/main_color</item>
+        <item name="actionMenuTextColor">@color/main_color</item>
+        <item name="colorAccent">@color/black_color</item>
+        <item name="colorControlNormal">@color/black_color</item>
+        <item name="colorControlActivated">@color/black_color</item>
+        <item name="colorControlHighlight">@color/black_color</item>
     </style>
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">21sp</item>
         <item name="android:textStyle">bold</item>
     </style>
-
-
 
 </resources>

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/md_white_1000"
+    android:background="@color/white_color"
     android:clipToPadding="false"
     tools:context="com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity">
 
@@ -33,7 +33,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/md_white_1000"
+                android:background="@color/white_color"
                 android:elevation="4dp"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -43,20 +43,19 @@
                     android:id="@+id/input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/md_white_1000"
+                    android:background="@color/white_color"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:orientation="horizontal">
 
                     <android.support.design.widget.TextInputLayout
-                        android:id="@+id/signup_input_layout_name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_weight="20"
-                        android:backgroundTint="@android:color/black"
-                        android:textColorHint="@color/chuck_status_requested">
+                        android:backgroundTint="@color/black_color"
+                        android:textColorHint="@color/gray_btn_bg_color">
 
                         <EditText
                             android:id="@+id/search_edit"
@@ -66,10 +65,10 @@
                             android:hint="@string/enter_tag_to_search_icons"
                             android:inputType="text|textNoSuggestions"
                             android:maxLines="1"
-                            android:shadowColor="@android:color/black"
-                            android:textColor="@android:color/black"
-                            android:textColorHint="@color/chuck_status_requested"
-                            android:textColorLink="@android:color/black" />
+                            android:shadowColor="@color/black_color"
+                            android:textColor="@color/black_color"
+                            android:textColorHint="@color/gray_btn_bg_color"
+                            android:textColorLink="@color/black_color" />
 
                     </android.support.design.widget.TextInputLayout>
 

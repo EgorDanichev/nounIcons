@@ -7,11 +7,8 @@ public class AuthEvent {
         this.isSuccess = isSucess;
     }
 
-    public boolean isSucess() {
+    public boolean isSuccess() {
         return isSuccess;
     }
 
-    public void setSucess(boolean sucess) {
-        isSuccess = sucess;
-    }
 }

@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -21,11 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
+import com.edanichev.nounIcons.app.main.NounBase.BaseActivity;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Tag;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IIconDetailsPresenter;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsPresenter;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
+import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
 import com.edanichev.nounIcons.app.main.Utils.String.StringUtils;
@@ -60,10 +61,12 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private ImageButton shareButton;
     private Button iconButton;
 
-    private Activity activity;
+    private BaseActivity activity;
     public IIconDetailsPresenter iconDetailsPresenter;
 
     public static IconDetailsFragmentView openIconDetails(IconDetails icon, FragmentManager fragmentManager) {
+
+        NounFirebaseAnalytics.registerOpenIconDetailsEvent();
         Bundle bundle = new Bundle();
         bundle.putParcelable(ICON_KEY, icon);
 
@@ -95,15 +98,12 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
-                    FrameLayout bottomSheet = dialog.findViewById(android.support.design.R.id.design_bottom_sheet);
-                    BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
-                    behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
+        view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
+                FrameLayout bottomSheet = dialog.findViewById(android.support.design.R.id.design_bottom_sheet);
+                BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         });
     }
@@ -112,7 +112,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof Activity) {
-            activity = (Activity) context;
+            activity = (BaseActivity) context;
         }
     }
 
@@ -156,12 +156,14 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     @Subscribe
     @Override
     public void onAuthResult(AuthEvent event) {
-        if (event.isSucess()) {
+        if (event.isSuccess()) {
             iconDetailsPresenter.onFavoriteButtonClick(iconData);
             showMessage("Hello " + NounFirebaseAuth.getCurrentUserName() + "!");
             animateButton(favoriteButton);
+            activity.setMarkedBurger();
         }
         hideLoaderDialog();
+        NounFirebaseAnalytics.registerAuthResultEvent(event.isSuccess());
     }
 
     @Override
@@ -248,7 +250,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
                     @Override
                     public void onSuccess() {
                         hideProgress();
-                        bottomSheetImageView.startAnimation(NounAnimations.getBecomeVisibleAnimation(NounAnimations.LONG_FADE));
+                        bottomSheetImageView.startAnimation(NounAnimations.getBecomeVisibleAnimation(NounAnimations.SHORT_FADE));
                     }
 
                     @Override
@@ -276,45 +278,26 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     }
 
     private View.OnClickListener onFavoriteButtonClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                iconDetailsPresenter.onFavoriteButtonClick(iconData);
-            }
-        };
+        return view -> iconDetailsPresenter.onFavoriteButtonClick(iconData);
     }
 
     private View.OnClickListener onIconImageClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        };
+        return view -> dismiss();
     }
 
     private View.OnClickListener onShareButtonClickListener() {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                shareIconImage();
-            }
-        };
+        return view -> shareIconImage();
     }
 
     private ChipListener onChipClickListener() {
-        return new ChipListener() {
-            @Override
-            public void chipCheckedChange(int i, boolean b, boolean b1) {
-                if (b) {
-                    if (activity instanceof MainActivity) {
-                        ((MainActivity) activity).searchIconsList(chipCloud.getLabel(i));
-                    } else {
-                        return;
-                    }
-                    dismiss();
+        return (i, b, b1) -> {
+            if (b) {
+                if (activity instanceof MainActivity) {
+                    ((MainActivity) activity).searchIconsList(chipCloud.getLabel(i));
+                } else {
+                    return;
                 }
+                dismiss();
             }
         };
     }

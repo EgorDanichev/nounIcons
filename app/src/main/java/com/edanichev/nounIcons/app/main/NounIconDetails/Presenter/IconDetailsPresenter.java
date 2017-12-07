@@ -6,6 +6,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.IconChangeFavoritesCallb
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentViewInterface;
+import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
@@ -25,7 +26,10 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
 
     @Override
     public void onFavoriteButtonClick(IconDetails icon) {
-        if (NounFirebaseAuth.isAuthorized()) {
+        boolean isAuthorized = NounFirebaseAuth.isAuthorized();
+
+        if (isAuthorized) {
+            NounFirebaseAnalytics.registerOnFavoriteButtonClick(isAuthorized);
             if (!favorite) {
                 addToFavorites(FirebaseIconDetails.converter(icon));
                 view.setFavoriteButtonStatus(true);
@@ -36,6 +40,7 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
                 favorite = false;
             }
         } else {
+            NounFirebaseAnalytics.registerOnFavoriteButtonClick(isAuthorized);
             view.showAuthDialog();
         }
     }

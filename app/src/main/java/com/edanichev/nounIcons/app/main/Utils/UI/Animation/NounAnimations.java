@@ -10,7 +10,7 @@ public class NounAnimations {
     private final static float FULLY_INVISIBLE = 0.0f;
 
     public final static int SHORT_FADE = 500;
-    public final static int LONG_FADE = 500;
+    public final static int LONG_FADE = 1000;
 
     public static Animation getBecomeInvisibleAnimation() {
         Animation animation = new AlphaAnimation(FULLY_VISIBLE, FULLY_INVISIBLE);

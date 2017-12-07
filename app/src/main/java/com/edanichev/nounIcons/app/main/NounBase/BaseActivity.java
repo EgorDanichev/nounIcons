@@ -3,10 +3,11 @@ package com.edanichev.nounIcons.app.main.NounBase;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -18,8 +19,8 @@ import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 public abstract class BaseActivity extends MvpAppCompatActivity implements IBaseActivityView {
 
-    protected DrawerView drawer;
-    protected Toolbar toolbar;
+    public DrawerView drawer;
+    public Toolbar toolbar;
     protected Snackbar snackbar;
 
     @Override
@@ -29,11 +30,15 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
         setContentView(getLayoutId());
 
         findView();
-        initializeToolbar();
         initializeDagger();
         initializePresenter();
         initializeDrawer();
+    }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        initializeToolbar();
+        super.onPostCreate(savedInstanceState);
     }
 
     @Override
@@ -74,19 +79,24 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
 
     public abstract int getLayoutId();
 
+    public void setDefaultBurger() {
+        toolbar.setNavigationIcon(IconLoader.getBurgerIcon(this));
+    }
+
+    public void setMarkedBurger() {
+        toolbar.setNavigationIcon(IconLoader.getMarkedBurgerIcon(this));
+    }
+
     protected void initializeToolbar() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(IconLoader.getBurgerIcon());
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        setDefaultBurger();
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawer.openDrawer();
-                hideKeyboard();
-            }
+        toolbar.setNavigationOnClickListener(v -> {
+            drawer.openDrawer();
+            hideKeyboard();
         });
+
     }
 
     protected void initializeDrawer() {

@@ -4,7 +4,7 @@
     android:id="@+id/bottomsheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/chuck_colorAccent">
+    android:background="@color/main_color">
 
     <LinearLayout
         android:id="@+id/linear_layout"

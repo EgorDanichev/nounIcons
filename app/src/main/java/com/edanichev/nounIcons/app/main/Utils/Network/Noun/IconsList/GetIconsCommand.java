@@ -46,7 +46,6 @@ public class GetIconsCommand implements IGetIconsCommand {
                     } else {
                         e.onError(new EmptyListException("Empty response"));
                     }
-
                 }
 
         );

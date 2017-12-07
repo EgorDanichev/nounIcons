@@ -1,19 +1,17 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -30,15 +28,15 @@ import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.IconListPresenter;
+import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.NounIconListService;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 import com.google.android.flexbox.FlexboxLayout;
-import com.mikepenz.iconics.context.IconicsLayoutInflater2;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,9 +112,9 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
 
     @Override
     protected void onResume() {
-        if (searchText.length() > 0) {
-            searchIconsList(searchText.getText().toString());
-        }
+//        if (searchText.length() > 0) {
+//            searchIconsList(searchText.getText().toString());
+//        }
 
         if (getWindow() != null) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -161,6 +159,9 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     public void searchIconsList(String iconsQuery) {
         searchText.setText(iconsQuery);
         iconListPresenter.getIconsList(iconsQuery.trim());
+
+        NounFirebaseAnalytics.registerSearchEvent(iconsQuery);
+
     }
 
     @Override
@@ -197,17 +198,15 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     }
 
     private View.OnKeyListener searchKeyListener() {
-        return new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                boolean isEnterKeyPressed = event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER;
+        return (v, keyCode, event) -> {
+            boolean isEnterKeyPressed = event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER;
 
-                if (isEnterKeyPressed) {
-                    searchIconsList(searchText.getText().toString());
-                    hideKeyboard();
-                    return true;
-                }
-                return false;
+            if (isEnterKeyPressed) {
+                searchIconsList(searchText.getText().toString());
+                hideKeyboard();
+                return true;
             }
+            return false;
         };
     }
 
@@ -266,13 +265,10 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     }
 
     private ChipListener onChipClickListener() {
-        return new ChipListener() {
-            @Override
-            public void chipCheckedChange(int i, boolean b, boolean b1) {
-                if (b) {
-                    searchIconsList(hintCloud.getLabel(i));
-                    hideHintCloud();
-                }
+        return (i, b, b1) -> {
+            if (b) {
+                searchIconsList(hintCloud.getLabel(i));
+                hideHintCloud();
             }
         };
     }

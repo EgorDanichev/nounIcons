@@ -64,7 +64,7 @@ public class IconShare {
             FileOutputStream out = new FileOutputStream(file);
 
             Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-            imageWithBG.eraseColor(activity.getResources().getColor(R.color.shared_icon_color));
+            imageWithBG.eraseColor(activity.getResources().getColor(R.color.white_color));
             Canvas canvas = new Canvas(imageWithBG);
             canvas.drawBitmap(bitmap, 0f, 0f, null);
 

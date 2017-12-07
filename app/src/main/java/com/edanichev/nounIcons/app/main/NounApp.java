@@ -11,6 +11,7 @@ import com.edanichev.nounIcons.app.main.Utils.di.Component.DaggerAppComponent;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerDBModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerNetworkModule;
 import com.facebook.stetho.Stetho;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,6 +23,8 @@ import io.realm.RealmConfiguration;
 public class NounApp extends Application {
     private final static String BASE_NOUN_URL = "http://api.thenounproject.com/";
     private AppComponent component;
+    private FirebaseAnalytics analytics;
+
     private static NounApp app;
 
     @Override
@@ -45,6 +48,9 @@ public class NounApp extends Application {
 
         EventBus.getDefault().register(this);
         FirebaseAdapter.getConfigKey();
+
+        analytics = FirebaseAnalytics.getInstance(this);
+
 
 //        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 //                .detectDiskReads()
@@ -83,4 +89,9 @@ public class NounApp extends Application {
     public void onNounApiConfigResponse(NounApiConfigEvent event) {
         NounSharedPreferences.getInstance().setNounApiConfig(event.getNoun_key(), event.getNoun_secret());
     }
+
+    public FirebaseAnalytics getAnalytics() {
+        return analytics;
+    }
+
 }

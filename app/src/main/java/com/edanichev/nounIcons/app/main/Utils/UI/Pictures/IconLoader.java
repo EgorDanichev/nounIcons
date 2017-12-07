@@ -1,11 +1,21 @@
 package com.edanichev.nounIcons.app.main.Utils.UI.Pictures;
 
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 
+import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounApp;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+
+import static android.graphics.Bitmap.createScaledBitmap;
 
 public class IconLoader {
 
@@ -37,11 +47,20 @@ public class IconLoader {
                 .sizeDp(20);
     }
 
-    public static IconicsDrawable getBurgerIcon() {
-        return new IconicsDrawable(NounApp.app())
-                .icon(GoogleMaterial.Icon.gmd_view_headline)
-                .color(Color.BLACK)
-                .sizeDp(24);
+    public static Drawable getBurgerIcon(Context context) {
+        Resources r = context.getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, r.getDisplayMetrics());
+        Drawable icon = context.getDrawable(R.drawable.toolbar_burger);
+        Bitmap bitmap = ((BitmapDrawable) icon).getBitmap();
+        return new BitmapDrawable(context.getResources(), createScaledBitmap(bitmap, px, px, true));
+    }
+
+    public static Drawable getMarkedBurgerIcon(Context context) {
+        Resources r = context.getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, r.getDisplayMetrics());
+        Drawable icon = context.getDrawable(R.drawable.toolbar_burger_marked);
+        Bitmap bitmap = ((BitmapDrawable) icon).getBitmap();
+        return new BitmapDrawable(context.getResources(), createScaledBitmap(bitmap, px, px, true));
     }
 
     public static IconicsDrawable getEmptyAccountIcon() {

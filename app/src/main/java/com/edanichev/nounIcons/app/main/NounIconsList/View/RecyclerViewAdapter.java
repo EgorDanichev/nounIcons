@@ -37,11 +37,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        try {
-            holder.bind(position);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        holder.bind(position);
     }
 
     @Override
@@ -72,21 +68,29 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
 
-        protected void bind(int position) throws IOException {
-            Picasso.with(itemView.getContext())
-                    .load(iconsList.get(position).getPreview_url_84())
-                    .placeholder(R.drawable.grid_placeholder)
-                    .into(iconImage, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            iconImage.startAnimation(animation);
-                        }
+        protected void bind(int position) {
+            if (iconImage.getDrawable() != null) {
+                Picasso.with(itemView.getContext())
+                        .load(iconsList.get(position).getPreview_url_84())
+                        .placeholder(R.drawable.grid_placeholder)
+                        .into(iconImage);
+            }
+            else {
+                Picasso.with(itemView.getContext())
+                        .load(iconsList.get(position).getPreview_url_84())
+                        .placeholder(R.drawable.grid_placeholder)
+                        .into(iconImage, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                iconImage.startAnimation(animation);
+                            }
 
-                        @Override
-                        public void onError() {
+                            @Override
+                            public void onError() {
 
-                        }
-                    });
+                            }
+                        });
+            }
         }
 
     }
