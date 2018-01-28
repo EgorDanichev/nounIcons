@@ -58,7 +58,7 @@ public class IconLoader {
     public static Drawable getMarkedBurgerIcon(Context context) {
         Resources r = context.getResources();
         int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, r.getDisplayMetrics());
-        Drawable icon = context.getDrawable(R.drawable.toolbar_burger_marked);
+        Drawable icon = context.getDrawable(R.drawable.toolbar_burger);
         Bitmap bitmap = ((BitmapDrawable) icon).getBitmap();
         return new BitmapDrawable(context.getResources(), createScaledBitmap(bitmap, px, px, true));
     }

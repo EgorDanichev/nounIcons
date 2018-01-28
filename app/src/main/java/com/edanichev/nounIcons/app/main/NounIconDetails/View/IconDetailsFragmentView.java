@@ -17,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounBase.BaseActivity;
@@ -36,6 +35,7 @@ import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.BottomSheetView;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
+import com.edanichev.nounIcons.app.main.Utils.UI.Toast.ToastShower;
 import com.google.android.flexbox.FlexboxLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -146,11 +146,11 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     @Override
     public void showMessageOnRemove() {
-        showMessage(getContext().getResources().getString(R.string.icon_deleted_from_favorites));
+        ToastShower.showDefaultToast(getContext().getResources().getString(R.string.icon_deleted_from_favorites), activity);
     }
 
     private void showMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        ToastShower.showSuccessToast(message, activity);
     }
 
     @Subscribe

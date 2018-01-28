@@ -3,7 +3,6 @@ package com.edanichev.nounIcons.app.main;
 import android.app.Application;
 
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
-import com.edanichev.nounIcons.app.main.Utils.DB.Realm.RealmMigration;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.NounApiConfigEvent;
 import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPreferences;
 import com.edanichev.nounIcons.app.main.Utils.di.Component.AppComponent;
@@ -18,7 +17,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class NounApp extends Application {
     private final static String BASE_NOUN_URL = "http://api.thenounproject.com/";

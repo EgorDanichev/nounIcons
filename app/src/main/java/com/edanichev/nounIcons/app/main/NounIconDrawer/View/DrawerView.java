@@ -1,14 +1,10 @@
 package com.edanichev.nounIcons.app.main.NounIconDrawer.View;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounBase.BaseActivity;
@@ -20,6 +16,7 @@ import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
 import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
+import com.edanichev.nounIcons.app.main.Utils.UI.Toast.ToastShower;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -252,12 +249,12 @@ public class DrawerView implements FavoriteIconsListCallback {
 
             if (drawerItem.getIdentifier() == SIGN_OUT_ITEM_ID) {
                 AuthUI.getInstance()
-                        .signOut((FragmentActivity) activity)
+                        .signOut(activity)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 refreshSignOut();
                                 refreshProfile();
-                                Toast.makeText(activity, activity.getResources().getString(R.string.last_word), Toast.LENGTH_SHORT).show();
+                                ToastShower.showDefaultToast(activity.getResources().getString(R.string.last_word), activity);
                             }
                         });
             }

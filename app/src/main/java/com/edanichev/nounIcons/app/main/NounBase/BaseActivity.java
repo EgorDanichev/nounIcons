@@ -15,6 +15,7 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
+import com.edanichev.nounIcons.app.main.Utils.UI.Toast.ToastShower;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 public abstract class BaseActivity extends MvpAppCompatActivity implements IBaseActivityView {
@@ -63,7 +64,7 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
 
     @Override
     public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        ToastShower.showSuccessToast(message, this);
     }
 
     protected void hideKeyboard() {

@@ -16,8 +16,8 @@ public class DialogShower {
     public static void showAuthDialog(final Context context) {
         AlertDialog.Builder dialog;
         dialog = new AlertDialog.Builder(context);
-        dialog.setTitle("Do you want to authorize?");
-        dialog.setMessage("You need authorization to add icon to favorites");
+        dialog.setTitle("You need authorization to add icon to favorites");
+        dialog.setMessage("Authorize?");
         dialog.setPositiveButton("Yes", (dialog1, arg1) -> {
             context.startActivity(NounFirebaseAuth.getAuthIntent());
             DialogShower.showLoadingDialog(context);
