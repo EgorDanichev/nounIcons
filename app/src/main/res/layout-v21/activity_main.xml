@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bgLayout"
     android:layout_width="match_parent"
@@ -55,7 +54,7 @@
                         android:layout_marginLeft="8dp"
                         android:layout_weight="20"
                         android:backgroundTint="@color/black_color"
-                        android:textColorHint="@color/gray_btn_bg_color">
+                        android:textColorHint="@color/gray_hint">
 
                         <EditText
                             android:id="@+id/search_edit"
@@ -67,7 +66,7 @@
                             android:maxLines="1"
                             android:shadowColor="@color/black_color"
                             android:textColor="@color/black_color"
-                            android:textColorHint="@color/gray_btn_bg_color"
+                            android:textColorHint="@color/gray_hint"
                             android:textColorLink="@color/black_color" />
 
                     </android.support.design.widget.TextInputLayout>
@@ -81,35 +80,10 @@
 
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:id="@+id/hint_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:paddingLeft="30dp">
-
-                    <TextView
-                        android:id="@+id/search_hint"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
-                        android:maxLines="1"
-                        android:text="@string/for_example"
-                        android:textSize="15sp" />
-
-                    <com.google.android.flexbox.FlexboxLayout
-                        android:id="@+id/hint_cloud"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_toRightOf="@id/search_hint"
-                        app:alignContent="space_around"
-                        app:alignItems="flex_start"
-                        app:flexWrap="wrap"
-                        app:showDivider="middle" />
-
-                </RelativeLayout>
+                <include
+                    android:id="@+id/hint_cloud"
+                    layout="@layout/hint_cloud_view">
+                </include>
 
             </LinearLayout>
 
@@ -171,4 +145,3 @@
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
-

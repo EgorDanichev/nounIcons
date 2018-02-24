@@ -140,7 +140,6 @@ public class FirebaseAdapter {
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
-
     }
 
 }

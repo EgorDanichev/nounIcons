@@ -205,7 +205,7 @@ public class DrawerView implements FavoriteIconsListCallback {
                 public boolean onClick(View view, IProfile profile) {
                     if (!NounFirebaseAuth.isAuthorized()) {
                         activity.startActivityForResult(NounFirebaseAuth.getAuthIntent(), 300);
-                        DialogShower.showLoadingDialog(activity);
+                        DialogShower.Companion.showLoadingDialog(activity);
                         return true;
                     }
                     return false;

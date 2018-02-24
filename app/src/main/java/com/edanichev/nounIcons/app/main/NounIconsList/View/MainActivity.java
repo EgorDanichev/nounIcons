@@ -1,13 +1,12 @@
 package com.edanichev.nounIcons.app.main.NounIconsList.View;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounApp;
 import com.edanichev.nounIcons.app.main.NounBase.BaseActivity;
-import com.edanichev.nounIcons.app.main.NounHintCloud.Model.CloudTagsModel;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Presenter.HintCloudPresenter;
 import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
@@ -30,36 +28,35 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragment
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.IconListPresenter;
 import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
+import com.edanichev.nounIcons.app.main.Utils.EventBus.ChipClickEvent;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
-import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
 import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
-import com.google.android.flexbox.FlexboxLayout;
-import com.google.firebase.analytics.FirebaseAnalytics;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import fisk.chipcloud.ChipCloud;
-import fisk.chipcloud.ChipListener;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends BaseActivity implements MainView, RecyclerViewAdapter.ItemClickListener, EasyPermissions.PermissionCallbacks, HintCloudView {
-    private final static int NUMBER_OF_COLUMNS = 4;
+public class MainActivity extends BaseActivity implements MainView, RecyclerViewAdapter.ItemClickListener, EasyPermissions.PermissionCallbacks {
+    private final static int NUMBER_OF_COLUMNS_FOR_PORTRAIT = 4;
+    private final static int NUMBER_OF_COLUMNS_FOR_LANDSCAPE = 6;
 
     private ProgressBar progressBar;
     private EditText searchText;
     private RecyclerView iconsGridList;
     private Button searchIconsButton;
-    private FlexboxLayout flexBox;
-    private ChipCloud hintCloud;
-    private ViewGroup hintLayout;
     private ViewGroup emptyResponseLayout;
     private TextView emptyResponseText;
+    private HintCloudView hintCloud;
 
+    private RecyclerViewAdapter iconListAdapter;
     private IconDetailsFragmentView bottomSheetFragment;
 
     @InjectPresenter
@@ -71,16 +68,8 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         return iconListPresenter;
     }
 
-    @InjectPresenter
     @Inject
     HintCloudPresenter hintCloudPresenter;
-
-    @ProvidePresenter
-    HintCloudPresenter provideHintCloudPresenter() {
-        return hintCloudPresenter;
-    }
-
-    private RecyclerViewAdapter iconListAdapter;
 
     @Override
     protected void initializeDagger() {
@@ -92,7 +81,7 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         iconListPresenter.attachView(this);
         iconListPresenter.onCreate();
 
-        hintCloudPresenter.attachView(this);
+        hintCloudPresenter.setView(hintCloud);
         hintCloudPresenter.onCreate();
     }
 
@@ -105,22 +94,23 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     protected void onDestroy() {
         iconListPresenter.onDestroy();
         iconListPresenter.detachView(this);
-        hintCloudPresenter.onDestroy();
-        hintCloudPresenter.detachView(this);
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-//        if (searchText.length() > 0) {
-//            searchIconsList(searchText.getText().toString());
-//        }
+        super.onResume();
+        EventBus.getDefault().register(this);
+        createAdapter();
+
+        if (searchText.length() > 0) {
+            searchIconsList(searchText.getText().toString());
+        }
 
         if (getWindow() != null) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         }
-        super.onResume();
     }
 
     @Override
@@ -144,7 +134,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     public void showIconsList(List<IconDetails> icons) {
         if (icons != null) {
             hideProgress();
-            createAdapter();
             iconListAdapter.setItems(icons);
             iconsGridList.scrollToPosition(0);
             hideEmptyIconsListMessage();
@@ -161,7 +150,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         iconListPresenter.getIconsList(iconsQuery.trim());
 
         NounFirebaseAnalytics.registerSearchEvent(iconsQuery);
-
     }
 
     @Override
@@ -175,23 +163,17 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         bottomSheetFragment = IconDetailsFragmentView.openIconDetails(icon, getSupportFragmentManager());
     }
 
-    @Override
-    public void hideHintCloud() {
-        hintLayout.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void addChipsToHintCloud(CloudTagsModel tags) {
-        hintCloud.addChips(tags);
-    }
-
-    @Override
-    public void showHintCloud() {
-        hintLayout.setVisibility(View.VISIBLE);
+    @Subscribe
+    public void searchIconList(ChipClickEvent event) {
+        searchIconsList(event.getText());
     }
 
     private void createAdapter() {
-        iconsGridList.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
+        int numberOfColumns = NUMBER_OF_COLUMNS_FOR_PORTRAIT;
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            numberOfColumns = NUMBER_OF_COLUMNS_FOR_LANDSCAPE;
+        }
+        iconsGridList.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
         iconListAdapter = new RecyclerViewAdapter();
         iconListAdapter.setClickListener(this);
         iconsGridList.setAdapter(iconListAdapter);
@@ -200,7 +182,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     private View.OnKeyListener searchKeyListener() {
         return (v, keyCode, event) -> {
             boolean isEnterKeyPressed = event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER;
-
             if (isEnterKeyPressed) {
                 searchIconsList(searchText.getText().toString());
                 hideKeyboard();
@@ -213,12 +194,10 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     private TextWatcher onSearchTextChangerListener = new TextWatcher() {
 
         @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
         @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
         @Override
         public void afterTextChanged(Editable editable) {
@@ -230,7 +209,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
 
     private void showEmptyIconsList() {
         hideProgress();
-        createAdapter();
         iconListAdapter.setItems(new ArrayList<>());
         iconsGridList.scrollToPosition(0);
     }
@@ -247,30 +225,19 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     protected void findView() {
         getWindow().setBackgroundDrawable(null);
 
+        hintCloud = findViewById(R.id.hint_cloud);
+
         progressBar = findViewById(R.id.progress);
         searchText = findViewById(R.id.search_edit);
         setSearchTextDefault();
         iconsGridList = findViewById(R.id.items_grid_list);
         searchIconsButton = findViewById(R.id.icon_list_button);
-        flexBox = findViewById(R.id.hint_cloud);
-        hintLayout = findViewById(R.id.hint_layout);
         emptyResponseLayout = findViewById(R.id.empty_response_layout);
         emptyResponseText = findViewById(R.id.empty_response_text);
-        hintCloud = new ChipCloud(this, flexBox, ChipConfig.getChipCloudConfig());
 
         searchIconsButton.setOnClickListener(buttonClickListener);
         searchText.setOnKeyListener(searchKeyListener());
         searchText.addTextChangedListener(onSearchTextChangerListener);
-        hintCloud.setListener(onChipClickListener());
-    }
-
-    private ChipListener onChipClickListener() {
-        return (i, b, b1) -> {
-            if (b) {
-                searchIconsList(hintCloud.getLabel(i));
-                hideHintCloud();
-            }
-        };
     }
 
     @Override
@@ -282,7 +249,7 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 300) {
-            DialogShower.hideLoadingDialog();
+            DialogShower.Companion.hideLoadingDialog();
             if (NounFirebaseAuth.isAuthorized()) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("Hello ").append(NounFirebaseAuth.getCurrentUserName()).append("!");
@@ -326,5 +293,4 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         searchText.setCompoundDrawablePadding(15);
         searchText.setOnFocusChangeListener((view, b) -> searchText.setCompoundDrawables(null, null, null, null));
     }
-
 }

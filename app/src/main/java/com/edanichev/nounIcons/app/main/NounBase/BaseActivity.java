@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
+import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Toast.ToastShower;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
@@ -44,6 +45,7 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
 
     @Override
     public void onBackPressed() {
+        DialogShower.Companion.hideLoadingDialog();
         if (drawer.isDrawerOpen()) {
             drawer.closeDrawer();
         } else {

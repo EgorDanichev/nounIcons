@@ -169,7 +169,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     @Override
     public void showAuthDialog() {
         iconDetailsPresenter.onAuthDialogShow();
-        DialogShower.showAuthDialog(getContext());
+        DialogShower.Companion.showAuthDialog(getContext());
     }
 
     @Override
@@ -198,11 +198,11 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     @Override
     public void showLoaderDialog() {
-        DialogShower.showLoadingDialog(getContext());
+        DialogShower.Companion.showLoadingDialog(getContext());
     }
 
     public void hideLoaderDialog() {
-        DialogShower.hideLoadingDialog();
+        DialogShower.Companion.hideLoadingDialog();
     }
 
     private void animateButton(final ImageButton button) {

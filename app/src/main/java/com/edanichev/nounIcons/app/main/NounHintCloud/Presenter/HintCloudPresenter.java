@@ -1,20 +1,19 @@
 package com.edanichev.nounIcons.app.main.NounHintCloud.Presenter;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
+import com.edanichev.nounIcons.app.main.NounBase.BasePresenter;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Model.IHintCloudInteractor;
-import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
+import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudViewInterface;
 import com.edanichev.nounIcons.app.main.Utils.BuildConfig.INounConfig;
 import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.INounSharedPreferences;
 
 import javax.inject.Inject;
 
-@InjectViewState
-public class HintCloudPresenter extends MvpPresenter<HintCloudView> {
+public class HintCloudPresenter implements BasePresenter<HintCloudViewInterface>{
 
     private INounSharedPreferences preferences;
     private IHintCloudInteractor hintCloudInteractor;
     private INounConfig config;
+    private HintCloudViewInterface view;
 
     @Inject
     public HintCloudPresenter(INounSharedPreferences preferences, IHintCloudInteractor hintCloudInteractor, INounConfig buildConfig) {
@@ -23,18 +22,23 @@ public class HintCloudPresenter extends MvpPresenter<HintCloudView> {
         this.config = buildConfig;
     }
 
+    @Override
+    public void setView(HintCloudViewInterface view) {
+        this.view = view;
+    }
+
     public void onCreate() {
         loadHintCloud();
     }
 
     private void loadHintCloud() {
         if (!preferences.isHintSeen() || config.isDebug()) {
-            getViewState().addChipsToHintCloud(hintCloudInteractor.getTags());
+            view.initView();
+            view.addChipsToHintCloud(hintCloudInteractor.getTags());
+            view.showHintCloud();
             preferences.setHintSeen(true);
-            getViewState().showHintCloud();
         } else {
-            getViewState().hideHintCloud();
+            view.hideHintCloud();
         }
     }
-
 }

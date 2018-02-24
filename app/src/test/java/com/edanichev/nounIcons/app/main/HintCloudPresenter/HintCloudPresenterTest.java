@@ -3,7 +3,7 @@ package com.edanichev.nounIcons.app.main.HintCloudPresenter;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Model.CloudTagsModel;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Model.IHintCloudInteractor;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Presenter.HintCloudPresenter;
-import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
+import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudViewInterface;
 import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView$$State;
 import com.edanichev.nounIcons.app.main.Utils.BuildConfig.INounConfig;
 import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.INounSharedPreferences;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 public final class HintCloudPresenterTest {
 
     @Mock
-    HintCloudView hintCloudView;
+    HintCloudViewInterface hintCloudView;
     @Mock
     HintCloudView$$State hintCloudState;
     @Mock
