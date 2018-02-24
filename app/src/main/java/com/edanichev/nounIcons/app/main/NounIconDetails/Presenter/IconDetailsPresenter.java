@@ -92,32 +92,19 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
     }
 
     private void addToFavorites(final FirebaseIconDetails icon) {
-        NounAsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                FirebaseAdapter.getInstance(IconDetailsPresenter.this).addIconToFavorite(icon);
-            }
-        });
+        NounAsyncTask.execute(() -> FirebaseAdapter.getInstance(IconDetailsPresenter.this).addIconToFavorite(icon));
     }
 
     private void removeToFavorites(final FirebaseIconDetails icon) {
-        NounAsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                FirebaseAdapter.getInstance(IconDetailsPresenter.this).removeIconFromFavorites(icon);
-            }
-        });
+        NounAsyncTask.execute(() -> FirebaseAdapter.getInstance(IconDetailsPresenter.this).removeIconFromFavorites(icon));
     }
 
     private void registerAuthStateChangedListener() {
-        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (NounSharedPreferences.getInstance().isAuthDialogShown()) {
-                    if (NounFirebaseAuth.isAuthorized()) {
-                        NounSharedPreferences.getInstance().setAuthDialogShown(false);
-                        EventBus.getDefault().post(new AuthEvent(true));
-                    }
+        FirebaseAuth.getInstance().addAuthStateListener(firebaseAuth -> {
+            if (NounSharedPreferences.getInstance().isAuthDialogShown()) {
+                if (NounFirebaseAuth.isAuthorized()) {
+                    NounSharedPreferences.getInstance().setAuthDialogShown(false);
+                    EventBus.getDefault().post(new AuthEvent(true));
                 }
             }
         });

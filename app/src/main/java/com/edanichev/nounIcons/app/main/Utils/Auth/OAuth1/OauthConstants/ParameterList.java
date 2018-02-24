@@ -1,7 +1,5 @@
 package com.edanichev.nounIcons.app.main.Utils.Auth.OAuth1.OauthConstants;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,12 +20,12 @@ public class ParameterList
 
     public ParameterList()
     {
-        params = new ArrayList<Parameter>();
+        params = new ArrayList<>();
     }
 
     ParameterList(List<Parameter> params)
     {
-        this.params = new ArrayList<Parameter>(params);
+        this.params = new ArrayList<>(params);
     }
 
     public ParameterList(Map<String, String> map)

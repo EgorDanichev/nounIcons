@@ -2,7 +2,6 @@ package com.edanichev.nounIcons.app.main.Utils.di.Component;
 
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.SearchIconsInteractor;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerApplicationContextModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerCommandModule;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerConfigModule;

@@ -6,7 +6,6 @@ import com.edanichev.nounIcons.app.main.Utils.DB.Realm.IconsRealmAdapter;
 import javax.inject.Inject;
 
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import retrofit2.Response;
 import retrofit2.Retrofit;

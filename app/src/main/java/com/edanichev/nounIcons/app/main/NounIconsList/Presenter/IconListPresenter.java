@@ -4,14 +4,9 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
-import com.edanichev.nounIcons.app.main.NounIconsList.Model.Events.EmptyIconsListFromInteractorEvent;
-import com.edanichev.nounIcons.app.main.NounIconsList.Model.Events.IconsListFromInteractorEvent;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.ISearchIconsInteractor;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainView;
 import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.IInternetStatus;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 

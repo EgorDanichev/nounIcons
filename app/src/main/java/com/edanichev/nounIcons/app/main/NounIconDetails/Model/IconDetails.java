@@ -5,9 +5,6 @@ import android.os.Parcelable;
 
 import java.util.List;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-
 public class IconDetails implements Parcelable{
 
     private String id;

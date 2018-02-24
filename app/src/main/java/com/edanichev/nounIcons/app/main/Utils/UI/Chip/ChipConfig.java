@@ -2,7 +2,6 @@ package com.edanichev.nounIcons.app.main.Utils.UI.Chip;
 
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounApp;

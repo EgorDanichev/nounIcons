@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,6 @@ public final class SearchIconsInteractorTest {
 
     private ISearchIconsInteractor interactor;
     private Icons icons;
-    private TestSubscriber<Icons> newsModelTestSubscriber;
     private CompositeDisposable compositeDisposable;
 
     @Before
@@ -55,7 +53,7 @@ public final class SearchIconsInteractorTest {
         iconDetailsList.add(new IconDetails("123", "asdasdasd", "aazzza", "asdgggcxz", "cat"));
         icons = new Icons(iconDetailsList);
 
-        newsModelTestSubscriber = new TestSubscriber<>();
+        TestSubscriber<Icons> newsModelTestSubscriber = new TestSubscriber<>();
         compositeDisposable = new CompositeDisposable();
     }
 

@@ -3,8 +3,6 @@ package com.edanichev.nounIcons.app.main.NounIconDetails.Model.Realm;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
-import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Tag;
 
 import java.util.ArrayList;

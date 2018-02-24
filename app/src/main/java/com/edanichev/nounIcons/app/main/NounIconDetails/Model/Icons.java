@@ -3,10 +3,6 @@ package com.edanichev.nounIcons.app.main.NounIconDetails.Model;
 
 import java.util.List;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.Index;
-
 public class Icons {
 
     private List<IconDetails> icons;

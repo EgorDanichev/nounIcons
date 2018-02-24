@@ -13,7 +13,6 @@ import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

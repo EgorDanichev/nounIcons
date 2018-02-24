@@ -4,7 +4,6 @@ import com.edanichev.nounIcons.app.main.NounHintCloud.Model.CloudTagsModel;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Model.IHintCloudInteractor;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Presenter.HintCloudPresenter;
 import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudViewInterface;
-import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView$$State;
 import com.edanichev.nounIcons.app.main.Utils.BuildConfig.INounConfig;
 import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.INounSharedPreferences;
 

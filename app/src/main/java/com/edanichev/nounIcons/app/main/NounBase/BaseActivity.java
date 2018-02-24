@@ -7,9 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.edanichev.nounIcons.app.R;
