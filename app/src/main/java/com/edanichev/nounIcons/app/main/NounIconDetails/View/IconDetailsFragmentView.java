@@ -163,7 +163,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
             activity.setMarkedBurger();
         }
         hideLoaderDialog();
-        NounFirebaseAnalytics.registerAuthResultEvent(event.isSuccess());
     }
 
     @Override

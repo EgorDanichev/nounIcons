@@ -6,6 +6,7 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconsList.IconsCallback;
 import com.edanichev.nounIcons.app.main.NounIconsList.Model.ISearchIconsInteractor;
 import com.edanichev.nounIcons.app.main.NounIconsList.View.MainView;
+import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
 import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.IInternetStatus;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class IconListPresenter extends MvpPresenter<MainView> implements IIconLi
         } else {
             getViewState().emptyQueryError();
         }
+        NounFirebaseAnalytics.registerSearchEvent(term);
     }
 
     @Override

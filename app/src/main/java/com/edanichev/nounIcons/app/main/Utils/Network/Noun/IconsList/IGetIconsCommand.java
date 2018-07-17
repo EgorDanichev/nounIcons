@@ -6,5 +6,4 @@ import io.reactivex.Single;
 public interface IGetIconsCommand {
 
     Single getIconsList(final String term);
-
 }

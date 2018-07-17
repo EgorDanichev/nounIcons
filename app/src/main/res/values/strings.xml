@@ -21,5 +21,6 @@
     <string name="key">8d6f079d73054acab464cee59652d02f</string>
     <string name="secret">ede7fa4a5090413ba11d6ffe0eb96f36</string>
     <string name="for_example">For example:</string>
+    <string name="asset_statements" translatable="false">[{ \"include\": \"https://www.example.com/.well-known/assetlinks.json\" }]</string>
 
 </resources>

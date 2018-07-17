@@ -17,6 +17,8 @@ import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Toast.ToastShower;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
+import org.greenrobot.eventbus.EventBus;
+
 public abstract class BaseActivity extends MvpAppCompatActivity implements IBaseActivityView {
 
     public DrawerView drawer;
@@ -29,10 +31,17 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
 
-        findView();
         initializeDagger();
+        findView();
         initializePresenter();
         initializeDrawer();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -72,14 +81,6 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
         inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
     }
 
-    protected abstract void initializeDagger();
-
-    protected abstract void initializePresenter();
-
-    protected abstract void findView();
-
-    public abstract int getLayoutId();
-
     public void setDefaultBurger() {
         toolbar.setNavigationIcon(IconLoader.getBurgerIcon(this));
     }
@@ -104,4 +105,11 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
         drawer = new DrawerView(this);
     }
 
+    protected abstract void initializeDagger();
+
+    protected abstract void initializePresenter();
+
+    protected abstract void findView();
+
+    public abstract int getLayoutId();
 }

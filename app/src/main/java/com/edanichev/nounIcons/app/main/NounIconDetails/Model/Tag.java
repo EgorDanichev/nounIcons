@@ -1,6 +1,7 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.Model;
 
 public class Tag {
+
     String id;
     String slug;
 

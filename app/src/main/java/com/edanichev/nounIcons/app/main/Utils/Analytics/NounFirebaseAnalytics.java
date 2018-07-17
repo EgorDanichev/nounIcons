@@ -22,16 +22,28 @@ public class NounFirebaseAnalytics {
     public static void registerOnFavoriteButtonClick(boolean isAuthorized) {
         Bundle bundle = new Bundle();
         bundle.putString("onFavoriteButtonClick", "onFavoriteButtonClick");
-        bundle.putBoolean("isAuthorized", isAuthorized);
+        if (isAuthorized) {
+            bundle.putString("isAuthorized", "true");
+        } else {
+            bundle.putString("isAuthorized", "false");
+        }
         NounApp.app().getAnalytics().logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
-
 
     public static void registerAuthResultEvent(boolean isAuthorized) {
         Bundle bundle = new Bundle();
         bundle.putString("onAuthResult", "onAuthResult");
-        bundle.putBoolean("isAuthorized", isAuthorized);
+        if (isAuthorized) {
+            bundle.putString("isAuthorized", "true");
+        } else {
+            bundle.putString("isAuthorized", "false");
+        }
         NounApp.app().getAnalytics().logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
     }
 
+    public static void registerOnHintClick(String query) {
+        Bundle bundle = new Bundle();
+        bundle.putString("onHintClick", query);
+        NounApp.app().getAnalytics().logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
 }

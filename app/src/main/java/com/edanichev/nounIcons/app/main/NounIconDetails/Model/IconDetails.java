@@ -92,7 +92,4 @@ public class IconDetails implements Parcelable{
             return new IconDetails[size];
         }
     };
-
-
-
 }

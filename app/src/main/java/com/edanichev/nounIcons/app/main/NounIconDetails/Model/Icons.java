@@ -19,7 +19,5 @@ public class Icons {
         this.icons = icons;
     }
 
-    public Icons() {
-    }
-
+    public Icons() {}
 }

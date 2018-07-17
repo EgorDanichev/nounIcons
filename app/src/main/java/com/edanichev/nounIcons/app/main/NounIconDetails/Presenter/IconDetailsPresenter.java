@@ -1,7 +1,5 @@
 package com.edanichev.nounIcons.app.main.NounIconDetails.Presenter;
 
-import android.support.annotation.NonNull;
-
 import com.edanichev.nounIcons.app.main.NounIconDetails.IconChangeFavoritesCallback;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
@@ -105,6 +103,7 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
                 if (NounFirebaseAuth.isAuthorized()) {
                     NounSharedPreferences.getInstance().setAuthDialogShown(false);
                     EventBus.getDefault().post(new AuthEvent(true));
+                    NounFirebaseAnalytics.registerAuthResultEvent(true);
                 }
             }
         });

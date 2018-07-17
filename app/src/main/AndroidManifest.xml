@@ -16,6 +16,9 @@
         android:label="@string/app_name"
         android:theme="@style/MyTheme"
         tools:replace="android:icon">
+        <meta-data
+            android:name="asset_statements"
+            android:resource="@string/asset_statements" />
         <activity
             android:name=".main.NounIconsList.View.MainActivity"
             android:label="@string/title_activity_main">
@@ -23,7 +26,8 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter android:label="Noun Icons">
+            <intent-filter android:label="Noun Icons"
+                android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />

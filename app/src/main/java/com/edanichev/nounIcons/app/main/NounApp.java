@@ -66,7 +66,6 @@ public class NounApp extends Application {
 //        realm.beginTransaction();
 //        realm.deleteAll();
 //        realm.commitTransaction();
-
     }
 
     public static NounApp app() {

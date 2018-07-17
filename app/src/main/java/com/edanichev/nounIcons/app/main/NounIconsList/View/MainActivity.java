@@ -26,7 +26,6 @@ import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconsList.Presenter.IconListPresenter;
-import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.ChipClickEvent;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
@@ -34,7 +33,6 @@ import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
@@ -54,7 +52,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     private Button searchIconsButton;
     private ViewGroup emptyResponseLayout;
     private TextView emptyResponseText;
-    private HintCloudView hintCloud;
 
     private RecyclerViewAdapter iconListAdapter;
     private IconDetailsFragmentView bottomSheetFragment;
@@ -71,6 +68,8 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     @Inject
     HintCloudPresenter hintCloudPresenter;
 
+    private HintCloudView hintCloudView;
+
     @Override
     protected void initializeDagger() {
         NounApp.app().getComponent().inject(this);
@@ -81,7 +80,8 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         iconListPresenter.attachView(this);
         iconListPresenter.onCreate();
 
-        hintCloudPresenter.setView(hintCloud);
+        hintCloudPresenter.setView(hintCloudView);
+        hintCloudView.setPresenter(hintCloudPresenter);
         hintCloudPresenter.onCreate();
     }
 
@@ -100,7 +100,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         createAdapter();
 
         if (searchText.length() > 0) {
@@ -148,8 +147,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     public void searchIconsList(String iconsQuery) {
         searchText.setText(iconsQuery);
         iconListPresenter.getIconsList(iconsQuery.trim());
-
-        NounFirebaseAnalytics.registerSearchEvent(iconsQuery);
     }
 
     @Override
@@ -225,7 +222,7 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     protected void findView() {
         getWindow().setBackgroundDrawable(null);
 
-        hintCloud = findViewById(R.id.hint_cloud);
+        hintCloudView = findViewById(R.id.hint_cloud);
 
         progressBar = findViewById(R.id.progress);
         searchText = findViewById(R.id.search_edit);
@@ -268,8 +265,7 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-    }
+    public void onPermissionsDenied(int requestCode, List<String> perms) {}
 
     private void showEmptyIconsListMessage() {
         progressBar.setVisibility(View.GONE);
