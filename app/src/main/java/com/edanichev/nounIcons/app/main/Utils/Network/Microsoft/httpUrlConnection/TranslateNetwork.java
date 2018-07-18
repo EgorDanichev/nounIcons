@@ -1,7 +1,7 @@
 package com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.httpUrlConnection;
 
 
-import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
+import com.edanichev.nounIcons.app.main.iconlist.TranslateCallback;
 
 public class TranslateNetwork implements TranslationResponseCallback {
 

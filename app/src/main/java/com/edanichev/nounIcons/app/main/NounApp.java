@@ -8,7 +8,8 @@ import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPrefer
 import com.edanichev.nounIcons.app.main.Utils.di.Component.AppComponent;
 import com.edanichev.nounIcons.app.main.Utils.di.Component.DaggerAppComponent;
 import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerDBModule;
-import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerNetworkModule;
+import com.edanichev.nounIcons.app.main.Utils.di.Modules.NetworkModule;
+import com.edanichev.nounIcons.app.main.Utils.di.Modules.DaggerRXModule;
 import com.facebook.stetho.Stetho;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
@@ -49,7 +50,6 @@ public class NounApp extends Application {
 
         analytics = FirebaseAnalytics.getInstance(this);
 
-
 //        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 //                .detectDiskReads()
 //                .detectDiskWrites()
@@ -75,8 +75,9 @@ public class NounApp extends Application {
     public AppComponent getComponent() {
         if (component == null) {
             component = DaggerAppComponent.builder()
-                    .daggerNetworkModule(new DaggerNetworkModule(BASE_NOUN_URL))
+                    .networkModule(new NetworkModule(BASE_NOUN_URL))
                     .daggerDBModule(new DaggerDBModule())
+                    .daggerRXModule(new DaggerRXModule())
                     .build();
         }
         return this.component;
@@ -88,7 +89,9 @@ public class NounApp extends Application {
     }
 
     public FirebaseAnalytics getAnalytics() {
+        if (analytics == null) {
+            analytics = FirebaseAnalytics.getInstance(this);
+        }
         return analytics;
     }
-
 }

@@ -1,7 +1,7 @@
 package com.edanichev.nounIcons.app.main.Utils.Network.Microsoft.Translate;
 
 import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.NounSharedPreferences;
-import com.edanichev.nounIcons.app.main.NounIconsList.TranslateCallback;
+import com.edanichev.nounIcons.app.main.iconlist.TranslateCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.TokenExpiredInterceptor;
 import com.edanichev.nounIcons.app.main.Utils.XML.XmlInterceptor;
 import com.facebook.stetho.okhttp3.StethoInterceptor;

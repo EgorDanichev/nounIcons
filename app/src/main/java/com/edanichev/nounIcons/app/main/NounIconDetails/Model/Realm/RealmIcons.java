@@ -15,13 +15,10 @@ public class RealmIcons extends RealmObject {
 
     @Index
     private String request;
-
     private RealmList<RealmIconDetails> icons;
-
     public List<RealmIconDetails> getIcons() {
         return icons;
     }
-
     public void setIcons(RealmList<RealmIconDetails> icons) {
         this.icons = icons;
     }
@@ -57,5 +54,4 @@ public class RealmIcons extends RealmObject {
         }
         return new Icons(iconDetailsList);
     }
-
 }

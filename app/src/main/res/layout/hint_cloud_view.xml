@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin">
+    android:layout_marginStart="@dimen/activity_horizontal_margin">
 
     <TextView
         android:id="@+id/search_hint"
@@ -20,8 +20,8 @@
         android:id="@+id/hint_flexbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_toRightOf="@id/search_hint"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/search_hint"
         app:alignContent="space_around"
         app:alignItems="flex_start"
         app:flexWrap="wrap"

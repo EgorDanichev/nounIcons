@@ -11,8 +11,7 @@ public class DaggerRXModule {
 
     @Provides
     @Singleton
-    public CompositeDisposable provideCompositeSubscription() {
+    public CompositeDisposable provideCompositeDisposable() {
         return new CompositeDisposable();
     }
-
 }

@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Collections;
+import java.util.Objects;
 
 public class NounFirebaseAuth {
 
@@ -25,11 +26,10 @@ public class NounFirebaseAuth {
     }
 
     public static String getCurrentUserName() {
-        return FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName();
     }
 
     public static FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
-
 }

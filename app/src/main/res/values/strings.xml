@@ -9,7 +9,7 @@
     <string name="sheet_p1">Search icons</string>
     <string name="search_icons">Search icons</string>
     <string name="icon_added_to_favorites">Icon added to favorites</string>
-    <!--<string name="icon_added_to_favorites">Icon added to favorites &#9989;</string>-->
+
     <string name="icon_deleted_from_favorites">Icon removed from favorites &#128465;</string>
     <string name="icon_deleted_from_favorites_fail">We had some problems to delete icon from favorites</string>
     <string name="no_internet">No internet connection</string>
@@ -18,9 +18,10 @@
     <string name="sign_out">Sign Out</string>
     <string name="my_favorites">My favorites</string>
     <string name="last_word">Bye Bye! &#129303;</string>
-    <string name="key">8d6f079d73054acab464cee59652d02f</string>
-    <string name="secret">ede7fa4a5090413ba11d6ffe0eb96f36</string>
     <string name="for_example">For example:</string>
+
     <string name="asset_statements" translatable="false">[{ \"include\": \"https://www.example.com/.well-known/assetlinks.json\" }]</string>
 
+    <string name="key">8d6f079d73054acab464cee59652d02f</string>
+    <string name="secret">ede7fa4a5090413ba11d6ffe0eb96f36</string>
 </resources>

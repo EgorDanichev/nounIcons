@@ -5,14 +5,13 @@ import com.edanichev.nounIcons.app.BuildConfig;
 
 public class NounConfig implements INounConfig {
 
-    private static final NounConfig OUR_INSTANCE = new NounConfig();
+    private static final NounConfig instance = new NounConfig();
 
     public static NounConfig getInstance() {
-        return OUR_INSTANCE;
+        return instance;
     }
 
-    private NounConfig() {
-    }
+    private NounConfig() { }
 
     @Override
     public boolean isDebug() {

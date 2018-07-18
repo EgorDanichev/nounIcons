@@ -1,5 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.UI.Dialog
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.v7.app.AlertDialog
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth
@@ -8,7 +9,8 @@ import com.kaopiz.kprogresshud.KProgressHUD
 class DialogShower {
 
     companion object {
-        fun a(): Int = 1
+
+        @SuppressLint("StaticFieldLeak")
         private var loadingDialog: KProgressHUD? = null
 
         fun showAuthDialog(context: Context) {
@@ -37,11 +39,7 @@ class DialogShower {
         }
 
         fun hideLoadingDialog() {
-            if (loadingDialog != null) {
-                loadingDialog!!.dismiss()
-            }
+            loadingDialog?.dismiss()
         }
-
     }
-
 }

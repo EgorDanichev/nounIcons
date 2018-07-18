@@ -20,7 +20,7 @@
             android:name="asset_statements"
             android:resource="@string/asset_statements" />
         <activity
-            android:name=".main.NounIconsList.View.MainActivity"
+            android:name=".main.iconlist.view.MainActivity"
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

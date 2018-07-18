@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.NounBase.BaseActivity;
+import com.edanichev.nounIcons.app.main.base.BaseActivity;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;

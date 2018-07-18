@@ -17,8 +17,10 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
 
     private IconDetailsFragmentViewInterface view;
     private boolean favorite = false;
+    private NounFirebaseAnalytics analytics = new NounFirebaseAnalytics();
 
     public IconDetailsPresenter(IconDetailsFragmentViewInterface view) {
+        analytics.registerOpenIconDetailsEvent();
         this.view = view;
     }
 
@@ -27,7 +29,7 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
         boolean isAuthorized = NounFirebaseAuth.isAuthorized();
 
         if (isAuthorized) {
-            NounFirebaseAnalytics.registerOnFavoriteButtonClick(isAuthorized);
+            analytics.registerOnFavoriteButtonClick(isAuthorized);
             if (!favorite) {
                 addToFavorites(FirebaseIconDetails.converter(icon));
                 view.setFavoriteButtonStatus(true);
@@ -38,7 +40,7 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
                 favorite = false;
             }
         } else {
-            NounFirebaseAnalytics.registerOnFavoriteButtonClick(isAuthorized);
+            analytics.registerOnFavoriteButtonClick(isAuthorized);
             view.showAuthDialog();
         }
     }
@@ -103,13 +105,9 @@ public class IconDetailsPresenter implements IIconDetailsPresenter, IconChangeFa
                 if (NounFirebaseAuth.isAuthorized()) {
                     NounSharedPreferences.getInstance().setAuthDialogShown(false);
                     EventBus.getDefault().post(new AuthEvent(true));
-                    NounFirebaseAnalytics.registerAuthResultEvent(true);
+                    analytics.registerAuthResultEvent(true);
                 }
             }
         });
     }
-
 }
-
-
-

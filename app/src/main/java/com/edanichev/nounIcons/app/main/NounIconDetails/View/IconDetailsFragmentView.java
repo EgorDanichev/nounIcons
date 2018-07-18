@@ -19,13 +19,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.NounBase.BaseActivity;
+import com.edanichev.nounIcons.app.main.base.BaseActivity;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Tag;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IIconDetailsPresenter;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Presenter.IconDetailsPresenter;
-import com.edanichev.nounIcons.app.main.NounIconsList.View.MainActivity;
-import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
+import com.edanichev.nounIcons.app.main.iconlist.view.MainActivity;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
 import com.edanichev.nounIcons.app.main.Utils.String.StringUtils;
@@ -65,8 +64,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     public IIconDetailsPresenter iconDetailsPresenter;
 
     public static IconDetailsFragmentView openIconDetails(IconDetails icon, FragmentManager fragmentManager) {
-
-        NounFirebaseAnalytics.registerOpenIconDetailsEvent();
         Bundle bundle = new Bundle();
         bundle.putParcelable(ICON_KEY, icon);
 
@@ -82,7 +79,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View myInflatedView = inflater.inflate(R.layout.bottom_sheet, container, false);
         findView(myInflatedView);
-        createPresenter();
+        iconDetailsPresenter = new IconDetailsPresenter(this);
         receiveIconData();
         loadIconImage();
         loadIconTerm();
@@ -208,10 +205,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         button.startAnimation(NounAnimations.getFavoriteButtonAnimation());
     }
 
-    private void createPresenter() {
-        iconDetailsPresenter = new IconDetailsPresenter(this);
-    }
-
     private void findView(View myInflatedView) {
         progress = myInflatedView.findViewById(R.id.progress_bar);
         bottomSheetImageView = myInflatedView.findViewById(R.id.bottom_sheet_view);
@@ -237,7 +230,6 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     private void loadIconImage() {
         showProgress();
         String iconUrl;
-
         if (iconData.getAttribution_preview_url() == null)
             iconUrl = iconData.getPreview_url();
         else
@@ -300,5 +292,4 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
             }
         };
     }
-
 }

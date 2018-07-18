@@ -48,5 +48,4 @@ public class IconsRealmAdapter {
             .schemaVersion(0)
             .migration(new RealmMigration())
             .build();
-
 }
