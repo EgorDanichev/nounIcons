@@ -5,7 +5,6 @@ import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.Icons;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.EmptyListException;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
-import com.edanichev.nounIcons.app.main.iconlist.IconsCallback;
 import com.edanichev.nounIcons.app.main.iconlist.model.SearchIconsInteractor;
 
 import org.junit.Before;
@@ -22,7 +21,9 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
+import ru.alfabank.mobile.android.core.domain.network.callback.RequestCallback;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -37,7 +38,7 @@ public final class SearchIconsInteractorTest {
     GetIconsCommand command;
     @Mock
     private
-    IconsCallback callback;
+    RequestCallback<List<IconDetails>> callback;
 
     private SearchIconsInteractor interactor;
     private Icons icons;
@@ -61,17 +62,29 @@ public final class SearchIconsInteractorTest {
 
         interactor.getIcons("cat", callback);
 
-        verify(callback, times(1)).onIconsSearchResponse(icons.getIcons());
-        verify(callback, never()).onEmptyIconsList();
+        verify(callback, times(1)).onRequestSuccess(icons.getIcons());
+        verify(callback, never()).onRequestFailure(any(Throwable.class));
     }
 
     @Test
     public void search_icons_empty() {
         when(command.execute())
-                .thenReturn(Single.error(new EmptyListException("Empty response")));
+                .thenReturn(Single.just(new Icons()));
 
         interactor.getIcons("asdsdfadf", callback);
 
-        verify(callback, never()).onIconsSearchResponse(anyListOf(IconDetails.class));
+        verify(callback, times(1)).onRequestFailure(any(EmptyListException.class));
+        verify(callback, never()).onRequestSuccess(anyListOf(IconDetails.class));
+    }
+
+    @Test
+    public void should_call_onfail_if_command_fails() {
+        when(command.execute())
+                .thenReturn(Single.error(new Throwable()));
+
+        interactor.getIcons("asdsdfadf", callback);
+
+        verify(callback, times(1)).onRequestFailure(any(Throwable.class));
+        verify(callback, never()).onRequestSuccess(anyListOf(IconDetails.class));
     }
 }

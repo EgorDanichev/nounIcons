@@ -6,9 +6,9 @@ import com.edanichev.nounIcons.app.R
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails
 import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics
 import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus
-import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.EmptyListException
 import com.edanichev.nounIcons.app.main.iconlist.model.SearchIconsInteractor
 import com.edanichev.nounIcons.app.main.iconlist.view.MainView
+import retrofit2.HttpException
 import ru.alfabank.mobile.android.core.domain.network.callback.RequestCallback
 import javax.inject.Inject
 
@@ -36,10 +36,15 @@ constructor(
 
         val callback = RequestCallback<List<IconDetails>>()
         callback.apply {
-            setSuccess { viewState.showIconsList(it) }
+            setSuccess {
+                viewState.hideProgress()
+                viewState.showIconsList(it)
+            }
             setError {
-                if (it is EmptyListException)
+                if (it is HttpException && it.code() == 404) {
+                    viewState.hideProgress()
                     viewState.onEmptyIconsList()
+                }
             }
         }
 
@@ -53,4 +58,8 @@ constructor(
         else
             viewState.hideSnack()
     }
+
+    private fun asd() {}
+
+
 }

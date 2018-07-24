@@ -19,7 +19,8 @@ class HintCloudView
 
     private val flexBox by bind<FlexboxLayout>(R.id.hint_flexbox)
     private lateinit var hintCloud: ChipCloud
-    private lateinit var presenter: HintCloudPresenterInterface
+
+    override lateinit var presenter: HintCloudPresenterInterface
 
     override fun showHintCloud() {
         visibility = View.VISIBLE
@@ -29,25 +30,20 @@ class HintCloudView
         visibility = View.GONE
     }
 
-    override fun addChipsToHintCloud(tags: CloudTagsModel?) {
+    override fun addChipsToHintCloud(tags: CloudTagsModel) {
         hintCloud.addChips(tags)
     }
 
-    override fun initView() {
+    override fun initChips() {
         hintCloud = ChipCloud(context, flexBox, ChipConfig.getChipCloudConfig())
-        hintCloud.setListener(onChipClickListener())
+        hintCloud.setListener(onChipClickListener)
     }
 
-    private fun onChipClickListener(): ChipListener {
-        return ChipListener { clickedChipIndex: Int, b: Boolean, _: Boolean ->
+    private val onChipClickListener =
+        ChipListener { clickedChipIndex: Int, b: Boolean, _: Boolean ->
             if (b) {
                 val clickedChipText = hintCloud.getLabel(clickedChipIndex)
                 presenter.hintClick(clickedChipText)
             }
         }
-    }
-
-    fun setPresenter(presenter: HintCloudPresenterInterface) {
-        this.presenter = presenter
-    }
 }

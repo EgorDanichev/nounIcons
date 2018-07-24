@@ -1,24 +1,22 @@
 package com.edanichev.nounIcons.app.main.NounHintCloud.Presenter
 
-import com.edanichev.nounIcons.app.main.NounHintCloud.Model.IHintCloudInteractor
+import com.edanichev.nounIcons.app.main.NounHintCloud.Model.HintCloudInteractor
 import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudViewInterface
 import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics
 import com.edanichev.nounIcons.app.main.Utils.BuildConfig.INounConfig
 import com.edanichev.nounIcons.app.main.Utils.EventBus.ChipClickEvent
 import com.edanichev.nounIcons.app.main.Utils.SharedPreferences.INounSharedPreferences
-
-import org.greenrobot.eventbus.EventBus
-
+import org.greenrobot.eventbus.EventBus.getDefault
 import javax.inject.Inject
 
 class HintCloudPresenter @Inject
 constructor(
     private val preferences: INounSharedPreferences,
-    private val hintCloudInteractor: IHintCloudInteractor,
+    private val hintCloudInteractor: HintCloudInteractor,
     private val config: INounConfig,
     private val analytics: NounFirebaseAnalytics
 ) : HintCloudPresenterInterface {
-    private var view: HintCloudViewInterface? = null
+    private lateinit var view: HintCloudViewInterface
 
     override fun setView(view: HintCloudViewInterface) {
         this.view = view
@@ -30,18 +28,20 @@ constructor(
 
     private fun loadHintCloud() {
         if (!preferences.isHintSeen || config.isDebug) {
-            view!!.initView()
-            view!!.addChipsToHintCloud(hintCloudInteractor.tags)
-            view!!.showHintCloud()
+            with(view) {
+                initChips()
+                addChipsToHintCloud(hintCloudInteractor.getTags())
+                showHintCloud()
+            }
             preferences.isHintSeen = true
         } else {
-            view!!.hideHintCloud()
+            view.hideHintCloud()
         }
     }
 
     override fun hintClick(text: String) {
-        view!!.hideHintCloud()
-        EventBus.getDefault().post(ChipClickEvent(text))
+        view.hideHintCloud()
+        getDefault().post(ChipClickEvent(text))
         analytics.registerOnHintClick(text)
     }
 }

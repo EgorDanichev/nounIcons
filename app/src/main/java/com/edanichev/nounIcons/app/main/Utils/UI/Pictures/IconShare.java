@@ -48,10 +48,9 @@ public class IconShare {
     }
 
     private static Uri getLocalBitmapUri(ImageView imageView, Activity activity) {
-
         Drawable drawable = imageView.getDrawable();
-        Bitmap bitmap;
 
+        Bitmap bitmap;
         if (drawable instanceof BitmapDrawable) {
             bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         } else {
@@ -77,6 +76,4 @@ public class IconShare {
         }
         return bitmapUri;
     }
-
-
 }

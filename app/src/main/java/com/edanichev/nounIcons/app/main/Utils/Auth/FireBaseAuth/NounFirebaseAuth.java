@@ -16,8 +16,10 @@ public class NounFirebaseAuth {
                 .createSignInIntentBuilder()
                 .setIsSmartLockEnabled(false, true)
                 .setAvailableProviders(
-                        Collections.singletonList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
-                        ))
+                        Collections.singletonList(
+                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+                        )
+                )
                 .build();
     }
 

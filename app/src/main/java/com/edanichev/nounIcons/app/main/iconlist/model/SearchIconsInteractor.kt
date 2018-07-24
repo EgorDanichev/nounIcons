@@ -6,7 +6,6 @@ import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.EmptyListEx
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand
 import com.edanichev.nounIcons.app.main.Utils.Network.rx.SimpleSingleObserver
 import com.edanichev.nounIcons.app.main.base.data.BaseInteractor
-import com.edanichev.nounIcons.app.main.iconlist.IconsCallback
 import io.reactivex.disposables.CompositeDisposable
 import ru.alfabank.mobile.android.core.domain.network.callback.RequestCallback
 import javax.inject.Inject
@@ -22,7 +21,11 @@ open class SearchIconsInteractor
     open fun getIcons(term: String, callback: RequestCallback<List<IconDetails>>) {
         val observer = SimpleSingleObserver<Icons> {
             onComplete = {
-                callback.onRequestSuccess(it.icons)
+                if (it.icons.isEmpty()) {
+                    callback.onRequestFailure(EmptyListException())
+                } else {
+                    callback.onRequestSuccess(it.icons)
+                }
             }
             onSubscribe = { compositeDisposable.add(it) }
             onError = {

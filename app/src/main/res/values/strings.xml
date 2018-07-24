@@ -7,7 +7,7 @@
     <string name="enter_icons_name_to_search">Enter icons name to search</string>
     <string name="enter_tag_to_search_icons">Enter something to find icons</string>
     <string name="sheet_p1">Search icons</string>
-    <string name="search_icons">Search icons</string>
+    <string name="search_icons">Search</string>
     <string name="icon_added_to_favorites">Icon added to favorites</string>
 
     <string name="icon_deleted_from_favorites">Icon removed from favorites &#128465;</string>

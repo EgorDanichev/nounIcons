@@ -1,68 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bgLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/white_color"
     android:clipToPadding="false"
+    android:id="@+id/bgLayout"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
     tools:context="com.edanichev.nounIcons.app.main.iconlist.view.MainActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fitsSystemWindows="true"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:orientation="vertical"
         tools:context=".main.iconlist.view.MainActivity">
 
         <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar" />
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <RelativeLayout
                 android:background="@color/white_color"
                 android:elevation="4dp"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <FrameLayout
                     android:background="@color/white_color"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:orientation="horizontal">
+                    android:id="@+id/input_layout"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
 
                     <android.support.design.widget.TextInputLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginLeft="8dp"
-                        android:layout_weight="20"
                         android:backgroundTint="@color/black_color"
+                        android:layout_gravity="start"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
                         android:textColorHint="@color/gray_hint">
 
                         <EditText
-                            android:id="@+id/search_edit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/enter_tag_to_search_icons"
+                            android:id="@+id/search_edit"
                             android:inputType="text|textNoSuggestions"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="-6dp"
+                            android:layout_width="match_parent"
                             android:maxLines="1"
                             android:shadowColor="@color/black_color"
                             android:textColor="@color/black_color"
@@ -73,72 +72,74 @@
 
                     <Button
                         android:id="@+id/icon_list_button"
-                        android:layout_width="wrap_content"
+                        android:layout_gravity="end"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
+                        android:layout_width="wrap_content"
                         android:text="@string/search_icons" />
 
-                </LinearLayout>
+                </FrameLayout>
 
                 <include
+                    layout="@layout/hint_cloud_view"
                     android:id="@+id/hint_cloud"
-                    layout="@layout/hint_cloud_view">
-                </include>
+                    android:layout_below="@id/input_layout"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <FrameLayout
                 android:layout_height="match_parent"
+                android:layout_width="match_parent"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/empty_response_layout"
-                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/empty_response_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
+                        android:id="@+id/empty_response_text"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
                         android:text="@string/we_didn_t_find_any_icons"
                         android:textSize="30sp" />
 
                     <ImageView
                         android:id="@+id/empty_response_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:src="@drawable/no_icons_found" />
 
                 </LinearLayout>
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent">
 
                     <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
                         android:id="@+id/progress"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
                         android:layout_centerInParent="true"
+                        android:layout_height="70dp"
+                        android:layout_width="70dp"
                         android:visibility="invisible" />
 
                     <android.support.v7.widget.RecyclerView
+                        android:clickable="true"
                         android:id="@+id/items_grid_list"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
                         android:layout_centerHorizontal="true"
-                        android:clickable="true" />
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content" />
 
                 </RelativeLayout>
 
-            </LinearLayout>
+            </FrameLayout>
 
         </LinearLayout>
 

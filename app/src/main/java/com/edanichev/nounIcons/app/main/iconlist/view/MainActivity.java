@@ -100,11 +100,9 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     protected void onResume() {
         super.onResume();
         createAdapter();
-
         if (searchText.length() > 0) {
             searchIconsList(searchText.getText().toString());
         }
-
         if (getWindow() != null) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -131,7 +129,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     @Override
     public void showIconsList(List<IconDetails> icons) {
         if (icons != null) {
-            hideProgress();
             iconListAdapter.setItems(icons);
             iconsGridList.scrollToPosition(0);
             hideEmptyIconsListMessage();
@@ -285,7 +282,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
 
     private void setSearchTextDefault() {
         searchText.setCompoundDrawables(IconLoader.getSearchIcon(), null, null, null);
-        searchText.setCompoundDrawablePadding(15);
         searchText.setOnFocusChangeListener((view, b) -> searchText.setCompoundDrawables(null, null, null, null));
     }
 }

@@ -1,7 +1,6 @@
 package com.edanichev.nounIcons.app.main.Utils.di.Modules;
 
 import com.edanichev.nounIcons.app.main.NounHintCloud.Model.HintCloudInteractor;
-import com.edanichev.nounIcons.app.main.NounHintCloud.Model.IHintCloudInteractor;
 import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.GetIconsCommand;
 import com.edanichev.nounIcons.app.main.iconlist.model.SearchIconsInteractor;
 
@@ -13,7 +12,7 @@ import io.reactivex.disposables.CompositeDisposable;
 public class InteractorModule {
 
     @Provides
-    public IHintCloudInteractor provideIHintCloudInteractor() {
+    public HintCloudInteractor provideIHintCloudInteractor() {
         return new HintCloudInteractor();
     }
 

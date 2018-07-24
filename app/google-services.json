@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "612004936727-gt6qrgmqpu183aa13ma3p6ttuv00v8ja.apps.googleusercontent.com",
+          "client_id": "612004936727-bi25pf9lujtg6fctub2sasbquo7ub3ot.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.edanichev.nounIcons",
-            "certificate_hash": "1befdcf666cd1dca8b275884b6a27225d34b2324"
+            "certificate_hash": "7c4316aa21b7d0887b98be10c1a48292cc35c1c4"
           }
         },
         {

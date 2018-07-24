@@ -3,7 +3,7 @@ package com.edanichev.nounIcons.app.main.IconListPresenter;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.Utils.Analytics.NounFirebaseAnalytics;
 import com.edanichev.nounIcons.app.main.Utils.Network.InternetStatus.InternetStatus;
-import com.edanichev.nounIcons.app.main.iconlist.IconsCallback;
+import com.edanichev.nounIcons.app.main.Utils.Network.Noun.IconsList.EmptyListException;
 import com.edanichev.nounIcons.app.main.iconlist.model.SearchIconsInteractor;
 import com.edanichev.nounIcons.app.main.iconlist.presenter.IconListPresenter;
 import com.edanichev.nounIcons.app.main.iconlist.view.MainView;
@@ -27,6 +27,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricTestRunner.class)
@@ -88,29 +89,32 @@ public final class IconListPresenterTest extends Robolectric {
     }
 
     @Test
-    public void should_show_progress_and_make_search() {
+    public void should_show_progress_and_show_result_after_succes_response() {
         doAnswer(invocation -> {
-            IconsCallback callback = (IconsCallback) invocation.getArguments()[1];
-            callback.onIconsSearchResponse(iconDetailsList);
+            RequestCallback<List<IconDetails>> callback = (RequestCallback<List<IconDetails>>) invocation.getArguments()[1];
+            callback.onRequestSuccess(iconDetailsList);
             return null;
         }).when(searchIconsInteractor).getIcons(anyString(), any(RequestCallback.class));
 
         presenter.getIconsList("cat");
+
         verify(mainViewState).showProgress();
-        verify(searchIconsInteractor).getIcons(anyString(), any(RequestCallback.class));
+        verify(mainViewState, times(1)).showIconsList(iconDetailsList);
+        verify(mainViewState, times(1)).hideProgress();
     }
 
     @Test
-    public void should_show_empty_icon_list() {
+    public void should_show_empty_message_when_error() {
         doAnswer(invocation -> {
-            IconsCallback callback = (IconsCallback) invocation.getArguments()[1];
-            callback.onEmptyIconsList();
+            RequestCallback<List<IconDetails>> callback = (RequestCallback<List<IconDetails>>) invocation.getArguments()[1];
+            callback.onRequestFailure(new EmptyListException());
             return null;
         }).when(searchIconsInteractor).getIcons(anyString(), any(RequestCallback.class));
 
         presenter.getIconsList("cat23eddsfasd");
 
-        verify(mainViewState).showProgress();
-        verify(searchIconsInteractor).getIcons(anyString(), any(RequestCallback.class));
+        verify(mainViewState, times(1)).showProgress();
+        verify(mainViewState, times(1)).onEmptyIconsList();
+        verify(mainViewState, times(1)).hideProgress();
     }
 }

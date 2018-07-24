@@ -17,4 +17,3 @@ public interface MainView extends IBaseActivityView {
 
     void emptyQueryError();
 }
-
