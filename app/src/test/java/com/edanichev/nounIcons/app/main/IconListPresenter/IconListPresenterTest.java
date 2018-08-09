@@ -15,8 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,23 +29,14 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(RobolectricTestRunner.class)
-public final class IconListPresenterTest extends Robolectric {
+@RunWith(MockitoJUnitRunner.class)
+public final class IconListPresenterTest {
 
-    @Mock
-    private
-    MainView mainView;
-    @Mock
-    private
-    MainView$$State mainViewState;
-    @Mock
-    private
-    SearchIconsInteractor searchIconsInteractor;
-    @Mock
-    private
-    InternetStatus internetStatus;
-    @Mock
-    NounFirebaseAnalytics analytics;
+    @Mock private MainView mainView;
+    @Mock private MainView$$State mainViewState;
+    @Mock private SearchIconsInteractor searchIconsInteractor;
+    @Mock private InternetStatus internetStatus;
+    @Mock private NounFirebaseAnalytics analytics;
 
     private IconListPresenter presenter;
 
