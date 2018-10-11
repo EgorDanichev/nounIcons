@@ -3,11 +3,30 @@ package com.edanichev.nounIcons.app.main.Utils.UI.Dialog
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import com.edanichev.nounIcons.app.main.base.BaseActivity
+import com.kaopiz.kprogresshud.KProgressHUD
 import java.lang.ref.WeakReference
 
 class DialogShower {
 
+    private var loadingDialog: KProgressHUD? = null
     var activity: WeakReference<BaseActivity>? = null
+
+
+    fun showProgress() {
+        getActivity {
+            loadingDialog = KProgressHUD.create(it)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Loading")
+                .setCancellable(false)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f)
+                .show()
+        }
+    }
+
+    fun hideProgress() {
+        loadingDialog?.dismiss()
+    }
 
     fun showAuthDialog(
         dialogTitle: String,

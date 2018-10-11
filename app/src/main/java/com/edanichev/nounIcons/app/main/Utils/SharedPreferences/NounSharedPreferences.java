@@ -51,16 +51,6 @@ public class NounSharedPreferences implements  INounSharedPreferences {
         return sharedPreferences.getBoolean(HINT_IS_SEEN_FIELD_NAME, false);
     }
 
-    public void setAuthDialogShown(boolean isShown) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(AUTH_DIALOG_SHOWN, isShown);
-        editor.apply();
-    }
-
-    public boolean isAuthDialogShown() {
-        return sharedPreferences.getBoolean(AUTH_DIALOG_SHOWN, false);
-    }
-
     public void setNounApiConfig(String key, String secret) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(NOUN_API_KEY, key);

@@ -12,12 +12,7 @@ public interface INounSharedPreferences {
 
     boolean isHintSeen();
 
-    void setAuthDialogShown(boolean isShown);
-
-    boolean isAuthDialogShown();
-
     void setNounApiConfig(String key, String secret);
 
     NounApiConfigEvent getNounApiConfig();
-
 }

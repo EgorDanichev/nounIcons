@@ -158,7 +158,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
             animateButton(favoriteButton);
             activity.setMarkedBurger();
         }
-        hideLoaderDialog();
+        hideLoading();
     }
 
     @Override
@@ -191,12 +191,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
         favoriteButton.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void showLoaderDialog() {
-        activity.showLoadingDialog();
-    }
-
-    public void hideLoaderDialog() {
+    private void hideLoading() {
         activity.hideLoadingDialog();
     }
 

@@ -20,8 +20,5 @@ public interface IconDetailsFragmentViewInterface {
 
     void showMessageOnRemove();
 
-    void showLoaderDialog();
-
     void onAuthResult(AuthEvent event);
-
 }

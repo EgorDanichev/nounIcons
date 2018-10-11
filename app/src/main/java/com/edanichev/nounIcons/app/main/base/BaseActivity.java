@@ -16,10 +16,9 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.View.DrawerView;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
+import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Toast.ToastShower;
-import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,11 +29,11 @@ import kotlin.Unit;
 
 public abstract class BaseActivity extends MvpAppCompatActivity implements IBaseActivityView {
 
-    private KProgressHUD loadingDialog;
-
     public DrawerView drawer;
     public Toolbar toolbar;
     protected Snackbar snackbar;
+
+    private DialogShower dialogShower = new DialogShower();
 
     @Override
     protected void onResume() {
@@ -60,20 +59,17 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
     }
 
     private void createProgress(Context context) {
-        loadingDialog = KProgressHUD.create(context)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Loading")
-                .setCancellable(false)
-                .setAnimationSpeed(2)
-                .setDimAmount(0.5f);
+        dialogShower.setActivity(new WeakReference<>(this));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        loadingDialog.dismiss();
-        loadingDialog = null;
+        if (dialogShower.getActivity() != null) {
+            dialogShower.getActivity().clear();
+        }
+        hideLoadingDialog();
     }
 
     @Override
@@ -135,18 +131,15 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
     }
 
     public void showLoadingDialog() {
-        loadingDialog.show();
+        dialogShower.showProgress();
     }
 
     public void hideLoadingDialog() {
-        if (loadingDialog != null)
-            loadingDialog.dismiss();
+        dialogShower.hideProgress();
     }
 
     public void showAuthDialog() {
-        DialogShower progress = new DialogShower();
-        progress.setActivity(new WeakReference(this));
-        new DialogShower().showAuthDialog(
+        dialogShower.showAuthDialog(
                 "You need authorization to add icon to favorites",
                 "Authorize?",
                 () -> {
@@ -155,7 +148,7 @@ public abstract class BaseActivity extends MvpAppCompatActivity implements IBase
                     return Unit.INSTANCE;
                 },
                 () -> {
-                    showLoadingDialog();
+                    hideLoadingDialog();
                     return Unit.INSTANCE;
                 }
         );
