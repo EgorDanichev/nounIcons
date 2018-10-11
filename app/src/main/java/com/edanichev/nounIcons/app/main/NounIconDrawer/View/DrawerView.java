@@ -7,16 +7,15 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.edanichev.nounIcons.app.R;
-import com.edanichev.nounIcons.app.main.base.BaseActivity;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.FirebaseIconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
 import com.edanichev.nounIcons.app.main.NounIconDrawer.FavoriteIconsListCallback;
 import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.DB.Firebase.FirebaseAdapter;
-import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Toast.ToastShower;
+import com.edanichev.nounIcons.app.main.base.BaseActivity;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -205,7 +204,7 @@ public class DrawerView implements FavoriteIconsListCallback {
                 public boolean onClick(View view, IProfile profile) {
                     if (!NounFirebaseAuth.isAuthorized()) {
                         activity.startActivityForResult(NounFirebaseAuth.getAuthIntent(), 300);
-                        DialogShower.Companion.showLoadingDialog(activity);
+                        activity.showLoadingDialog();
                         return true;
                     }
                     return false;

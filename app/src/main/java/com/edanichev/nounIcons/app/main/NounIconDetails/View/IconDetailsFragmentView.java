@@ -30,7 +30,6 @@ import com.edanichev.nounIcons.app.main.Utils.EventBus.AuthEvent;
 import com.edanichev.nounIcons.app.main.Utils.String.StringUtils;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
 import com.edanichev.nounIcons.app.main.Utils.UI.Chip.ChipConfig;
-import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.BottomSheetView;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
@@ -165,7 +164,7 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
     @Override
     public void showAuthDialog() {
         iconDetailsPresenter.onAuthDialogShow();
-        DialogShower.Companion.showAuthDialog(getContext());
+        activity.showAuthDialog();
     }
 
     @Override
@@ -194,11 +193,11 @@ public class IconDetailsFragmentView extends BottomSheetDialogFragment implement
 
     @Override
     public void showLoaderDialog() {
-        DialogShower.Companion.showLoadingDialog(getContext());
+        activity.showLoadingDialog();
     }
 
     public void hideLoaderDialog() {
-        DialogShower.Companion.hideLoadingDialog();
+        activity.hideLoadingDialog();
     }
 
     private void animateButton(final ImageButton button) {

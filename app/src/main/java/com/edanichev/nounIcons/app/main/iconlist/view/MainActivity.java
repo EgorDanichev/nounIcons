@@ -1,7 +1,7 @@
 package com.edanichev.nounIcons.app.main.iconlist.view;
 
-import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -20,18 +19,16 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.edanichev.nounIcons.app.R;
 import com.edanichev.nounIcons.app.main.NounApp;
-import com.edanichev.nounIcons.app.main.base.BaseActivity;
 import com.edanichev.nounIcons.app.main.NounHintCloud.Presenter.HintCloudPresenter;
 import com.edanichev.nounIcons.app.main.NounHintCloud.View.HintCloudView;
 import com.edanichev.nounIcons.app.main.NounIconDetails.Model.IconDetails;
 import com.edanichev.nounIcons.app.main.NounIconDetails.View.IconDetailsFragmentView;
-import com.edanichev.nounIcons.app.main.iconlist.presenter.IconListPresenter;
-import com.edanichev.nounIcons.app.main.Utils.Auth.FireBaseAuth.NounFirebaseAuth;
 import com.edanichev.nounIcons.app.main.Utils.EventBus.ChipClickEvent;
 import com.edanichev.nounIcons.app.main.Utils.UI.Animation.NounAnimations;
-import com.edanichev.nounIcons.app.main.Utils.UI.Dialog.DialogShower;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconLoader;
 import com.edanichev.nounIcons.app.main.Utils.UI.Pictures.IconShare;
+import com.edanichev.nounIcons.app.main.base.BaseActivity;
+import com.edanichev.nounIcons.app.main.iconlist.presenter.IconListPresenter;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -76,6 +73,12 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        createAdapter();
+    }
+
+    @Override
     protected void initializePresenter() {
         iconListPresenter.attachView(this);
 
@@ -99,13 +102,8 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
     @Override
     protected void onResume() {
         super.onResume();
-        createAdapter();
         if (searchText.length() > 0) {
             searchIconsList(searchText.getText().toString());
-        }
-        if (getWindow() != null) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         }
     }
 
@@ -239,18 +237,6 @@ public class MainActivity extends BaseActivity implements MainView, RecyclerView
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 300) {
-            DialogShower.Companion.hideLoadingDialog();
-            if (NounFirebaseAuth.isAuthorized()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Hello ").append(NounFirebaseAuth.getCurrentUserName()).append("!");
-                showMessage(sb.toString());
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {

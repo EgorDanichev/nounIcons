@@ -1,6 +1,5 @@
 package com.edanichev.nounIcons.app.main.Utils.UI.Chip;
 
-
 import android.annotation.SuppressLint;
 
 import com.edanichev.nounIcons.app.R;
